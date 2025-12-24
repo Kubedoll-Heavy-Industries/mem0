@@ -1,6 +1,6 @@
 import json
 import os
-from typing import Any, Optional
+from typing import Any
 
 try:
     import google.auth.credentials
@@ -23,10 +23,10 @@ class GCPAuthenticator:
 
     @staticmethod
     def get_credentials(
-        service_account_json: Optional[dict[str, Any]] = None,
-        credentials_path: Optional[str] = None,
-        scopes: Optional[list] = None,
-    ) -> tuple[google.auth.credentials.Credentials, Optional[str]]:
+        service_account_json: dict[str, Any] | None = None,
+        credentials_path: str | None = None,
+        scopes: list | None = None,
+    ) -> tuple[google.auth.credentials.Credentials, str | None]:
         """
         Get Google credentials using the priority order defined above.
 
@@ -85,9 +85,9 @@ class GCPAuthenticator:
 
     @staticmethod
     def setup_vertex_ai(
-        service_account_json: Optional[dict[str, Any]] = None,
-        credentials_path: Optional[str] = None,
-        project_id: Optional[str] = None,
+        service_account_json: dict[str, Any] | None = None,
+        credentials_path: str | None = None,
+        project_id: str | None = None,
         location: str = "us-central1",
     ) -> str:
         """
@@ -131,9 +131,9 @@ class GCPAuthenticator:
 
     @staticmethod
     def get_genai_client(
-        service_account_json: Optional[dict[str, Any]] = None,
-        credentials_path: Optional[str] = None,
-        api_key: Optional[str] = None,
+        service_account_json: dict[str, Any] | None = None,
+        credentials_path: str | None = None,
+        api_key: str | None = None,
     ):
         """
         Get a Google GenAI client with authentication.

@@ -18,7 +18,7 @@ export const useFileHandler = (): UseFileHandlerReturn => {
 
   const handleFile = async (file: File) => {
     setFile(file);
-    
+
     if (file.type.startsWith('image/')) {
       const base64Data = await convertToBase64(file);
       setFileData(base64Data);
@@ -42,4 +42,4 @@ export const useFileHandler = (): UseFileHandlerReturn => {
     handleFile,
     clearFile,
   };
-}; 
+};

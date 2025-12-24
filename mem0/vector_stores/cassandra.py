@@ -1,7 +1,7 @@
 import json
 import logging
 import uuid
-from typing import Any, Optional
+from typing import Any
 
 import numpy as np
 from pydantic import BaseModel
@@ -21,9 +21,9 @@ logger = logging.getLogger(__name__)
 
 
 class OutputData(BaseModel):
-    id: Optional[str]
-    score: Optional[float]
-    payload: Optional[dict]
+    id: str | None
+    score: float | None
+    payload: dict | None
 
 
 class CassandraDB(VectorStoreBase):
@@ -31,14 +31,14 @@ class CassandraDB(VectorStoreBase):
         self,
         contact_points: list[str],
         port: int = 9042,
-        username: Optional[str] = None,
-        password: Optional[str] = None,
+        username: str | None = None,
+        password: str | None = None,
         keyspace: str = "mem0",
         collection_name: str = "memories",
         embedding_model_dims: int = 1536,
-        secure_connect_bundle: Optional[str] = None,
+        secure_connect_bundle: str | None = None,
         protocol_version: int = 4,
-        load_balancing_policy: Optional[Any] = None,
+        load_balancing_policy: Any | None = None,
     ):
         """
         Initialize the Apache Cassandra vector store.
@@ -144,7 +144,7 @@ class CassandraDB(VectorStoreBase):
             logger.error(f"Failed to create table: {e}")
             raise
 
-    def create_col(self, name: Optional[str] = None, vector_size: Optional[int] = None, distance: str = "cosine"):
+    def create_col(self, name: str | None = None, vector_size: int | None = None, distance: str = "cosine"):
         """
         Create a new collection (table in Cassandra).
 
@@ -170,9 +170,7 @@ class CassandraDB(VectorStoreBase):
             logger.error(f"Failed to create collection: {e}")
             raise
 
-    def insert(
-        self, vectors: list[list[float]], payloads: Optional[list[dict]] = None, ids: Optional[list[str]] = None
-    ):
+    def insert(self, vectors: list[list[float]], payloads: list[dict] | None = None, ids: list[str] | None = None):
         """
         Insert vectors into the collection.
 
@@ -206,7 +204,7 @@ class CassandraDB(VectorStoreBase):
         query: str,
         vectors: list[float],
         limit: int = 5,
-        filters: Optional[dict] = None,
+        filters: dict | None = None,
     ) -> list[OutputData]:
         """
         Search for similar vectors using cosine similarity.
@@ -287,8 +285,8 @@ class CassandraDB(VectorStoreBase):
     def update(
         self,
         vector_id: str,
-        vector: Optional[list[float]] = None,
-        payload: Optional[dict] = None,
+        vector: list[float] | None = None,
+        payload: dict | None = None,
     ):
         """
         Update a vector and its payload.
@@ -322,7 +320,7 @@ class CassandraDB(VectorStoreBase):
             logger.error(f"Failed to update vector: {e}")
             raise
 
-    def get(self, vector_id: str) -> Optional[OutputData]:
+    def get(self, vector_id: str) -> OutputData | None:
         """
         Retrieve a vector by ID.
 
@@ -406,7 +404,7 @@ class CassandraDB(VectorStoreBase):
             logger.error(f"Failed to get collection info: {e}")
             return {}
 
-    def list(self, filters: Optional[dict] = None, limit: int = 100) -> list[list[OutputData]]:
+    def list(self, filters: dict | None = None, limit: int = 100) -> list[list[OutputData]]:
         """
         List all vectors in the collection.
 

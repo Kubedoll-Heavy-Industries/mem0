@@ -22,12 +22,12 @@ interface MarkdownRendererProps {
   isDarkMode?: boolean
 }
 
-const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ 
+const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
   markdownText = '',
-  className, 
+  className,
   style,
-  actualCode, 
-  messageId = '', 
+  actualCode,
+  messageId = '',
   showCopyButton = true,
   isDarkMode = false
 }) => {
@@ -43,7 +43,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
 
   const preProcessText = React.useCallback((text: unknown): string => {
     if (typeof text !== 'string' || !text) return '';
-    
+
     // Remove highlight tags initially for clean rendering
     return text.replace(/<highlight>.*?<\/highlight>/g, (match) => {
       // Extract the content between tags
@@ -71,7 +71,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
 
   const processText = React.useCallback((text: string) => {
     if (typeof text !== 'string') return text;
-    
+
     // Only process highlights after streaming is complete
     if (!isStreaming) {
       if (text === '<highlight>') {
@@ -85,7 +85,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
         highlightBuffer.current = [];
 
         return (
-          <span 
+          <span
             key={`highlight-${messageId}-${content}`}
             className={cn("highlight-text animate text-black", {
               "dark": isDarkMode

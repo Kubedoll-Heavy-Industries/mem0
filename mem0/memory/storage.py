@@ -2,7 +2,7 @@ import logging
 import sqlite3
 import threading
 import uuid
-from typing import Any, Optional
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -126,15 +126,15 @@ class SQLiteManager:
     def add_history(
         self,
         memory_id: str,
-        old_memory: Optional[str],
-        new_memory: Optional[str],
+        old_memory: str | None,
+        new_memory: str | None,
         event: str,
         *,
-        created_at: Optional[str] = None,
-        updated_at: Optional[str] = None,
+        created_at: str | None = None,
+        updated_at: str | None = None,
         is_deleted: int = 0,
-        actor_id: Optional[str] = None,
-        role: Optional[str] = None,
+        actor_id: str | None = None,
+        role: str | None = None,
     ) -> None:
         with self._lock:
             try:

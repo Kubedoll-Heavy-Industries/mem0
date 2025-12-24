@@ -1,5 +1,4 @@
 import json
-from typing import Optional
 
 try:
     import litellm
@@ -12,7 +11,7 @@ from mem0.memory.utils import extract_json
 
 
 class LiteLLM(LLMBase):
-    def __init__(self, config: Optional[BaseLlmConfig] = None):
+    def __init__(self, config: BaseLlmConfig | None = None):
         super().__init__(config)
 
         if not self.config.model:
@@ -52,7 +51,7 @@ class LiteLLM(LLMBase):
         self,
         messages: list[dict[str, str]],
         response_format=None,
-        tools: Optional[list[dict]] = None,
+        tools: list[dict] | None = None,
         tool_choice: str = "auto",
     ):
         """

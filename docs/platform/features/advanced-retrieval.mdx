@@ -16,7 +16,7 @@ Expands results to include memories with specific terms, names, and technical ke
 <Tabs>
   <Tab title="When to Use">
 - Searching for specific entities, names, or technical terms
-- Need comprehensive coverage of a topic  
+- Need comprehensive coverage of a topic
 - Want broader recall even if some results are less relevant
 - Working with domain-specific terminology
 </Tab>
@@ -30,7 +30,7 @@ results = client.search(
 )
 
 # Results might include:
-# ✓ "Allergic to peanuts and shellfish"  
+# ✓ "Allergic to peanuts and shellfish"
 # ✓ "Lactose intolerant - avoid dairy"
 # ✓ "Mentioned avoiding gluten last week"
 ```
@@ -65,7 +65,7 @@ results = client.search(
 
 # Before reranking:        After reranking:
 # 1. "Went to Paris"   →   1. "Tokyo trip next month"
-# 2. "Tokyo trip next" →   2. "Need to book hotel in Tokyo"  
+# 2. "Tokyo trip next" →   2. "Need to book hotel in Tokyo"
 # 3. "Need hotel"      →   3. "Went to Paris last year"
 ```
 </Tab>
@@ -84,7 +84,7 @@ Filters results to keep only the most precisely relevant memories.
 <Tabs>
 <Tab title="When to Use">
 - Need highly specific, focused results
-- Working with large datasets where noise is problematic  
+- Working with large datasets where noise is problematic
 - Quality over quantity is essential
 - Building production or safety-critical applications
 </Tab>
@@ -100,8 +100,8 @@ results = client.search(
 # Before filtering:           After filtering:
 # • "Allergic to nuts"    →   • "Allergic to nuts"
 # • "Likes Italian food"  →   • "Vegetarian diet"
-# • "Vegetarian diet"     →   
-# • "Eats dinner at 7pm"  →   
+# • "Vegetarian diet"     →
+# • "Eats dinner at 7pm"  →
 ```
 </Tab>
 <Tab title="Performance">
@@ -183,7 +183,7 @@ def quick_search(query, user_id):
         user_id=user_id
     )
 
-# Balanced - good for most applications  
+# Balanced - good for most applications
 def standard_search(query, user_id):
     return client.search(
         query=query,

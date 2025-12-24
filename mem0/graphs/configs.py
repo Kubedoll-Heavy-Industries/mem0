@@ -1,16 +1,14 @@
-from typing import Optional, Union
-
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 from mem0.llms.configs import LlmConfig
 
 
 class Neo4jConfig(BaseModel):
-    url: Optional[str] = Field(None, description="Host address for the graph database")
-    username: Optional[str] = Field(None, description="Username for the graph database")
-    password: Optional[str] = Field(None, description="Password for the graph database")
-    database: Optional[str] = Field(None, description="Database for the graph database")
-    base_label: Optional[bool] = Field(None, description="Whether to use base node label __Entity__ for all entities")
+    url: str | None = Field(None, description="Host address for the graph database")
+    username: str | None = Field(None, description="Username for the graph database")
+    password: str | None = Field(None, description="Password for the graph database")
+    database: str | None = Field(None, description="Database for the graph database")
+    base_label: bool | None = Field(None, description="Whether to use base node label __Entity__ for all entities")
 
     @model_validator(mode="before")
     def check_host_port_or_path(cls, values):
@@ -25,9 +23,9 @@ class Neo4jConfig(BaseModel):
 
 
 class MemgraphConfig(BaseModel):
-    url: Optional[str] = Field(None, description="Host address for the graph database")
-    username: Optional[str] = Field(None, description="Username for the graph database")
-    password: Optional[str] = Field(None, description="Password for the graph database")
+    url: str | None = Field(None, description="Host address for the graph database")
+    username: str | None = Field(None, description="Username for the graph database")
+    password: str | None = Field(None, description="Password for the graph database")
 
     @model_validator(mode="before")
     def check_host_port_or_path(cls, values):
@@ -42,15 +40,15 @@ class MemgraphConfig(BaseModel):
 
 
 class NeptuneConfig(BaseModel):
-    app_id: Optional[str] = Field("Mem0", description="APP_ID for the connection")
-    endpoint: Optional[str] = (
+    app_id: str | None = Field("Mem0", description="APP_ID for the connection")
+    endpoint: str | None = (
         Field(
             None,
             description="Endpoint to connect to a Neptune-DB Cluster as 'neptune-db://<host>' or Neptune Analytics Server as 'neptune-graph://<graphid>'",
         ),
     )
-    base_label: Optional[bool] = Field(None, description="Whether to use base node label __Entity__ for all entities")
-    collection_name: Optional[str] = Field(
+    base_label: bool | None = Field(None, description="Whether to use base node label __Entity__ for all entities")
+    collection_name: str | None = Field(
         None, description="vector_store collection name to store vectors when using Neptune-DB Clusters"
     )
 
@@ -78,7 +76,7 @@ class NeptuneConfig(BaseModel):
 
 
 class KuzuConfig(BaseModel):
-    db: Optional[str] = Field(":memory:", description="Path to a Kuzu database file")
+    db: str | None = Field(":memory:", description="Path to a Kuzu database file")
 
 
 class GraphStoreConfig(BaseModel):
@@ -86,13 +84,11 @@ class GraphStoreConfig(BaseModel):
         description="Provider of the data store (e.g., 'neo4j', 'memgraph', 'neptune', 'kuzu')",
         default="neo4j",
     )
-    config: Union[Neo4jConfig, MemgraphConfig, NeptuneConfig, KuzuConfig] = Field(
+    config: Neo4jConfig | MemgraphConfig | NeptuneConfig | KuzuConfig = Field(
         description="Configuration for the specific data store", default=None
     )
-    llm: Optional[LlmConfig] = Field(description="LLM configuration for querying the graph store", default=None)
-    custom_prompt: Optional[str] = Field(
-        description="Custom prompt to fetch entities from the given text", default=None
-    )
+    llm: LlmConfig | None = Field(description="LLM configuration for querying the graph store", default=None)
+    custom_prompt: str | None = Field(description="Custom prompt to fetch entities from the given text", default=None)
     threshold: float = Field(
         description="Threshold for embedding similarity when matching nodes during graph ingestion. "
         "Range: 0.0 to 1.0. Higher values require closer matches. "

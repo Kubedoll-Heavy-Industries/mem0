@@ -1,5 +1,3 @@
-from typing import Optional, Union
-
 try:
     from ollama import Client
 except ImportError:
@@ -11,7 +9,7 @@ from mem0.llms.base import LLMBase
 
 
 class OllamaLLM(LLMBase):
-    def __init__(self, config: Optional[Union[BaseLlmConfig, OllamaConfig, dict]] = None):
+    def __init__(self, config: BaseLlmConfig | OllamaConfig | dict | None = None):
         # Convert to OllamaConfig if needed
         if config is None:
             config = OllamaConfig()
@@ -67,7 +65,7 @@ class OllamaLLM(LLMBase):
         self,
         messages: list[dict[str, str]],
         response_format=None,
-        tools: Optional[list[dict]] = None,
+        tools: list[dict] | None = None,
         tool_choice: str = "auto",
         **kwargs,
     ):

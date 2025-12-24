@@ -1,5 +1,5 @@
 from collections.abc import Callable
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field, model_validator
 
@@ -8,18 +8,18 @@ class ElasticsearchConfig(BaseModel):
     collection_name: str = Field("mem0", description="Name of the index")
     host: str = Field("localhost", description="Elasticsearch host")
     port: int = Field(9200, description="Elasticsearch port")
-    user: Optional[str] = Field(None, description="Username for authentication")
-    password: Optional[str] = Field(None, description="Password for authentication")
-    cloud_id: Optional[str] = Field(None, description="Cloud ID for Elastic Cloud")
-    api_key: Optional[str] = Field(None, description="API key for authentication")
+    user: str | None = Field(None, description="Username for authentication")
+    password: str | None = Field(None, description="Password for authentication")
+    cloud_id: str | None = Field(None, description="Cloud ID for Elastic Cloud")
+    api_key: str | None = Field(None, description="API key for authentication")
     embedding_model_dims: int = Field(1536, description="Dimension of the embedding vector")
     verify_certs: bool = Field(True, description="Verify SSL certificates")
     use_ssl: bool = Field(True, description="Use SSL for connection")
     auto_create_index: bool = Field(True, description="Automatically create index during initialization")
-    custom_search_query: Optional[Callable[[list[float], int, Optional[dict]], dict]] = Field(
+    custom_search_query: Callable[[list[float], int, dict | None], dict] | None = Field(
         None, description="Custom search query function. Parameters: (query, limit, filters) -> Dict"
     )
-    headers: Optional[dict[str, str]] = Field(None, description="Custom headers to include in requests")
+    headers: dict[str, str] | None = Field(None, description="Custom headers to include in requests")
 
     @model_validator(mode="before")
     @classmethod

@@ -12,7 +12,7 @@ class PdfFileLoader(BaseLoader):
     def load_data(self, url):
         """Load data from a PDF file."""
         headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36",  # noqa:E501
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36",
         }
         loader = PyPDFLoader(url, headers=headers)
         data = []

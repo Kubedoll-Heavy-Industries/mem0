@@ -19,7 +19,7 @@ def sadhguru_ai():
 
 # Function to read the CSV file row by row
 def read_csv_row_by_row(file_path):
-    with open(file_path, mode="r", newline="", encoding="utf-8") as file:
+    with open(file_path, newline="", encoding="utf-8") as file:
         csv_reader = csv.DictReader(file)
         for row in csv_reader:
             yield row
@@ -28,7 +28,7 @@ def read_csv_row_by_row(file_path):
 @st.cache_resource
 def add_data_to_app():
     app = sadhguru_ai()
-    url = "https://gist.githubusercontent.com/deshraj/50b0597157e04829bbbb7bc418be6ccb/raw/95b0f1547028c39691f5c7db04d362baa597f3f4/data.csv"  # noqa:E501
+    url = "https://gist.githubusercontent.com/deshraj/50b0597157e04829bbbb7bc418be6ccb/raw/95b0f1547028c39691f5c7db04d362baa597f3f4/data.csv"
     response = requests.get(url)
     csv_file = StringIO(response.text)
     for row in csv.reader(csv_file):
@@ -39,13 +39,13 @@ def add_data_to_app():
 app = sadhguru_ai()
 add_data_to_app()
 
-assistant_avatar_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Sadhguru-Jaggi-Vasudev.jpg/640px-Sadhguru-Jaggi-Vasudev.jpg"  # noqa: E501
+assistant_avatar_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Sadhguru-Jaggi-Vasudev.jpg/640px-Sadhguru-Jaggi-Vasudev.jpg"
 
 
 st.title("🙏 Sadhguru AI")
 
-styled_caption = '<p style="font-size: 17px; color: #aaa;">🚀 An <a href="https://github.com/embedchain/embedchain">Embedchain</a> app powered with Sadhguru\'s wisdom!</p>'  # noqa: E501
-st.markdown(styled_caption, unsafe_allow_html=True)  # noqa: E501
+styled_caption = '<p style="font-size: 17px; color: #aaa;">🚀 An <a href="https://github.com/embedchain/embedchain">Embedchain</a> app powered with Sadhguru\'s wisdom!</p>'
+st.markdown(styled_caption, unsafe_allow_html=True)
 
 if "messages" not in st.session_state:
     st.session_state.messages = [
@@ -53,7 +53,7 @@ if "messages" not in st.session_state:
             "role": "assistant",
             "content": """
                 Hi, I'm Sadhguru AI! I'm a mystic, yogi, visionary, and spiritual master. I'm here to answer your questions about life, the universe, and everything.
-            """,  # noqa: E501
+            """,
         }
     ]
 
@@ -94,7 +94,7 @@ if prompt := st.chat_input("Ask me anything!"):
             full_response += "\n\n**Sources**:\n"
             sources = list(set(map(lambda x: x[1]["url"], citations)))
             for i, source in enumerate(sources):
-                full_response += f"{i+1}. {source}\n"
+                full_response += f"{i + 1}. {source}\n"
 
         msg_placeholder.markdown(full_response)
         st.session_state.messages.append({"role": "assistant", "content": full_response})

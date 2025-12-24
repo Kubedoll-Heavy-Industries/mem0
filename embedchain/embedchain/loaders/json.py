@@ -2,7 +2,6 @@ import hashlib
 import json
 import os
 import re
-from typing import Union
 
 import requests
 
@@ -16,7 +15,7 @@ class JSONReader:
         pass
 
     @staticmethod
-    def load_data(json_data: Union[dict, str]) -> list[str]:
+    def load_data(json_data: dict | str) -> list[str]:
         """Load data from a JSON structure.
 
         Args:
@@ -46,7 +45,7 @@ class JSONLoader(BaseLoader):
     def _check_content(content):
         if not isinstance(content, str):
             raise ValueError(
-                "Invaid content input. \
+                "Invalid content input. \
                 If you want to upload (list, dict, etc.), do \
                     `json.dump(data, indent=0)` and add the stringified JSON. \
                         Check - `https://docs.embedchain.ai/data-sources/json`"
@@ -65,7 +64,7 @@ class JSONLoader(BaseLoader):
         content_url_str = content
 
         if os.path.isfile(content):
-            with open(content, "r", encoding="utf-8") as json_file:
+            with open(content, encoding="utf-8") as json_file:
                 json_data = json.load(json_file)
         elif re.match(VALID_URL_PATTERN, content):
             response = requests.get(content)

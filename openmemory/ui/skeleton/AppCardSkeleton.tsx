@@ -32,4 +32,4 @@ export function AppCardSkeleton() {
       </CardFooter>
     </Card>
   );
-} 
+}

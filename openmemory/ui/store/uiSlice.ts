@@ -44,4 +44,4 @@ export const {
   closeUpdateMemoryDialog,
 } = uiSlice.actions;
 
-export default uiSlice.reducer; 
+export default uiSlice.reducer;

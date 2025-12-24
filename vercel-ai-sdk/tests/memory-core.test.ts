@@ -20,7 +20,7 @@ describe("Memory Core Functions", () => {
       ];
 
       const response = await addMemories(messages, { user_id: userId });
-      
+
       expect(Array.isArray(response)).toBe(true);
       response.forEach((memory: { event: any; }) => {
         expect(memory).toHaveProperty('id');
@@ -50,7 +50,7 @@ describe("Memory Core Functions", () => {
     it("should retrieve memories with string prompt", async () => {
       const prompt = "Which car would I prefer?";
       const response = await retrieveMemories(prompt, { user_id: userId });
-      
+
       expect(typeof response).toBe('string');
       expect(response.match(/Memory:/g)?.length).toBeGreaterThan(2);
     });
@@ -67,7 +67,7 @@ describe("Memory Core Functions", () => {
       ];
 
       const response = await retrieveMemories(messages, { user_id: userId });
-      
+
       expect(typeof response).toBe('string');
       expect(response.match(/Memory:/g)?.length).toBeGreaterThan(2);
     });

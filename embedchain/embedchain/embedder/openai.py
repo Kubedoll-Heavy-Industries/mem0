@@ -18,20 +18,20 @@ class OpenAIEmbedder(BaseEmbedder):
 
         api_key = self.config.api_key or os.environ["OPENAI_API_KEY"]
         api_base = (
-           self.config.api_base
-           or os.environ.get("OPENAI_API_BASE")
-           or os.getenv("OPENAI_BASE_URL")
-           or "https://api.openai.com/v1"
+            self.config.api_base
+            or os.environ.get("OPENAI_API_BASE")
+            or os.getenv("OPENAI_BASE_URL")
+            or "https://api.openai.com/v1"
         )
         if os.environ.get("OPENAI_API_BASE"):
             warnings.warn(
                 "The environment variable 'OPENAI_API_BASE' is deprecated and will be removed in the 0.1.140. "
                 "Please use 'OPENAI_BASE_URL' instead.",
-                DeprecationWarning
+                DeprecationWarning,
             )
 
         if api_key is None and os.getenv("OPENAI_ORGANIZATION") is None:
-            raise ValueError("OPENAI_API_KEY or OPENAI_ORGANIZATION environment variables not provided")  # noqa:E501
+            raise ValueError("OPENAI_API_KEY or OPENAI_ORGANIZATION environment variables not provided")
         embedding_fn = OpenAIEmbeddingFunction(
             api_key=api_key,
             api_base=api_base,

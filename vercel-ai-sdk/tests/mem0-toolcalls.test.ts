@@ -46,7 +46,7 @@ describe("Tool Calls Tests", () => {
     // Check if the response is valid
     expect(result).toHaveProperty('text');
     expect(typeof result.text).toBe("string");
-    
+
     // For tool calls, we should have either text response or tool call results
     if (result.text && result.text.length > 0) {
       expect(result.text.length).toBeGreaterThan(0);
@@ -89,7 +89,7 @@ describe("Tool Calls Tests", () => {
     // Check if the response is valid
     expect(result).toHaveProperty('text');
     expect(typeof result.text).toBe("string");
-    
+
     if (result.text && result.text.length > 0) {
       expect(result.text.length).toBeGreaterThan(0);
       // Check if the response mentions weather or temperature

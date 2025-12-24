@@ -1,7 +1,7 @@
 import logging
 import os
 from collections.abc import Generator
-from typing import Any, Optional, Union
+from typing import Any, Optional
 
 try:
     import google.generativeai as genai
@@ -31,7 +31,7 @@ class GoogleLlm(BaseLlm):
         response = self._get_answer(prompt)
         return response
 
-    def _get_answer(self, prompt: str) -> Union[str, Generator[Any, Any, None]]:
+    def _get_answer(self, prompt: str) -> str | Generator[Any, Any, None]:
         model_name = self.config.model or "gemini-pro"
         logger.info(f"Using Google LLM model: {model_name}")
         model = genai.GenerativeModel(model_name=model_name)

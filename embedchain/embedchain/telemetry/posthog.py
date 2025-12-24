@@ -36,7 +36,7 @@ class AnonymousTelemetry:
     def _get_user_id():
         os.makedirs(CONFIG_DIR, exist_ok=True)
         if os.path.exists(CONFIG_FILE):
-            with open(CONFIG_FILE, "r") as f:
+            with open(CONFIG_FILE) as f:
                 data = json.load(f)
                 if "user_id" in data:
                     return data["user_id"]

@@ -3,4 +3,3 @@ module.exports = {
     testEnvironment: 'node',
     globalTeardown: './teardown.ts',
 };
-  

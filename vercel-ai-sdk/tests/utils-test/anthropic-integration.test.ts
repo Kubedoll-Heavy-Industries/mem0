@@ -32,7 +32,7 @@ describe("ANTHROPIC Integration Tests", () => {
 
     // Retrieve memories based on previous messages
     const memories = await retrieveMemories(messages, { user_id: userId });
-    
+
     const { text } = await generateText({
       // @ts-ignore
       model: anthropic("claude-3-haiku-20240307"),

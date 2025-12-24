@@ -1,5 +1,4 @@
 import os
-from typing import Optional
 
 from openai import OpenAI
 
@@ -8,7 +7,7 @@ from mem0.llms.base import LLMBase
 
 
 class XAILLM(LLMBase):
-    def __init__(self, config: Optional[BaseLlmConfig] = None):
+    def __init__(self, config: BaseLlmConfig | None = None):
         super().__init__(config)
 
         if not self.config.model:
@@ -22,7 +21,7 @@ class XAILLM(LLMBase):
         self,
         messages: list[dict[str, str]],
         response_format=None,
-        tools: Optional[list[dict]] = None,
+        tools: list[dict] | None = None,
         tool_choice: str = "auto",
     ):
         """

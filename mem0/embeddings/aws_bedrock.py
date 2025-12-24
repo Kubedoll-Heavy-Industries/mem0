@@ -1,6 +1,6 @@
 import json
 import os
-from typing import Literal, Optional
+from typing import Literal
 
 try:
     import boto3
@@ -19,7 +19,7 @@ class AWSBedrockEmbedding(EmbeddingBase):
     This class uses AWS Bedrock's embedding models.
     """
 
-    def __init__(self, config: Optional[BaseEmbedderConfig] = None):
+    def __init__(self, config: BaseEmbedderConfig | None = None):
         super().__init__(config)
 
         self.config.model = self.config.model or "amazon.titan-embed-text-v1"
@@ -84,7 +84,7 @@ class AWSBedrockEmbedding(EmbeddingBase):
         except Exception as e:
             raise ValueError(f"Error getting embedding from AWS Bedrock: {e}")
 
-    def embed(self, text, memory_action: Optional[Literal["add", "search", "update"]] = None):
+    def embed(self, text, memory_action: Literal["add", "search", "update"] | None = None):
         """
         Get the embedding for the given text using AWS Bedrock.
 

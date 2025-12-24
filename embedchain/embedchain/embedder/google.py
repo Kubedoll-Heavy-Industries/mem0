@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Optional
 
 import google.generativeai as genai
 from chromadb import EmbeddingFunction, Embeddings
@@ -13,7 +13,7 @@ class GoogleAIEmbeddingFunction(EmbeddingFunction):
         super().__init__()
         self.config = config or GoogleAIEmbedderConfig()
 
-    def __call__(self, input: Union[list[str], str]) -> Embeddings:
+    def __call__(self, input: list[str] | str) -> Embeddings:
         model = self.config.model
         title = self.config.title
         task_type = self.config.task_type

@@ -1,6 +1,6 @@
 ## Chainlit + Embedchain Demo
 
-In this example, we will learn how to use Chainlit and Embedchain together 
+In this example, we will learn how to use Chainlit and Embedchain together
 
 ## Setup
 

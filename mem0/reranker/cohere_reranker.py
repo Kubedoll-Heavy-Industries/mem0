@@ -1,5 +1,5 @@
 import os
-from typing import Any, Optional
+from typing import Any
 
 from mem0.reranker.base import BaseReranker
 
@@ -34,7 +34,7 @@ class CohereReranker(BaseReranker):
         self.model = config.model
         self.client = cohere.Client(self.api_key)
 
-    def rerank(self, query: str, documents: list[dict[str, Any]], top_k: Optional[int] = None) -> list[dict[str, Any]]:
+    def rerank(self, query: str, documents: list[dict[str, Any]], top_k: int | None = None) -> list[dict[str, Any]]:
         """
         Rerank documents using Cohere's rerank API.
 

@@ -1,7 +1,7 @@
 import json
 import logging
 from contextlib import contextmanager
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -33,9 +33,9 @@ logger = logging.getLogger(__name__)
 
 
 class OutputData(BaseModel):
-    id: Optional[str]
-    score: Optional[float]
-    payload: Optional[dict]
+    id: str | None
+    score: float | None
+    payload: dict | None
 
 
 class PGVector(VectorStoreBase):
@@ -207,8 +207,8 @@ class PGVector(VectorStoreBase):
         self,
         query: str,
         vectors: list[float],
-        limit: Optional[int] = 5,
-        filters: Optional[dict] = None,
+        limit: int | None = 5,
+        filters: dict | None = None,
     ) -> list[OutputData]:
         """
         Search for similar vectors.
@@ -260,8 +260,8 @@ class PGVector(VectorStoreBase):
     def update(
         self,
         vector_id: str,
-        vector: Optional[list[float]] = None,
-        payload: Optional[dict] = None,
+        vector: list[float] | None = None,
+        payload: dict | None = None,
     ) -> None:
         """
         Update a vector and its payload.
@@ -350,7 +350,7 @@ class PGVector(VectorStoreBase):
             result = cur.fetchone()
         return {"name": result[0], "count": result[1], "size": result[2]}
 
-    def list(self, filters: Optional[dict] = None, limit: Optional[int] = 100) -> list[OutputData]:
+    def list(self, filters: dict | None = None, limit: int | None = 100) -> list[OutputData]:
         """
         List all vectors in a collection.
 

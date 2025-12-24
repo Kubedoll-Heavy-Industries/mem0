@@ -289,7 +289,7 @@ def run_dev_gradio():
 @click.option("--port", default=8000, help="The port to run the FastAPI app on.")
 def dev(debug, host, port):
     template = ""
-    with open("embedchain.json", "r") as file:
+    with open("embedchain.json") as file:
         embedchain_config = json.load(file)
         template = embedchain_config["provider"]
 
@@ -313,7 +313,7 @@ def deploy():
     # Check for platform-specific files
     template = ""
     ec_app_name = ""
-    with open("embedchain.json", "r") as file:
+    with open("embedchain.json") as file:
         embedchain_config = json.load(file)
         ec_app_name = embedchain_config["name"] if "name" in embedchain_config else None
         template = embedchain_config["provider"]

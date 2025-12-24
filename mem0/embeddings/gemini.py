@@ -1,5 +1,5 @@
 import os
-from typing import Literal, Optional
+from typing import Literal
 
 from google import genai
 from google.genai import types
@@ -9,7 +9,7 @@ from mem0.embeddings.base import EmbeddingBase
 
 
 class GoogleGenAIEmbedding(EmbeddingBase):
-    def __init__(self, config: Optional[BaseEmbedderConfig] = None):
+    def __init__(self, config: BaseEmbedderConfig | None = None):
         super().__init__(config)
 
         self.config.model = self.config.model or "models/text-embedding-004"
@@ -19,7 +19,7 @@ class GoogleGenAIEmbedding(EmbeddingBase):
 
         self.client = genai.Client(api_key=api_key)
 
-    def embed(self, text, memory_action: Optional[Literal["add", "search", "update"]] = None):
+    def embed(self, text, memory_action: Literal["add", "search", "update"] | None = None):
         """
         Get the embedding for the given text using Google Generative AI.
         Args:

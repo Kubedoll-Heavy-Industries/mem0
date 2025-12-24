@@ -1,5 +1,4 @@
 from abc import ABC
-from typing import Optional, Union
 
 import httpx
 
@@ -15,15 +14,15 @@ class BaseLlmConfig(ABC):
 
     def __init__(
         self,
-        model: Optional[Union[str, dict]] = None,
+        model: str | dict | None = None,
         temperature: float = 0.1,
-        api_key: Optional[str] = None,
+        api_key: str | None = None,
         max_tokens: int = 2000,
         top_p: float = 0.1,
         top_k: int = 1,
         enable_vision: bool = False,
-        vision_details: Optional[str] = "auto",
-        http_client_proxies: Optional[Union[dict, str]] = None,
+        vision_details: str | None = "auto",
+        http_client_proxies: dict | str | None = None,
     ):
         """
         Initialize a base configuration class instance for the LLM.

@@ -1,7 +1,7 @@
 import json
 import logging
 import re
-from typing import Any, Optional, Union
+from typing import Any
 
 try:
     import boto3
@@ -51,7 +51,7 @@ class AWSBedrockLLM(LLMBase):
     Supports all available Bedrock models with automatic provider detection.
     """
 
-    def __init__(self, config: Optional[Union[AWSBedrockConfig, BaseLlmConfig, dict]] = None):
+    def __init__(self, config: AWSBedrockConfig | BaseLlmConfig | dict | None = None):
         """
         Initialize AWS Bedrock LLM.
 
@@ -151,7 +151,7 @@ class AWSBedrockLLM(LLMBase):
         else:
             self._format_messages = self._format_messages_generic
 
-    def _format_messages_anthropic(self, messages: list[dict[str, str]]) -> tuple[list[dict[str, Any]], Optional[str]]:
+    def _format_messages_anthropic(self, messages: list[dict[str, str]]) -> tuple[list[dict[str, Any]], str | None]:
         """Format messages for Anthropic models."""
         formatted_messages = []
         system_message = None
@@ -363,9 +363,7 @@ class AWSBedrockLLM(LLMBase):
 
         return new_tools
 
-    def _parse_response(
-        self, response: dict[str, Any], tools: Optional[list[dict]] = None
-    ) -> Union[str, dict[str, Any]]:
+    def _parse_response(self, response: dict[str, Any], tools: list[dict] | None = None) -> str | dict[str, Any]:
         """
         Parse response from Bedrock API.
 
@@ -438,12 +436,12 @@ class AWSBedrockLLM(LLMBase):
     def generate_response(
         self,
         messages: list[dict[str, str]],
-        response_format: Optional[str] = None,
-        tools: Optional[list[dict]] = None,
+        response_format: str | None = None,
+        tools: list[dict] | None = None,
         tool_choice: str = "auto",
         stream: bool = False,
         **kwargs,
-    ) -> Union[str, dict[str, Any]]:
+    ) -> str | dict[str, Any]:
         """
         Generate response using AWS Bedrock.
 

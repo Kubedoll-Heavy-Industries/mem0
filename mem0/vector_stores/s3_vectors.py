@@ -1,6 +1,5 @@
 import json
 import logging
-from typing import Optional
 
 from pydantic import BaseModel
 
@@ -16,9 +15,9 @@ logger = logging.getLogger(__name__)
 
 
 class OutputData(BaseModel):
-    id: Optional[str]
-    score: Optional[float]
-    payload: Optional[dict]
+    id: str | None
+    score: float | None
+    payload: dict | None
 
 
 class S3Vectors(VectorStoreBase):
@@ -28,7 +27,7 @@ class S3Vectors(VectorStoreBase):
         collection_name: str,
         embedding_model_dims: int,
         distance_metric: str = "cosine",
-        region_name: Optional[str] = None,
+        region_name: str | None = None,
     ):
         self.client = boto3.client("s3vectors", region_name=region_name)
         self.vector_bucket_name = vector_bucket_name
@@ -125,7 +124,7 @@ class S3Vectors(VectorStoreBase):
         # S3 Vectors uses put_vectors for updates (overwrite)
         self.insert(vectors=[vector], payloads=[payload], ids=[vector_id])
 
-    def get(self, vector_id) -> Optional[OutputData]:
+    def get(self, vector_id) -> OutputData | None:
         response = self.client.get_vectors(
             vectorBucketName=self.vector_bucket_name,
             indexName=self.collection_name,

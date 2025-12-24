@@ -1,6 +1,6 @@
 import logging
 import time
-from typing import Any, Optional
+from typing import Any
 
 try:
     from opensearchpy import OpenSearch, RequestsHttpConnection
@@ -106,7 +106,7 @@ class OpenSearchDB(VectorStoreBase):
                     time.sleep(0.5)
 
     def insert(
-        self, vectors: list[list[float]], payloads: Optional[list[dict]] = None, ids: Optional[list[str]] = None
+        self, vectors: list[list[float]], payloads: list[dict] | None = None, ids: list[str] | None = None
     ) -> list[OutputData]:
         """Insert vectors into the index."""
         if not ids:
@@ -140,9 +140,7 @@ class OpenSearchDB(VectorStoreBase):
 
         return results
 
-    def search(
-        self, query: str, vectors: list[float], limit: int = 5, filters: Optional[dict] = None
-    ) -> list[OutputData]:
+    def search(self, query: str, vectors: list[float], limit: int = 5, filters: dict | None = None) -> list[OutputData]:
         """Search for similar vectors using OpenSearch k-NN search with optional filters."""
 
         # Base KNN query
@@ -202,7 +200,7 @@ class OpenSearchDB(VectorStoreBase):
         # Delete using the actual document ID
         self.client.delete(index=self.collection_name, id=opensearch_id)
 
-    def update(self, vector_id: str, vector: Optional[list[float]] = None, payload: Optional[dict] = None) -> None:
+    def update(self, vector_id: str, vector: list[float] | None = None, payload: dict | None = None) -> None:
         """Update a vector and its payload using the custom 'id' field."""
 
         # First, find the document by custom ID
@@ -227,7 +225,7 @@ class OpenSearchDB(VectorStoreBase):
             with contextlib.suppress(Exception):
                 response = self.client.update(index=self.collection_name, id=opensearch_id, body={"doc": doc})
 
-    def get(self, vector_id: str) -> Optional[OutputData]:
+    def get(self, vector_id: str) -> OutputData | None:
         """Retrieve a vector by ID."""
         try:
             search_query = {"query": {"term": {"id": vector_id}}}
@@ -255,7 +253,7 @@ class OpenSearchDB(VectorStoreBase):
         """Get information about a collection (index)."""
         return self.client.indices.get(index=name)
 
-    def list(self, filters: Optional[dict] = None, limit: Optional[int] = None) -> list[OutputData]:
+    def list(self, filters: dict | None = None, limit: int | None = None) -> list[OutputData]:
         try:
             """List all memories with optional filters."""
             query: dict = {"query": {"match_all": {}}}

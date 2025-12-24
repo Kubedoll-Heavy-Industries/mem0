@@ -24,13 +24,13 @@ ANSWER_PROMPT = """
     2. Pay special attention to the timestamps to determine the answer
     3. If the question asks about a specific event or fact, look for direct evidence in the memories
     4. If the memories contain contradictory information, prioritize the most recent memory
-    5. If there is a question about time references (like "last year", "two months ago", etc.), 
-       calculate the actual date based on the memory timestamp. For example, if a memory from 
+    5. If there is a question about time references (like "last year", "two months ago", etc.),
+       calculate the actual date based on the memory timestamp. For example, if a memory from
        4 May 2022 mentions "went to India last year," then the trip occurred in 2021.
-    6. Always convert relative time references to specific dates, months, or years. For example, 
-       convert "last year" to "2022" or "two months ago" to "March 2023" based on the memory 
+    6. Always convert relative time references to specific dates, months, or years. For example,
+       convert "last year" to "2022" or "two months ago" to "March 2023" based on the memory
        timestamp. Ignore the reference while answering the question.
-    7. Focus only on the content of the memories. Do not confuse character 
+    7. Focus only on the content of the memories. Do not confuse character
        names mentioned in memories with the actual users who created those memories.
     8. The answer should be less than 5-6 words.
 

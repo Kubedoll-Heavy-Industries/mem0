@@ -1,5 +1,5 @@
 import os
-from typing import Optional, Union
+from typing import Optional
 
 from chromadb import EmbeddingFunction, Embeddings
 
@@ -24,7 +24,7 @@ class ClarifaiEmbeddingFunction(EmbeddingFunction):
         self.model_obj = Model(url=self.model, pat=self.api_key)
         self.input_obj = Inputs(pat=self.api_key)
 
-    def __call__(self, input: Union[str, list[str]]) -> Embeddings:
+    def __call__(self, input: str | list[str]) -> Embeddings:
         if isinstance(input, str):
             input = [input]
 

@@ -1,5 +1,4 @@
 import json
-from typing import Optional, Union
 
 from openai import OpenAI
 
@@ -10,7 +9,7 @@ from mem0.memory.utils import extract_json
 
 
 class LMStudioLLM(LLMBase):
-    def __init__(self, config: Optional[Union[BaseLlmConfig, LMStudioConfig, dict]] = None):
+    def __init__(self, config: BaseLlmConfig | LMStudioConfig | dict | None = None):
         # Convert to LMStudioConfig if needed
         if config is None:
             config = LMStudioConfig()
@@ -74,7 +73,7 @@ class LMStudioLLM(LLMBase):
         self,
         messages: list[dict[str, str]],
         response_format=None,
-        tools: Optional[list[dict]] = None,
+        tools: list[dict] | None = None,
         tool_choice: str = "auto",
         **kwargs,
     ):

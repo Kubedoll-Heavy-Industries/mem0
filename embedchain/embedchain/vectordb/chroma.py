@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Optional, Union
+from typing import Any, Optional
 
 from chromadb import Collection, QueryResult
 from langchain.docstore.document import Document
@@ -151,8 +151,8 @@ class ChromaDB(BaseVectorDB):
         size = len(documents)
         if len(documents) != size or len(metadatas) != size or len(ids) != size:
             raise ValueError(
-                "Cannot add documents to chromadb with inconsistent sizes. Documents size: {}, Metadata size: {},"
-                " Ids size: {}".format(len(documents), len(metadatas), len(ids))
+                f"Cannot add documents to chromadb with inconsistent sizes. Documents size: {len(documents)}, Metadata size: {len(metadatas)},"
+                f" Ids size: {len(ids)}"
             )
 
         for i in tqdm(range(0, len(documents), self.batch_size), desc="Inserting batches in chromadb"):
@@ -190,7 +190,7 @@ class ChromaDB(BaseVectorDB):
         raw_filter: Optional[dict[str, any]] = None,
         citations: bool = False,
         **kwargs: Optional[dict[str, any]],
-    ) -> Union[list[tuple[str, dict]], list[str]]:
+    ) -> list[tuple[str, dict]] | list[str]:
         """
         Query contents from vector database based on vector similarity
 

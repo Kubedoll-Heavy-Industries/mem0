@@ -31,7 +31,7 @@ describe("GOOGLE Integration Tests", () => {
 
     // Retrieve memories based on previous messages
     const memories = await retrieveMemories(messages, { user_id: userId });
-    
+
     const { text } = await generateText({
       model: google("gemini-1.5-flash"),
       messages: messages,
@@ -56,4 +56,4 @@ describe("GOOGLE Integration Tests", () => {
     expect(typeof text).toBe('string');
     expect(text.length).toBeGreaterThan(0);
   });
-}); 
+});

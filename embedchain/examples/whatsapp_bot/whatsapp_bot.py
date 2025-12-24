@@ -33,7 +33,7 @@ def add_sources(message):
             chat_bot.add(data_type, url_or_text)
             response = f"Added {data_type}: {url_or_text}"
         except Exception as e:
-            response = f"Failed to add {data_type}: {url_or_text}.\nError: {str(e)}"
+            response = f"Failed to add {data_type}: {url_or_text}.\nError: {e!s}"
     else:
         response = "Invalid 'add' command format.\nUse: add <data_type> <url_or_text>"
     return response

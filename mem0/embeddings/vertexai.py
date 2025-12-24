@@ -1,5 +1,5 @@
 import os
-from typing import Literal, Optional
+from typing import Literal
 
 from vertexai.language_models import TextEmbeddingInput, TextEmbeddingModel
 
@@ -9,7 +9,7 @@ from mem0.utils.gcp_auth import GCPAuthenticator
 
 
 class VertexAIEmbedding(EmbeddingBase):
-    def __init__(self, config: Optional[BaseEmbedderConfig] = None):
+    def __init__(self, config: BaseEmbedderConfig | None = None):
         super().__init__(config)
 
         self.config.model = self.config.model or "text-embedding-004"
@@ -41,7 +41,7 @@ class VertexAIEmbedding(EmbeddingBase):
 
         self.model = TextEmbeddingModel.from_pretrained(self.config.model)
 
-    def embed(self, text, memory_action: Optional[Literal["add", "search", "update"]] = None):
+    def embed(self, text, memory_action: Literal["add", "search", "update"] | None = None):
         """
         Get the embedding for the given text using Vertex AI.
 

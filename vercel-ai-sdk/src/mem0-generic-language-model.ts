@@ -54,7 +54,7 @@ export class Mem0GenericLanguageModel implements LanguageModelV2 {
     const mySystemPrompt = "These are the memories I have stored. Give more weightage to the question by users and try to answer that first. You have to modify your answer based on the memories I have provided. If the memories are irrelevant you can ignore them. Also don't reply to this section of the prompt, or the memories, they are only for your reference. The System prompt starts after text System Message: \n\n";
 
     const isGraphEnabled = mem0Config?.enable_graph;
-  
+
     let memoriesText = "";
     let memoriesText2 = "";
     try {
@@ -106,10 +106,10 @@ export class Mem0GenericLanguageModel implements LanguageModelV2 {
   }
 
   async doGenerate(options: LanguageModelV2CallOptions): Promise<Awaited<ReturnType<LanguageModelV2['doGenerate']>>> {
-    try {   
+    try {
       const provider = this.config.provider;
       const mem0_api_key = this.config.mem0ApiKey;
-      
+
       const settings: Mem0ProviderSettings = {
         provider: provider,
         mem0ApiKey: mem0_api_key,
@@ -123,24 +123,24 @@ export class Mem0GenericLanguageModel implements LanguageModelV2 {
       }
 
       const selector = new Mem0ClassSelector(this.modelId, settings, this.provider_config);
-      
+
       let messagesPrompts = options.prompt;
-      
+
       // Process memories and update prompts
       const { memories, messagesPrompts: updatedPrompts } = await this.processMemories(messagesPrompts, mem0Config);
-      
+
       const model = selector.createProvider();
 
       const ans = await model.doGenerate({
         ...options,
         prompt: updatedPrompts,
       });
-      
+
       // If there are no memories, return the original response
       if (!memories || memories?.length === 0) {
         return ans;
       }
-      
+
       try {
         // Create sources array with existing sources
         const sources: LanguageModelV2Source[] = [
@@ -163,7 +163,7 @@ export class Mem0GenericLanguageModel implements LanguageModelV2 {
       } catch (e) {
         console.error("Error while creating sources");
       }
- 
+
       return {
         ...ans,
         // sources
@@ -179,7 +179,7 @@ export class Mem0GenericLanguageModel implements LanguageModelV2 {
     try {
       const provider = this.config.provider;
       const mem0_api_key = this.config.mem0ApiKey;
-      
+
       const settings: Mem0ProviderSettings = {
         provider: provider,
         mem0ApiKey: mem0_api_key,
@@ -194,9 +194,9 @@ export class Mem0GenericLanguageModel implements LanguageModelV2 {
       }
 
       const selector = new Mem0ClassSelector(this.modelId, settings, this.provider_config);
-      
+
       let messagesPrompts = options.prompt;
-      
+
       // Process memories and update prompts
       const { memories, messagesPrompts: updatedPrompts } = await this.processMemories(messagesPrompts, mem0Config);
 

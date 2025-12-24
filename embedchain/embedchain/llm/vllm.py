@@ -1,4 +1,5 @@
-from typing import Iterable, Optional, Union
+from collections.abc import Iterable
+from typing import Optional
 
 from langchain.callbacks.manager import CallbackManager
 from langchain.callbacks.stdout import StdOutCallbackHandler
@@ -21,7 +22,7 @@ class VLLM(BaseLlm):
         return self._get_answer(prompt=prompt, config=self.config)
 
     @staticmethod
-    def _get_answer(prompt: str, config: BaseLlmConfig) -> Union[str, Iterable]:
+    def _get_answer(prompt: str, config: BaseLlmConfig) -> str | Iterable:
         callback_manager = [StreamingStdOutCallbackHandler()] if config.stream else [StdOutCallbackHandler()]
 
         # Prepare the arguments for BaseVLLM

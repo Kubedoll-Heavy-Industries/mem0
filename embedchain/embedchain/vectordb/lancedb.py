@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Optional
 
 import pyarrow as pa
 
@@ -60,7 +60,7 @@ class LanceDB(BaseVectorDB):
         """
         return self.client
 
-    def _generate_where_clause(self, where: Dict[str, any]) -> str:
+    def _generate_where_clause(self, where: dict[str, any]) -> str:
         """
         This method generate where clause using dictionary containing attributes and their values
         """
@@ -124,7 +124,7 @@ class LanceDB(BaseVectorDB):
 
         return self.collection
 
-    def get(self, ids: Optional[List[str]] = None, where: Optional[Dict[str, any]] = None, limit: Optional[int] = None):
+    def get(self, ids: Optional[list[str]] = None, where: Optional[dict[str, any]] = None, limit: Optional[int] = None):
         """
         Get existing doc ids present in vector database
 
@@ -168,9 +168,9 @@ class LanceDB(BaseVectorDB):
 
     def add(
         self,
-        documents: List[str],
-        metadatas: List[object],
-        ids: List[str],
+        documents: list[str],
+        metadatas: list[object],
+        ids: list[str],
     ) -> Any:
         """
         Add vectors to lancedb database
@@ -222,7 +222,7 @@ class LanceDB(BaseVectorDB):
         raw_filter: Optional[dict[str, any]] = None,
         citations: bool = False,
         **kwargs: Optional[dict[str, any]],
-    ) -> Union[list[tuple[str, dict]], list[str]]:
+    ) -> list[tuple[str, dict]] | list[str]:
         """
         Query contents from vector database based on vector similarity
 

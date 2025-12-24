@@ -1,5 +1,4 @@
 import os
-from typing import Optional
 
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 from openai import AzureOpenAI
@@ -11,7 +10,7 @@ SCOPE = "https://cognitiveservices.azure.com/.default"
 
 
 class AzureOpenAIStructuredLLM(LLMBase):
-    def __init__(self, config: Optional[BaseLlmConfig] = None):
+    def __init__(self, config: BaseLlmConfig | None = None):
         super().__init__(config)
 
         # Model name should match the custom deployment name chosen for it.
@@ -49,8 +48,8 @@ class AzureOpenAIStructuredLLM(LLMBase):
     def generate_response(
         self,
         messages: list[dict[str, str]],
-        response_format: Optional[str] = None,
-        tools: Optional[list[dict]] = None,
+        response_format: str | None = None,
+        tools: list[dict] | None = None,
         tool_choice: str = "auto",
     ) -> str:
         """

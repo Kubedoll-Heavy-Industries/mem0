@@ -2,7 +2,7 @@ import hashlib
 import logging
 import os
 import warnings
-from typing import Any, Optional
+from typing import Any
 
 import httpx
 import requests
@@ -39,11 +39,11 @@ class MemoryClient:
 
     def __init__(
         self,
-        api_key: Optional[str] = None,
-        host: Optional[str] = None,
-        org_id: Optional[str] = None,
-        project_id: Optional[str] = None,
-        client: Optional[httpx.Client] = None,
+        api_key: str | None = None,
+        host: str | None = None,
+        org_id: str | None = None,
+        project_id: str | None = None,
+        client: httpx.Client | None = None,
     ):
         """Initialize the MemoryClient.
 
@@ -295,8 +295,8 @@ class MemoryClient:
     def update(
         self,
         memory_id: str,
-        text: Optional[str] = None,
-        metadata: Optional[dict[str, Any]] = None,
+        text: str | None = None,
+        metadata: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         """
         Update a memory by ID.
@@ -416,10 +416,10 @@ class MemoryClient:
     @api_error_handler
     def delete_users(
         self,
-        user_id: Optional[str] = None,
-        agent_id: Optional[str] = None,
-        app_id: Optional[str] = None,
-        run_id: Optional[str] = None,
+        user_id: str | None = None,
+        agent_id: str | None = None,
+        app_id: str | None = None,
+        run_id: str | None = None,
     ) -> dict[str, str]:
         """Delete specific entities or all entities if no filters provided.
 
@@ -603,7 +603,7 @@ class MemoryClient:
         return response.json()
 
     @api_error_handler
-    def get_summary(self, filters: Optional[dict[str, Any]] = None) -> dict[str, Any]:
+    def get_summary(self, filters: dict[str, Any] | None = None) -> dict[str, Any]:
         """Get the summary of a memory export.
 
         Args:
@@ -619,7 +619,7 @@ class MemoryClient:
         return response.json()
 
     @api_error_handler
-    def get_project(self, fields: Optional[list[str]] = None) -> dict[str, Any]:
+    def get_project(self, fields: list[str] | None = None) -> dict[str, Any]:
         """Get instructions or categories for the current project.
 
         Args:
@@ -659,11 +659,11 @@ class MemoryClient:
     @api_error_handler
     def update_project(
         self,
-        custom_instructions: Optional[str] = None,
-        custom_categories: Optional[list[str]] = None,
-        retrieval_criteria: Optional[list[dict[str, Any]]] = None,
-        enable_graph: Optional[bool] = None,
-        version: Optional[str] = None,
+        custom_instructions: str | None = None,
+        custom_categories: list[str] | None = None,
+        retrieval_criteria: list[dict[str, Any]] | None = None,
+        enable_graph: bool | None = None,
+        version: str | None = None,
     ) -> dict[str, Any]:
         """Update the project settings.
 
@@ -798,9 +798,9 @@ class MemoryClient:
     def update_webhook(
         self,
         webhook_id: int,
-        name: Optional[str] = None,
-        url: Optional[str] = None,
-        event_types: Optional[list[str]] = None,
+        name: str | None = None,
+        url: str | None = None,
+        event_types: list[str] | None = None,
     ) -> dict[str, Any]:
         """Update a webhook configuration.
 
@@ -860,8 +860,8 @@ class MemoryClient:
     def feedback(
         self,
         memory_id: str,
-        feedback: Optional[str] = None,
-        feedback_reason: Optional[str] = None,
+        feedback: str | None = None,
+        feedback_reason: str | None = None,
     ) -> dict[str, str]:
         VALID_FEEDBACK_VALUES = {"POSITIVE", "NEGATIVE", "VERY_NEGATIVE"}
 
@@ -896,7 +896,7 @@ class MemoryClient:
         payload.update({k: v for k, v in kwargs.items() if v is not None})
         return payload
 
-    def _prepare_params(self, kwargs: Optional[dict[str, Any]] = None) -> dict[str, Any]:
+    def _prepare_params(self, kwargs: dict[str, Any] | None = None) -> dict[str, Any]:
         """Prepare query parameters for API requests.
 
         Args:
@@ -931,11 +931,11 @@ class AsyncMemoryClient:
 
     def __init__(
         self,
-        api_key: Optional[str] = None,
-        host: Optional[str] = None,
-        org_id: Optional[str] = None,
-        project_id: Optional[str] = None,
-        client: Optional[httpx.AsyncClient] = None,
+        api_key: str | None = None,
+        host: str | None = None,
+        org_id: str | None = None,
+        project_id: str | None = None,
+        client: httpx.AsyncClient | None = None,
     ):
         """Initialize the AsyncMemoryClient.
 
@@ -1044,7 +1044,7 @@ class AsyncMemoryClient:
         payload.update({k: v for k, v in kwargs.items() if v is not None})
         return payload
 
-    def _prepare_params(self, kwargs: Optional[dict[str, Any]] = None) -> dict[str, Any]:
+    def _prepare_params(self, kwargs: dict[str, Any] | None = None) -> dict[str, Any]:
         """Prepare query parameters for API requests.
 
         Args:
@@ -1169,7 +1169,7 @@ class AsyncMemoryClient:
 
     @api_error_handler
     async def update(
-        self, memory_id: str, text: Optional[str] = None, metadata: Optional[dict[str, Any]] = None
+        self, memory_id: str, text: str | None = None, metadata: dict[str, Any] | None = None
     ) -> dict[str, Any]:
         """
         Update a memory by ID asynchronously.
@@ -1284,10 +1284,10 @@ class AsyncMemoryClient:
     @api_error_handler
     async def delete_users(
         self,
-        user_id: Optional[str] = None,
-        agent_id: Optional[str] = None,
-        app_id: Optional[str] = None,
-        run_id: Optional[str] = None,
+        user_id: str | None = None,
+        agent_id: str | None = None,
+        app_id: str | None = None,
+        run_id: str | None = None,
     ) -> dict[str, str]:
         """Delete specific entities or all entities if no filters provided.
 
@@ -1457,7 +1457,7 @@ class AsyncMemoryClient:
         return response.json()
 
     @api_error_handler
-    async def get_summary(self, filters: Optional[dict[str, Any]] = None) -> dict[str, Any]:
+    async def get_summary(self, filters: dict[str, Any] | None = None) -> dict[str, Any]:
         """Get the summary of a memory export.
 
         Args:
@@ -1473,7 +1473,7 @@ class AsyncMemoryClient:
         return response.json()
 
     @api_error_handler
-    async def get_project(self, fields: Optional[list[str]] = None) -> dict[str, Any]:
+    async def get_project(self, fields: list[str] | None = None) -> dict[str, Any]:
         """Get instructions or categories for the current project.
 
         Args:
@@ -1509,11 +1509,11 @@ class AsyncMemoryClient:
     @api_error_handler
     async def update_project(
         self,
-        custom_instructions: Optional[str] = None,
-        custom_categories: Optional[list[str]] = None,
-        retrieval_criteria: Optional[list[dict[str, Any]]] = None,
-        enable_graph: Optional[bool] = None,
-        version: Optional[str] = None,
+        custom_instructions: str | None = None,
+        custom_categories: list[str] | None = None,
+        retrieval_criteria: list[dict[str, Any]] | None = None,
+        enable_graph: bool | None = None,
+        version: str | None = None,
     ) -> dict[str, Any]:
         """Update the project settings.
 
@@ -1646,9 +1646,9 @@ class AsyncMemoryClient:
     async def update_webhook(
         self,
         webhook_id: int,
-        name: Optional[str] = None,
-        url: Optional[str] = None,
-        event_types: Optional[list[str]] = None,
+        name: str | None = None,
+        url: str | None = None,
+        event_types: list[str] | None = None,
     ) -> dict[str, Any]:
         """Update a webhook configuration.
 
@@ -1702,7 +1702,7 @@ class AsyncMemoryClient:
 
     @api_error_handler
     async def feedback(
-        self, memory_id: str, feedback: Optional[str] = None, feedback_reason: Optional[str] = None
+        self, memory_id: str, feedback: str | None = None, feedback_reason: str | None = None
     ) -> dict[str, str]:
         VALID_FEEDBACK_VALUES = {"POSITIVE", "NEGATIVE", "VERY_NEGATIVE"}
 

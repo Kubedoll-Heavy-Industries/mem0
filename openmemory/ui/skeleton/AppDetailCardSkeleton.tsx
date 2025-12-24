@@ -42,4 +42,4 @@ export function AppDetailCardSkeleton() {
       </div>
     </div>
   )
-} 
+}

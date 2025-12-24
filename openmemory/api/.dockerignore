@@ -20,4 +20,4 @@
 # Ignore Docker runtime files
 **/.dockerignore
 **/Dockerfile
-**/docker-compose*.yml 
+**/docker-compose*.yml

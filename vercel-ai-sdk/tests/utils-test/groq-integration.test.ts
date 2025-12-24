@@ -32,7 +32,7 @@ describe("GROQ Integration Tests", () => {
 
     // Retrieve memories based on previous messages
     const memories = await retrieveMemories(messages, { user_id: userId });
-    
+
     const { text } = await generateText({
       // @ts-ignore
       model: groq("llama3-8b-8192"),

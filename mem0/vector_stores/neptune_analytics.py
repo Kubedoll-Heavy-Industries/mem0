@@ -1,7 +1,6 @@
 import logging
 import time
 import uuid
-from typing import Optional
 
 from pydantic import BaseModel
 
@@ -16,9 +15,9 @@ logger = logging.getLogger(__name__)
 
 
 class OutputData(BaseModel):
-    id: Optional[str]  # memory id
-    score: Optional[float]  # distance
-    payload: Optional[dict]  # metadata
+    id: str | None  # memory id
+    score: float | None  # distance
+    payload: dict | None  # metadata
 
 
 class NeptuneAnalyticsVector(VectorStoreBase):
@@ -75,7 +74,7 @@ class NeptuneAnalyticsVector(VectorStoreBase):
         """
         pass
 
-    def insert(self, vectors: list[list], payloads: Optional[list[dict]] = None, ids: Optional[list[str]] = None):
+    def insert(self, vectors: list[list], payloads: list[dict] | None = None, ids: list[str] | None = None):
         """
         Insert vectors into the collection.
 
@@ -127,9 +126,7 @@ class NeptuneAnalyticsVector(VectorStoreBase):
         result = self.execute_query(query_string_vector, para_map_to_insert)
         self._process_success_message(result, "Vector store - Insert")
 
-    def search(
-        self, query: str, vectors: list[float], limit: int = 5, filters: Optional[dict] = None
-    ) -> list[OutputData]:
+    def search(self, query: str, vectors: list[float], limit: int = 5, filters: dict | None = None) -> list[OutputData]:
         """
         Search for similar vectors using embedding similarity.
 
@@ -188,8 +185,8 @@ class NeptuneAnalyticsVector(VectorStoreBase):
     def update(
         self,
         vector_id: str,
-        vector: Optional[list[float]] = None,
-        payload: Optional[dict] = None,
+        vector: list[float] | None = None,
+        payload: dict | None = None,
     ):
         """
         Update a vector's embedding and/or metadata.
@@ -291,7 +288,7 @@ class NeptuneAnalyticsVector(VectorStoreBase):
         """
         pass
 
-    def list(self, filters: Optional[dict] = None, limit: int = 100) -> list[OutputData]:
+    def list(self, filters: dict | None = None, limit: int = 100) -> list[OutputData]:
         """
         List all vectors in the collection with optional filtering.
 

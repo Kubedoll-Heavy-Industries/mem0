@@ -1,7 +1,7 @@
 import hashlib
 import json
 import logging
-from typing import Any, Optional, Union
+from typing import Any, Optional
 
 from dotenv import load_dotenv
 from langchain.docstore.document import Document
@@ -162,10 +162,10 @@ class EmbedChain(JSONSerializable):
         try:
             DataType(source)
             logger.warning(
-                f"""Starting from version v0.0.40, Embedchain can automatically detect the data type. So, in the `add` method, the argument order has changed. You no longer need to specify '{source}' for the `source` argument. So the code snippet will be `.add("{data_type}", "{source}")`"""  # noqa #E501
+                f"""Starting from version v0.0.40, Embedchain can automatically detect the data type. So, in the `add` method, the argument order has changed. You no longer need to specify '{source}' for the `source` argument. So the code snippet will be `.add("{data_type}", "{source}")`"""  # E501
             )
             logger.warning(
-                "Embedchain is swapping the arguments for you. This functionality might be deprecated in the future, so please adjust your code."  # noqa #E501
+                "Embedchain is swapping the arguments for you. This functionality might be deprecated in the future, so please adjust your code."  # E501
             )
             source, data_type = data_type, source
         except ValueError:
@@ -176,7 +176,7 @@ class EmbedChain(JSONSerializable):
                 data_type = DataType(data_type)
             except ValueError:
                 logger.info(
-                    f"Invalid data_type: '{data_type}', using `custom` instead.\n Check docs to pass the valid data type: `https://docs.embedchain.ai/data-sources/overview`"  # noqa: E501
+                    f"Invalid data_type: '{data_type}', using `custom` instead.\n Check docs to pass the valid data type: `https://docs.embedchain.ai/data-sources/overview`"
                 )
                 data_type = DataType.CUSTOM
 
@@ -442,7 +442,7 @@ class EmbedChain(JSONSerializable):
         where=None,
         citations: bool = False,
         **kwargs: Optional[dict[str, Any]],
-    ) -> Union[list[tuple[str, str, str]], list[str]]:
+    ) -> list[tuple[str, str, str]] | list[str]:
         """
         Queries the vector database based on the given input query.
         Gets relevant doc based on the query
@@ -487,7 +487,7 @@ class EmbedChain(JSONSerializable):
         where: Optional[dict] = None,
         citations: bool = False,
         **kwargs: dict[str, Any],
-    ) -> Union[tuple[str, list[tuple[str, dict]]], str, dict[str, Any]]:
+    ) -> tuple[str, list[tuple[str, dict]]] | str | dict[str, Any]:
         """
         Queries the vector database based on the given input query.
         Gets relevant doc based on the query and then passes it to an
@@ -569,7 +569,7 @@ class EmbedChain(JSONSerializable):
         where: Optional[dict[str, str]] = None,
         citations: bool = False,
         **kwargs: dict[str, Any],
-    ) -> Union[tuple[str, list[tuple[str, dict]]], str, dict[str, Any]]:
+    ) -> tuple[str, list[tuple[str, dict]]] | str | dict[str, Any]:
         """
         Queries the vector database on the given input query.
         Gets relevant doc based on the query and then passes it to an

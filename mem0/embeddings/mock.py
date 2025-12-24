@@ -1,10 +1,10 @@
-from typing import Literal, Optional
+from typing import Literal
 
 from mem0.embeddings.base import EmbeddingBase
 
 
 class MockEmbeddings(EmbeddingBase):
-    def embed(self, text, memory_action: Optional[Literal["add", "search", "update"]] = None):
+    def embed(self, text, memory_action: Literal["add", "search", "update"] | None = None):
         """
         Generate a mock embedding with dimension of 10.
         """

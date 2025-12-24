@@ -31,7 +31,7 @@ describe("OPENAI Integration Tests", () => {
 
     // Retrieve memories based on previous messages
     const memories = await retrieveMemories(messages, { user_id: userId });
-    
+
     const { text } = await generateText({
       model: openai("gpt-4-turbo"),
       messages: messages,

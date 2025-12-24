@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional, Union
+from typing import Any, Optional
 
 import httpx
 
@@ -15,9 +15,9 @@ class BaseEmbedderConfig:
         endpoint: Optional[str] = None,
         api_key: Optional[str] = None,
         api_base: Optional[str] = None,
-        model_kwargs: Optional[Dict[str, Any]] = None,
-        http_client_proxies: Optional[Union[Dict, str]] = None,
-        http_async_client_proxies: Optional[Union[Dict, str]] = None,
+        model_kwargs: Optional[dict[str, Any]] = None,
+        http_client_proxies: Optional[dict | str] = None,
+        http_async_client_proxies: Optional[dict | str] = None,
     ):
         """
         Initialize a new instance of an embedder config class.

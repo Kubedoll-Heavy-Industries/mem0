@@ -23,7 +23,7 @@ We use `hatch` for managing development environments. To set up:
 ```bash
 # Activate environment for specific Python version:
 hatch shell dev_py_3_9   # Python 3.9
-hatch shell dev_py_3_10  # Python 3.10  
+hatch shell dev_py_3_10  # Python 3.10
 hatch shell dev_py_3_11  # Python 3.11
 hatch shell dev_py_3_12  # Python 3.12
 

@@ -1,5 +1,5 @@
 import os
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -9,16 +9,16 @@ class PineconeConfig(BaseModel):
 
     collection_name: str = Field("mem0", description="Name of the index/collection")
     embedding_model_dims: int = Field(1536, description="Dimensions of the embedding model")
-    client: Optional[Any] = Field(None, description="Existing Pinecone client instance")
-    api_key: Optional[str] = Field(None, description="API key for Pinecone")
-    environment: Optional[str] = Field(None, description="Pinecone environment")
-    serverless_config: Optional[dict[str, Any]] = Field(None, description="Configuration for serverless deployment")
-    pod_config: Optional[dict[str, Any]] = Field(None, description="Configuration for pod-based deployment")
+    client: Any | None = Field(None, description="Existing Pinecone client instance")
+    api_key: str | None = Field(None, description="API key for Pinecone")
+    environment: str | None = Field(None, description="Pinecone environment")
+    serverless_config: dict[str, Any] | None = Field(None, description="Configuration for serverless deployment")
+    pod_config: dict[str, Any] | None = Field(None, description="Configuration for pod-based deployment")
     hybrid_search: bool = Field(False, description="Whether to enable hybrid search")
     metric: str = Field("cosine", description="Distance metric for vector similarity")
     batch_size: int = Field(100, description="Batch size for operations")
-    extra_params: Optional[dict[str, Any]] = Field(None, description="Additional parameters for Pinecone client")
-    namespace: Optional[str] = Field(None, description="Namespace for the collection")
+    extra_params: dict[str, Any] | None = Field(None, description="Additional parameters for Pinecone client")
+    namespace: str | None = Field(None, description="Namespace for the collection")
 
     @model_validator(mode="before")
     @classmethod

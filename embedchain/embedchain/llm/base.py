@@ -109,7 +109,7 @@ class BaseLlm(JSONSerializable):
         """
         context_string = " | ".join(contexts)
         web_search_result = kwargs.get("web_search_result", "")
-        memories = kwargs.get("memories", None)
+        memories = kwargs.get("memories")
         if web_search_result:
             context_string = self._append_search_and_context(context_string, web_search_result)
 

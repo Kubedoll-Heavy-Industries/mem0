@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -17,9 +17,9 @@ logging.basicConfig(level=logging.INFO)
 
 
 class OutputData(BaseModel):
-    id: Optional[str]
-    score: Optional[float]
-    payload: Optional[dict]
+    id: str | None
+    score: float | None
+    payload: dict | None
 
 
 class MongoDB(VectorStoreBase):
@@ -89,7 +89,7 @@ class MongoDB(VectorStoreBase):
             return None
 
     def insert(
-        self, vectors: list[list[float]], payloads: Optional[list[dict]] = None, ids: Optional[list[str]] = None
+        self, vectors: list[list[float]], payloads: list[dict] | None = None, ids: list[str] | None = None
     ) -> None:
         """
         Insert vectors into the collection.
@@ -111,7 +111,7 @@ class MongoDB(VectorStoreBase):
         except PyMongoError as e:
             logger.error(f"Error inserting data: {e}")
 
-    def search(self, query: str, vectors: list[float], limit=5, filters: Optional[dict] = None) -> list[OutputData]:
+    def search(self, query: str, vectors: list[float], limit=5, filters: dict | None = None) -> list[OutputData]:
         """
         Search for similar vectors using the vector search index.
 
@@ -182,7 +182,7 @@ class MongoDB(VectorStoreBase):
         except PyMongoError as e:
             logger.error(f"Error deleting document: {e}")
 
-    def update(self, vector_id: str, vector: Optional[list[float]] = None, payload: Optional[dict] = None) -> None:
+    def update(self, vector_id: str, vector: list[float] | None = None, payload: dict | None = None) -> None:
         """
         Update a vector and its payload.
 
@@ -207,7 +207,7 @@ class MongoDB(VectorStoreBase):
             except PyMongoError as e:
                 logger.error(f"Error updating document: {e}")
 
-    def get(self, vector_id: str) -> Optional[OutputData]:
+    def get(self, vector_id: str) -> OutputData | None:
         """
         Retrieve a vector by ID.
 
@@ -268,7 +268,7 @@ class MongoDB(VectorStoreBase):
             logger.error(f"Error getting collection info: {e}")
             return {}
 
-    def list(self, filters: Optional[dict] = None, limit: int = 100) -> list[OutputData]:
+    def list(self, filters: dict | None = None, limit: int = 100) -> list[OutputData]:
         """
         List vectors in the collection.
 

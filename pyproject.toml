@@ -136,15 +136,13 @@ only-include = ["mem0"]
 
 [tool.ruff]
 line-length = 120
-target-version = "py39"
+target-version = "py312"
 exclude = [
     "cookbooks/",
     "docs/",
-    "embedchain/",
     "evaluation/",
     "examples/",
     "mem0-ts/",
-    "openmemory/",
     "vercel-ai-sdk/",
 ]
 
@@ -162,15 +160,29 @@ select = [
 ]
 ignore = [
     "E501",   # line too long (handled by formatter)
+    "E722",   # bare except (existing code)
+    "B004",   # unreliable callable check
+    "B007",   # unused loop control variable
     "B008",   # function call in default argument
+    "B011",   # assert false
+    "B018",   # useless expression
     "B024",   # abstract class without abstract methods
+    "B028",   # no explicit stacklevel
     "B904",   # raise from err (too noisy for existing codebase)
+    "B905",   # zip without explicit strict
+    "C401",   # unnecessary generator set
+    "F811",   # redefined while unused
     "RUF001", # ambiguous unicode (intentional for CJK support)
     "RUF012", # mutable class attributes (ClassVar annotations)
+    "RUF013", # implicit optional
+    "RUF034", # useless if-else
     "SIM105", # use contextlib.suppress (style preference)
     "SIM108", # use ternary (style preference)
     "SIM115", # use context manager for open (style preference)
     "SIM117", # combine with statements (style preference)
+    "UP028",  # yield in for loop
+    "UP031",  # printf string formatting
+    "UP045",  # non-pep604 optional annotation
 ]
 
 [tool.ruff.lint.isort]

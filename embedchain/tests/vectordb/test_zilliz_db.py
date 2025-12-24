@@ -1,5 +1,3 @@
-# ruff: noqa: E501
-
 import os
 from unittest import mock
 from unittest.mock import Mock, patch

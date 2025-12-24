@@ -357,7 +357,7 @@ const retrieveMemories = async (prompt: LanguageModelV2Prompt | string, config?:
     try {
         const message = typeof prompt === 'string' ? prompt : flattenPrompt(prompt);
         const systemPrompt = "These are the memories I have stored. Give more weightage to the question by users and try to answer that first. You have to modify your answer based on the memories I have provided. If the memories are irrelevant you can ignore them. Also don't reply to this section of the prompt, or the memories, they are only for your reference. The System prompt starts after text System Message: \n\n";
-        
+
         const memories = await searchInternalMemories(message, config);
         let memoriesText1 = "";
         let memoriesText2 = "";
@@ -393,7 +393,7 @@ const getMemories = async (prompt: LanguageModelV2Prompt | string, config?: Mem0
     try {
         const message = typeof prompt === 'string' ? prompt : flattenPrompt(prompt);
         const memories = await searchInternalMemories(message, config);
-        
+
         if (!config?.enable_graph) {
             return memories?.results;
         }

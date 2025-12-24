@@ -1,6 +1,6 @@
 import logging
 import uuid
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 from urllib.parse import urlparse
 
 from pydantic import BaseModel
@@ -36,9 +36,9 @@ class Weaviate(VectorStoreBase):
         self,
         collection_name: str,
         embedding_model_dims: int,
-        cluster_url: Optional[str] = None,
-        auth_client_secret: Optional[str] = None,
-        additional_headers: Optional[dict] = None,
+        cluster_url: str | None = None,
+        auth_client_secret: str | None = None,
+        additional_headers: dict | None = None,
     ):
         """
         Initialize the Weaviate vector store.
@@ -181,9 +181,7 @@ class Weaviate(VectorStoreBase):
 
                 batch.add_object(collection=self.collection_name, properties=data_object, uuid=object_id, vector=vector)
 
-    def search(
-        self, query: str, vectors: list[float], limit: int = 5, filters: Optional[dict] = None
-    ) -> list[OutputData]:
+    def search(self, query: str, vectors: list[float], limit: int = 5, filters: dict | None = None) -> list[OutputData]:
         """
         Search for similar vectors.
         """
@@ -277,7 +275,7 @@ class Weaviate(VectorStoreBase):
             return_properties=["hash", "created_at", "updated_at", "user_id", "agent_id", "run_id", "data", "category"],
         )
         # results = {}
-        # print("reponse",response)
+        # print("response",response)
         # for obj in response.objects:
         payload = response.properties.copy()
         payload["id"] = str(response.uuid).split("'")[0]

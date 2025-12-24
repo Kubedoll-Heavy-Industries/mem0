@@ -71,9 +71,9 @@ export const Assistant = () => {
           </Link>
           </div>
 
-          <Button 
-              variant="ghost" 
-              size="sm" 
+          <Button
+              variant="ghost"
+              size="sm"
               onClick={() => setSidebarOpen(true)}
               className="text-[#475569] dark:text-zinc-300 md:hidden"
             >

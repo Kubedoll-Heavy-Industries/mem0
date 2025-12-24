@@ -1,5 +1,3 @@
-from typing import Optional
-
 from mem0.configs.llms.base import BaseLlmConfig
 from mem0.llms.base import LLMBase
 
@@ -11,7 +9,7 @@ except ImportError:
 
 
 class LangchainLLM(LLMBase):
-    def __init__(self, config: Optional[BaseLlmConfig] = None):
+    def __init__(self, config: BaseLlmConfig | None = None):
         super().__init__(config)
 
         if self.config.model is None:
@@ -22,7 +20,7 @@ class LangchainLLM(LLMBase):
 
         self.langchain_model = self.config.model
 
-    def _parse_response(self, response: AIMessage, tools: Optional[list[dict]]):
+    def _parse_response(self, response: AIMessage, tools: list[dict] | None):
         """
         Process the response based on whether tools are used or not.
 
@@ -55,7 +53,7 @@ class LangchainLLM(LLMBase):
         self,
         messages: list[dict[str, str]],
         response_format=None,
-        tools: Optional[list[dict]] = None,
+        tools: list[dict] | None = None,
         tool_choice: str = "auto",
     ):
         """

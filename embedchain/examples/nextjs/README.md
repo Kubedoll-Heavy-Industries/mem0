@@ -12,7 +12,7 @@ First, lets start by install all the required packages and dependencies.
 
 - We will use [Fly.io](https://fly.io/) to deploy our embedchain app and discord/slack bot. Follow the step one to install [Fly.io CLI](https://docs.embedchain.ai/deployment/fly_io#step-1-install-flyctl-command-line)
 
-# Developement
+# Development
 
 ## Embedchain App
 

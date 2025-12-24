@@ -19,7 +19,7 @@ export const testConfig = {
       activeModel: "gpt-4-turbo",
       apiKey: process.env.OPENAI_API_KEY,
     }
-    , 
+    ,
     {
       name: "anthropic",
       activeModel: "claude-3-5-sonnet-20240620",

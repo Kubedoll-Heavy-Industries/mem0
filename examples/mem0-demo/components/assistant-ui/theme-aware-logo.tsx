@@ -18,7 +18,7 @@ export default function ThemeAwareLogo({
   // For collapsed variant, always use the icon
   if (variant === "collapsed") {
     return (
-      <div 
+      <div
         className={`flex items-center justify-center rounded-full ${isDarkMode ? 'bg-[#6366f1]' : 'bg-[#4f46e5]'}`}
         style={{ width, height }}
       >
@@ -26,10 +26,10 @@ export default function ThemeAwareLogo({
       </div>
     );
   }
-  
+
   // For default variant, use the full logo image
   const logoSrc = isDarkMode ? darkAssistantUi : assistantUi;
-  
+
   return (
     <Image
       src={logoSrc}

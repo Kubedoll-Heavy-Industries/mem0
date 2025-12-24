@@ -65,7 +65,7 @@ def app_mention_handler(body, say, client):
         # thread is already created
         thread_ts = body["event"]["thread_ts"]
         say(
-            text="🧵 Currently, we don't support answering questions in threads. Could you please send your message in the channel for a swift response? Appreciate your understanding! 🚀",  # noqa: E501
+            text="🧵 Currently, we don't support answering questions in threads. Could you please send your message in the channel for a swift response? Appreciate your understanding! 🚀",
             thread_ts=thread_ts,
         )
         return
@@ -79,7 +79,9 @@ def app_mention_handler(body, say, client):
     question = remove_mentions(query)
     print("Asking question: ", question)
     response = slack_bot.query(question, citations=True)
-    default_answer = "Sorry, I don't know the answer to that question. Please refer to the documentation.\nhttps://nextjs.org/docs"  # noqa: E501
+    default_answer = (
+        "Sorry, I don't know the answer to that question. Please refer to the documentation.\nhttps://nextjs.org/docs"
+    )
     answer = response.get("answer", default_answer)
     contexts = response.get("contexts", [])
     if contexts:

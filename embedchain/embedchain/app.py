@@ -3,10 +3,11 @@ import concurrent.futures
 import json
 import logging
 import os
-from typing import Any, Optional, Union
+from typing import Any, Optional
 
 import requests
 import yaml
+from mem0 import Memory
 from tqdm import tqdm
 
 from embedchain.cache import (
@@ -39,7 +40,6 @@ from embedchain.utils.evaluation import EvalData, EvalMetric
 from embedchain.utils.misc import validate_config
 from embedchain.vectordb.base import BaseVectorDB
 from embedchain.vectordb.chroma import ChromaDB
-from mem0 import Memory
 
 logger = logging.getLogger(__name__)
 
@@ -178,7 +178,7 @@ class App(EmbedChain):
             self.client = Client()
         else:
             api_key = input(
-                "🔑 Enter your Embedchain API key. You can find the API key at https://app.embedchain.ai/settings/keys/ \n"  # noqa: E501
+                "🔑 Enter your Embedchain API key. You can find the API key at https://app.embedchain.ai/settings/keys/ \n"
             )
             self.client = Client(api_key=api_key)
 
@@ -195,9 +195,7 @@ class App(EmbedChain):
         if r.status_code == 404:
             raise Exception(f"❌ Pipeline with id {id} not found!")
 
-        print(
-            f"🎉 Pipeline loaded successfully! Pipeline url: https://app.embedchain.ai/pipelines/{r.json()['id']}\n"  # noqa: E501
-        )
+        print(f"🎉 Pipeline loaded successfully! Pipeline url: https://app.embedchain.ai/pipelines/{r.json()['id']}\n")
         return r.json()
 
     def _create_pipeline(self):
@@ -222,11 +220,11 @@ class App(EmbedChain):
 
         if r.status_code == 200:
             print(
-                f"🎉🎉🎉 Existing pipeline found! View your pipeline: https://app.embedchain.ai/pipelines/{r.json()['id']}\n"  # noqa: E501
-            )  # noqa: E501
+                f"🎉🎉🎉 Existing pipeline found! View your pipeline: https://app.embedchain.ai/pipelines/{r.json()['id']}\n"
+            )
         elif r.status_code == 201:
             print(
-                f"🎉🎉🎉 Pipeline created successfully! View your pipeline: https://app.embedchain.ai/pipelines/{r.json()['id']}\n"  # noqa: E501
+                f"🎉🎉🎉 Pipeline created successfully! View your pipeline: https://app.embedchain.ai/pipelines/{r.json()['id']}\n"
             )
         return r.json()
 
@@ -247,7 +245,7 @@ class App(EmbedChain):
                 response.raise_for_status()
                 return response.status_code == 200
         except Exception as e:
-            logger.exception(f"Error occurred during file upload: {str(e)}")
+            logger.exception(f"Error occurred during file upload: {e!s}")
             print("❌ Error occurred during file upload!")
             return False
 
@@ -263,7 +261,7 @@ class App(EmbedChain):
             printed_value = metadata.get("file_path") if metadata.get("file_path") else data_value
             print(f"✅ Data of type: {data_type}, value: {printed_value} added successfully.")
         except Exception as e:
-            print(f"❌ Error occurred during data upload for type {data_type}!. Error: {str(e)}")
+            print(f"❌ Error occurred during data upload for type {data_type}!. Error: {e!s}")
 
     def _send_api_request(self, endpoint, payload):
         url = f"{self.client.host}{endpoint}"
@@ -356,7 +354,7 @@ class App(EmbedChain):
 
         if config_path:
             file_extension = os.path.splitext(config_path)[1]
-            with open(config_path, "r", encoding="UTF-8") as file:
+            with open(config_path, encoding="UTF-8") as file:
                 if file_extension in [".yaml", ".yml"]:
                     config_data = yaml.safe_load(file)
                 elif file_extension == ".json":
@@ -367,7 +365,7 @@ class App(EmbedChain):
             config_data = config
         else:
             logger.error(
-                "Please provide either a config file path (YAML or JSON) or a config dictionary. Falling back to defaults because no config is provided.",  # noqa: E501
+                "Please provide either a config file path (YAML or JSON) or a config dictionary. Falling back to defaults because no config is provided.",
             )
             config_data = {}
 
@@ -380,7 +378,7 @@ class App(EmbedChain):
         memory_config_data = config_data.get("memory", {})
         llm_config_data = config_data.get("llm", {})
         chunker_config_data = config_data.get("chunker", {})
-        cache_config_data = config_data.get("cache", None)
+        cache_config_data = config_data.get("cache")
 
         app_config = AppConfig(**app_config_data)
         memory_config = Mem0Config(**memory_config_data) if memory_config_data else None
@@ -416,7 +414,7 @@ class App(EmbedChain):
             memory_config=memory_config,
         )
 
-    def _eval(self, dataset: list[EvalData], metric: Union[BaseMetric, str]):
+    def _eval(self, dataset: list[EvalData], metric: BaseMetric | str):
         """
         Evaluate the app on a dataset for a given metric.
         """
@@ -438,8 +436,8 @@ class App(EmbedChain):
 
     def evaluate(
         self,
-        questions: Union[str, list[str]],
-        metrics: Optional[list[Union[BaseMetric, str]]] = None,
+        questions: str | list[str],
+        metrics: Optional[list[BaseMetric | str]] = None,
         num_workers: int = 4,
     ):
         """

@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -8,7 +8,7 @@ class AzureAISearchConfig(BaseModel):
     service_name: str = Field(None, description="Azure AI Search service name")
     api_key: str = Field(None, description="API key for the Azure AI Search service")
     embedding_model_dims: int = Field(1536, description="Dimension of the embedding vector")
-    compression_type: Optional[str] = Field(
+    compression_type: str | None = Field(
         None, description="Type of vector compression to use. Options: 'scalar', 'binary', or None"
     )
     use_float16: bool = Field(
@@ -18,7 +18,7 @@ class AzureAISearchConfig(BaseModel):
     hybrid_search: bool = Field(
         False, description="Whether to use hybrid search. If True, vector_filter_mode must be 'preFilter'"
     )
-    vector_filter_mode: Optional[str] = Field(
+    vector_filter_mode: str | None = Field(
         "preFilter", description="Mode for vector filtering. Options: 'preFilter', 'postFilter'"
     )
 

@@ -1,5 +1,5 @@
 import os
-from typing import Optional, Union
+from typing import Optional
 
 from embedchain.config.vector_db.base import BaseVectorDbConfig
 from embedchain.helpers.json_serializable import register_deserializable
@@ -11,7 +11,7 @@ class ElasticsearchDBConfig(BaseVectorDbConfig):
         self,
         collection_name: Optional[str] = None,
         dir: Optional[str] = None,
-        es_url: Union[str, list[str]] = None,
+        es_url: str | list[str] = None,
         cloud_id: Optional[str] = None,
         batch_size: Optional[int] = 100,
         **ES_EXTRA_PARAMS: dict[str, any],
@@ -40,7 +40,7 @@ class ElasticsearchDBConfig(BaseVectorDbConfig):
         if not self.ES_URL and not self.CLOUD_ID:
             raise AttributeError(
                 "Elasticsearch needs a URL or CLOUD_ID attribute, "
-                "this can either be passed to `ElasticsearchDBConfig` or as `ELASTICSEARCH_URL` or `ELASTICSEARCH_CLOUD_ID` in `.env`"  # noqa: E501
+                "this can either be passed to `ElasticsearchDBConfig` or as `ELASTICSEARCH_URL` or `ELASTICSEARCH_CLOUD_ID` in `.env`"
             )
         self.ES_EXTRA_PARAMS = ES_EXTRA_PARAMS
         # Load API key from .env if it's not explicitly passed.

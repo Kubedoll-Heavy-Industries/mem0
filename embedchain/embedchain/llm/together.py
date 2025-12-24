@@ -4,10 +4,10 @@ from typing import Any, Optional
 
 try:
     from langchain_together import ChatTogether
-except ImportError:
+except ImportError as e:
     raise ImportError(
         "Please install the langchain_together package by running `pip install langchain_together==0.1.3`."
-    )
+    ) from e
 
 from embedchain.config import BaseLlmConfig
 from embedchain.helpers.json_serializable import register_deserializable

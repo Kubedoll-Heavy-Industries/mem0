@@ -1,7 +1,7 @@
 import os
 from collections.abc import Iterable
 from pathlib import Path
-from typing import Optional, Union
+from typing import Optional
 
 from langchain.callbacks.stdout import StdOutCallbackHandler
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
@@ -29,7 +29,7 @@ class GPT4ALLLlm(BaseLlm):
             from langchain_community.llms.gpt4all import GPT4All as LangchainGPT4All
         except ModuleNotFoundError:
             raise ModuleNotFoundError(
-                "The GPT4All python package is not installed. Please install it with `pip install --upgrade embedchain[opensource]`"  # noqa E501
+                "The GPT4All python package is not installed. Please install it with `pip install --upgrade embedchain[opensource]`"
             ) from None
 
         model_path = Path(model).expanduser()
@@ -41,7 +41,7 @@ class GPT4ALLLlm(BaseLlm):
         else:
             return LangchainGPT4All(model=model, allow_download=True)
 
-    def _get_answer(self, prompt: str, config: BaseLlmConfig) -> Union[str, Iterable]:
+    def _get_answer(self, prompt: str, config: BaseLlmConfig) -> str | Iterable:
         if config.model and config.model != self.config.model:
             raise RuntimeError(
                 "GPT4ALLLlm does not support switching models at runtime. Please create a new app instance."

@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field, model_validator
 
@@ -8,7 +8,7 @@ class MongoDBConfig(BaseModel):
 
     db_name: str = Field("mem0_db", description="Name of the MongoDB database")
     collection_name: str = Field("mem0", description="Name of the MongoDB collection")
-    embedding_model_dims: Optional[int] = Field(1536, description="Dimensions of the embedding vectors")
+    embedding_model_dims: int | None = Field(1536, description="Dimensions of the embedding vectors")
     mongo_uri: str = Field("mongodb://localhost:27017", description="MongoDB URI. Default is mongodb://localhost:27017")
 
     @model_validator(mode="before")

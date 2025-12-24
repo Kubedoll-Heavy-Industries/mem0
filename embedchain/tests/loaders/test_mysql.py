@@ -37,7 +37,7 @@ def test_mysql_loader_setup_loader_successful(mysql_loader):
 
 
 def test_mysql_loader_setup_loader_connection_error(mysql_loader, mocker):
-    mocker.patch("mysql.connector.connection.MySQLConnection", side_effect=IOError("Mocked connection error"))
+    mocker.patch("mysql.connector.connection.MySQLConnection", side_effect=OSError("Mocked connection error"))
     with pytest.raises(ValueError, match="Unable to connect with the given config:"):
         mysql_loader._setup_loader(config={})
 

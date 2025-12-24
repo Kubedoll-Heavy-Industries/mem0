@@ -104,7 +104,7 @@ export function FormView({ settings, onChange }: FormViewProps) {
 
   const LLM_PROVIDERS = {
     "OpenAI": "openai",
-    "Anthropic": "anthropic", 
+    "Anthropic": "anthropic",
     "Azure OpenAI": "azure_openai",
     "Ollama": "ollama",
     "Together": "together",
@@ -122,7 +122,7 @@ export function FormView({ settings, onChange }: FormViewProps) {
 
   const EMBEDDER_PROVIDERS = {
     "OpenAI": "openai",
-    "Azure OpenAI": "azure_openai", 
+    "Azure OpenAI": "azure_openai",
     "Ollama": "ollama",
     "Hugging Face": "huggingface",
     "Vertex AI": "vertexai",
@@ -167,7 +167,7 @@ export function FormView({ settings, onChange }: FormViewProps) {
         <CardContent className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="llm-provider">LLM Provider</Label>
-            <Select 
+            <Select
               value={settings.mem0?.llm?.provider || ""}
               onValueChange={handleLlmProviderChange}
             >
@@ -220,10 +220,10 @@ export function FormView({ settings, onChange }: FormViewProps) {
                   value={settings.mem0?.llm?.config?.api_key || ""}
                   onChange={(e) => handleLlmConfigChange("api_key", e.target.value)}
                 />
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  type="button" 
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  type="button"
                   className="absolute right-2 top-1/2 transform -translate-y-1/2 h-7 w-7"
                   onClick={() => setShowLlmApiKey(!showLlmApiKey)}
                 >
@@ -281,8 +281,8 @@ export function FormView({ settings, onChange }: FormViewProps) {
         <CardContent className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="embedder-provider">Embedder Provider</Label>
-            <Select 
-              value={settings.mem0?.embedder?.provider || ""} 
+            <Select
+              value={settings.mem0?.embedder?.provider || ""}
               onValueChange={handleEmbedderProviderChange}
             >
               <SelectTrigger id="embedder-provider">
@@ -334,10 +334,10 @@ export function FormView({ settings, onChange }: FormViewProps) {
                   value={settings.mem0?.embedder?.config?.api_key || ""}
                   onChange={(e) => handleEmbedderConfigChange("api_key", e.target.value)}
                 />
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  type="button" 
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  type="button"
                   className="absolute right-2 top-1/2 transform -translate-y-1/2 h-7 w-7"
                   onClick={() => setShowEmbedderApiKey(!showEmbedderApiKey)}
                 >
@@ -458,4 +458,4 @@ export function FormView({ settings, onChange }: FormViewProps) {
       </Card>
     </div>
   )
-} 
+}

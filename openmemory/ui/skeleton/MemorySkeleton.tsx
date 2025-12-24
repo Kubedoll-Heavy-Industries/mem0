@@ -24,4 +24,4 @@ export function MemorySkeleton() {
       </div>
     </div>
   );
-} 
+}

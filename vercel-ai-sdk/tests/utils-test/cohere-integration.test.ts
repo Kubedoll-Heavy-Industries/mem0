@@ -31,7 +31,7 @@ describe("COHERE Integration Tests", () => {
 
     // Retrieve memories based on previous messages
     const memories = await retrieveMemories(messages, { user_id: userId });
-    
+
     const { text } = await generateText({
       // @ts-ignore
       model: cohere("command-r-plus"),

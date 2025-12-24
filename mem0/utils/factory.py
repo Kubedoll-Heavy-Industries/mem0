@@ -1,5 +1,4 @@
 import importlib
-from typing import Optional, Union
 
 from mem0.configs.embeddings.base import BaseEmbedderConfig
 from mem0.configs.llms.anthropic import AnthropicConfig
@@ -53,7 +52,7 @@ class LlmFactory:
     }
 
     @classmethod
-    def create(cls, provider_name: str, config: Optional[Union[BaseLlmConfig, dict]] = None, **kwargs):
+    def create(cls, provider_name: str, config: BaseLlmConfig | dict | None = None, **kwargs):
         """
         Create an LLM instance with the appropriate configuration.
 
@@ -149,7 +148,7 @@ class EmbedderFactory:
     }
 
     @classmethod
-    def create(cls, provider_name, config, vector_config: Optional[dict]):
+    def create(cls, provider_name, config, vector_config: dict | None):
         if provider_name == "upstash_vector" and vector_config and vector_config.enable_embeddings:
             return MockEmbeddings()
         class_type = cls.provider_to_class.get(provider_name)
@@ -248,7 +247,7 @@ class RerankerFactory:
     }
 
     @classmethod
-    def create(cls, provider_name: str, config: Optional[Union[BaseRerankerConfig, dict]] = None, **kwargs):
+    def create(cls, provider_name: str, config: BaseRerankerConfig | dict | None = None, **kwargs):
         """
         Create a reranker instance based on the provider and configuration.
 

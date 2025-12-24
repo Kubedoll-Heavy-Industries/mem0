@@ -1,6 +1,6 @@
 import logging
 from collections.abc import Iterable
-from typing import Optional, Union
+from typing import Optional
 
 from langchain.callbacks.manager import CallbackManager
 from langchain.callbacks.stdout import StdOutCallbackHandler
@@ -36,7 +36,7 @@ class OllamaLlm(BaseLlm):
         return self._get_answer(prompt=prompt, config=self.config)
 
     @staticmethod
-    def _get_answer(prompt: str, config: BaseLlmConfig) -> Union[str, Iterable]:
+    def _get_answer(prompt: str, config: BaseLlmConfig) -> str | Iterable:
         if config.stream:
             callbacks = config.callbacks if config.callbacks else [StreamingStdOutCallbackHandler()]
         else:

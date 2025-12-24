@@ -11,8 +11,9 @@ def test_azure_openai_embedder_with_http_client(monkeypatch):
     mock_http_client_instance = Mock(spec=httpx.Client)
     mock_http_client.return_value = mock_http_client_instance
 
-    with patch("embedchain.embedder.azure_openai.AzureOpenAIEmbeddings") as mock_embeddings, patch(
-        "embedchain.config.embedder.base.httpx.Client", mock_http_client
+    with (
+        patch("embedchain.embedder.azure_openai.AzureOpenAIEmbeddings") as mock_embeddings,
+        patch("embedchain.config.embedder.base.httpx.Client", mock_http_client),
     ):
         config = BaseEmbedderConfig(
             deployment_name="text-embedding-ada-002",
@@ -34,8 +35,9 @@ def test_azure_openai_embedder_with_http_async_client(monkeypatch):
     mock_http_async_client_instance = Mock(spec=httpx.AsyncClient)
     mock_http_async_client.return_value = mock_http_async_client_instance
 
-    with patch("embedchain.embedder.azure_openai.AzureOpenAIEmbeddings") as mock_embeddings, patch(
-        "embedchain.config.embedder.base.httpx.AsyncClient", mock_http_async_client
+    with (
+        patch("embedchain.embedder.azure_openai.AzureOpenAIEmbeddings") as mock_embeddings,
+        patch("embedchain.config.embedder.base.httpx.AsyncClient", mock_http_async_client),
     ):
         config = BaseEmbedderConfig(
             deployment_name="text-embedding-ada-002",

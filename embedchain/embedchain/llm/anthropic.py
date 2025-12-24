@@ -4,8 +4,10 @@ from typing import Any, Optional
 
 try:
     from langchain_anthropic import ChatAnthropic
-except ImportError:
-    raise ImportError("Please install the langchain-anthropic package by running `pip install langchain-anthropic`.")
+except ImportError as e:
+    raise ImportError(
+        "Please install the langchain-anthropic package by running `pip install langchain-anthropic`."
+    ) from e
 
 from embedchain.config import BaseLlmConfig
 from embedchain.helpers.json_serializable import register_deserializable

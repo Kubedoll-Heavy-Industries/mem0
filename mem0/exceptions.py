@@ -28,7 +28,7 @@ Example:
                 logger.info(f"Suggestion: {e.suggestion}")
 """
 
-from typing import Any, Optional
+from typing import Any
 
 
 class MemoryError(Exception):
@@ -59,9 +59,9 @@ class MemoryError(Exception):
         self,
         message: str,
         error_code: str,
-        details: Optional[dict[str, Any]] = None,
-        suggestion: Optional[str] = None,
-        debug_info: Optional[dict[str, Any]] = None,
+        details: dict[str, Any] | None = None,
+        suggestion: str | None = None,
+        debug_info: dict[str, Any] | None = None,
     ):
         """Initialize a MemoryError.
 
@@ -330,9 +330,9 @@ class VectorStoreError(MemoryError):
         self,
         message: str,
         error_code: str = "VECTOR_001",
-        details: Optional[dict] = None,
+        details: dict | None = None,
         suggestion: str = "Please check your vector store configuration and connection",
-        debug_info: Optional[dict] = None,
+        debug_info: dict | None = None,
     ):
         super().__init__(message, error_code, details, suggestion, debug_info)
 
@@ -356,9 +356,9 @@ class GraphStoreError(MemoryError):
         self,
         message: str,
         error_code: str = "GRAPH_001",
-        details: Optional[dict] = None,
+        details: dict | None = None,
         suggestion: str = "Please check your graph store configuration and connection",
-        debug_info: Optional[dict] = None,
+        debug_info: dict | None = None,
     ):
         super().__init__(message, error_code, details, suggestion, debug_info)
 
@@ -382,9 +382,9 @@ class EmbeddingError(MemoryError):
         self,
         message: str,
         error_code: str = "EMBED_001",
-        details: Optional[dict] = None,
+        details: dict | None = None,
         suggestion: str = "Please check your embedding model configuration",
-        debug_info: Optional[dict] = None,
+        debug_info: dict | None = None,
     ):
         super().__init__(message, error_code, details, suggestion, debug_info)
 
@@ -408,9 +408,9 @@ class LLMError(MemoryError):
         self,
         message: str,
         error_code: str = "LLM_001",
-        details: Optional[dict] = None,
+        details: dict | None = None,
         suggestion: str = "Please check your LLM configuration and API key",
-        debug_info: Optional[dict] = None,
+        debug_info: dict | None = None,
     ):
         super().__init__(message, error_code, details, suggestion, debug_info)
 
@@ -434,9 +434,9 @@ class DatabaseError(MemoryError):
         self,
         message: str,
         error_code: str = "DB_001",
-        details: Optional[dict] = None,
+        details: dict | None = None,
         suggestion: str = "Please check your database configuration and connection",
-        debug_info: Optional[dict] = None,
+        debug_info: dict | None = None,
     ):
         super().__init__(message, error_code, details, suggestion, debug_info)
 
@@ -460,9 +460,9 @@ class DependencyError(MemoryError):
         self,
         message: str,
         error_code: str = "DEPS_001",
-        details: Optional[dict] = None,
+        details: dict | None = None,
         suggestion: str = "Please install the required dependencies",
-        debug_info: Optional[dict] = None,
+        debug_info: dict | None = None,
     ):
         super().__init__(message, error_code, details, suggestion, debug_info)
 
@@ -488,9 +488,9 @@ HTTP_STATUS_TO_EXCEPTION = {
 def create_exception_from_response(
     status_code: int,
     response_text: str,
-    error_code: Optional[str] = None,
-    details: Optional[dict[str, Any]] = None,
-    debug_info: Optional[dict[str, Any]] = None,
+    error_code: str | None = None,
+    details: dict[str, Any] | None = None,
+    debug_info: dict[str, Any] | None = None,
 ) -> MemoryError:
     """Create an appropriate exception based on HTTP response.
 

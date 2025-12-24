@@ -37,7 +37,7 @@ class SlackLoader(BaseLoader):
 
         if os.getenv("SLACK_USER_TOKEN") is None:
             raise ValueError(
-                "SLACK_USER_TOKEN environment variables not provided. Check `https://docs.embedchain.ai/data-sources/slack` to learn more."  # noqa:E501
+                "SLACK_USER_TOKEN environment variables not provided. Check `https://docs.embedchain.ai/data-sources/slack` to learn more."
             )
 
         logger.info(f"Creating Slack Loader with config: {config}")
@@ -62,7 +62,7 @@ class SlackLoader(BaseLoader):
     def _check_query(query):
         if not isinstance(query, str):
             raise ValueError(
-                f"Invalid query passed to Slack loader, found: {query}. Check `https://docs.embedchain.ai/data-sources/slack` to learn more."  # noqa:E501
+                f"Invalid query passed to Slack loader, found: {query}. Check `https://docs.embedchain.ai/data-sources/slack` to learn more."
             )
 
     def load_data(self, query):
@@ -111,5 +111,5 @@ class SlackLoader(BaseLoader):
         except Exception as e:
             logger.warning(f"Error in loading slack data: {e}")
             raise ValueError(
-                f"Error in loading slack data: {e}. Check `https://docs.embedchain.ai/data-sources/slack` to learn more."  # noqa:E501
+                f"Error in loading slack data: {e}. Check `https://docs.embedchain.ai/data-sources/slack` to learn more."
             ) from e

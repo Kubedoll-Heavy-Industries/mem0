@@ -19,7 +19,7 @@ class BaseBot(JSONSerializable):
     def add(self, data: Any, config: AddConfig = None):
         """
         Add data to the bot (to the vector database).
-        Auto-dectects type only, so some data types might not be usable.
+        Auto-detects type only, so some data types might not be usable.
 
         :param data: data to embed
         :type data: Any

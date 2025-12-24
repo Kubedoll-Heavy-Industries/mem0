@@ -1,6 +1,6 @@
 import logging
 import time
-from typing import Any, Optional, Union
+from typing import Any, Optional
 
 from tqdm import tqdm
 
@@ -150,7 +150,7 @@ class OpenSearchDB(BaseVectorDB):
         where: dict[str, any],
         citations: bool = False,
         **kwargs: Optional[dict[str, Any]],
-    ) -> Union[list[tuple[str, dict]], list[str]]:
+    ) -> list[tuple[str, dict]] | list[str]:
         """
         query contents from vector database based on vector similarity
 

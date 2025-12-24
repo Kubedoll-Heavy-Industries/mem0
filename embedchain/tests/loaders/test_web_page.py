@@ -70,11 +70,11 @@ def test_get_clean_content_excludes_unnecessary_info(web_page_loader):
             <noscript>NoScript Content</noscript>
             <svg>SVG Content</svg>
             <canvas>Canvas Content</canvas>
-            
+
             <div id="sidebar">Sidebar Content</div>
             <div id="main-navigation">Main Navigation Content</div>
             <div id="menu-main-menu">Menu Main Menu Content</div>
-            
+
             <div class="header-sidebar-wrapper">Header Sidebar Wrapper Content</div>
             <div class="blog-sidebar-wrapper">Blog Sidebar Wrapper Content</div>
             <div class="related-posts">Related Posts Content</div>

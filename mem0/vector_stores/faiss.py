@@ -4,7 +4,6 @@ import pickle
 import uuid
 import warnings
 from pathlib import Path
-from typing import Optional
 
 import numpy as np
 from pydantic import BaseModel
@@ -31,16 +30,16 @@ logger = logging.getLogger(__name__)
 
 
 class OutputData(BaseModel):
-    id: Optional[str]  # memory id
-    score: Optional[float]  # distance
-    payload: Optional[dict]  # metadata
+    id: str | None  # memory id
+    score: float | None  # distance
+    payload: dict | None  # metadata
 
 
 class FAISS(VectorStoreBase):
     def __init__(
         self,
         collection_name: str,
-        path: Optional[str] = None,
+        path: str | None = None,
         distance_strategy: str = "euclidean",
         normalize_L2: bool = False,
         embedding_model_dims: int = 1536,
@@ -155,7 +154,7 @@ class FAISS(VectorStoreBase):
 
         return results
 
-    def create_col(self, name: str, distance: Optional[str] = None):
+    def create_col(self, name: str, distance: str | None = None):
         """
         Create a new collection.
 
@@ -184,8 +183,8 @@ class FAISS(VectorStoreBase):
     def insert(
         self,
         vectors: list[list],
-        payloads: Optional[list[dict]] = None,
-        ids: Optional[list[str]] = None,
+        payloads: list[dict] | None = None,
+        ids: list[str] | None = None,
     ):
         """
         Insert vectors into a collection.
@@ -223,9 +222,7 @@ class FAISS(VectorStoreBase):
 
         logger.info(f"Inserted {len(vectors)} vectors into collection {self.collection_name}")
 
-    def search(
-        self, query: str, vectors: list[list], limit: int = 5, filters: Optional[dict] = None
-    ) -> list[OutputData]:
+    def search(self, query: str, vectors: list[list], limit: int = 5, filters: dict | None = None) -> list[OutputData]:
         """
         Search for similar vectors.
 
@@ -320,8 +317,8 @@ class FAISS(VectorStoreBase):
     def update(
         self,
         vector_id: str,
-        vector: Optional[list[float]] = None,
-        payload: Optional[dict] = None,
+        vector: list[float] | None = None,
+        payload: dict | None = None,
     ):
         """
         Update a vector and its payload.
@@ -434,7 +431,7 @@ class FAISS(VectorStoreBase):
             "distance": self.distance_strategy,
         }
 
-    def list(self, filters: Optional[dict] = None, limit: int = 100) -> list[OutputData]:
+    def list(self, filters: dict | None = None, limit: int = 100) -> list[OutputData]:
         """
         List all vectors in a collection.
 

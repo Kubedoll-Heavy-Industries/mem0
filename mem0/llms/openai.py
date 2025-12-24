@@ -1,7 +1,6 @@
 import json
 import logging
 import os
-from typing import Optional, Union
 
 from openai import OpenAI
 
@@ -12,7 +11,7 @@ from mem0.memory.utils import extract_json
 
 
 class OpenAILLM(LLMBase):
-    def __init__(self, config: Optional[Union[BaseLlmConfig, OpenAIConfig, dict]] = None):
+    def __init__(self, config: BaseLlmConfig | OpenAIConfig | dict | None = None):
         # Convert to OpenAIConfig if needed
         if config is None:
             config = OpenAIConfig()
@@ -84,7 +83,7 @@ class OpenAILLM(LLMBase):
         self,
         messages: list[dict[str, str]],
         response_format=None,
-        tools: Optional[list[dict]] = None,
+        tools: list[dict] | None = None,
         tool_choice: str = "auto",
         **kwargs,
     ):

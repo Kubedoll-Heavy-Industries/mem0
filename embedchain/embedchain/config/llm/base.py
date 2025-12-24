@@ -1,9 +1,10 @@
 import json
 import logging
 import re
+from collections.abc import Mapping
 from pathlib import Path
 from string import Template
-from typing import Any, Dict, Mapping, Optional, Union
+from typing import Any, Optional
 
 import httpx
 
@@ -26,7 +27,7 @@ $context
 
 Query: $query
 Answer:
-"""  # noqa:E501
+"""
 
 DEFAULT_PROMPT_WITH_HISTORY = """
 You are a Q&A expert system. Your responses must always be rooted in the context provided for each query. You are also provided with the conversation history with the user. Make sure to use relevant context from conversation history as needed.
@@ -49,7 +50,7 @@ $history
 
 Query: $query
 Answer:
-"""  # noqa:E501
+"""
 
 DEFAULT_PROMPT_WITH_MEM0_MEMORY = """
 You are an expert at answering questions based on provided memories. You are also provided with the context and conversation history of the user. Make sure to use relevant context from conversation history and context as needed.
@@ -59,7 +60,7 @@ Here are some guidelines to follow:
 2. Take into consideration the conversation history and context provided.
 3. Do not use phrases such as 'According to the context provided', 'Based on the context, ...' etc.
 
-Striclty return the query exactly as it is if it is not a question or if no relevant information is found.
+Strictly return the query exactly as it is if it is not a question or if no relevant information is found.
 
 Context information:
 ----------------------
@@ -78,7 +79,7 @@ $memories
 
 Query: $query
 Answer:
-"""  # noqa:E501
+"""
 
 DOCS_SITE_DEFAULT_PROMPT = """
 You are an expert AI assistant for developer support product. Your responses must always be rooted in the context provided for each query. Wherever possible, give complete code snippet. Dont make up any code snippet on your own.
@@ -96,7 +97,7 @@ $context
 
 Query: $query
 Answer:
-"""  # noqa:E501
+"""
 
 DEFAULT_PROMPT_TEMPLATE = Template(DEFAULT_PROMPT)
 DEFAULT_PROMPT_WITH_HISTORY_TEMPLATE = Template(DEFAULT_PROMPT_WITH_HISTORY)
@@ -134,8 +135,8 @@ class BaseLlmConfig(BaseConfig):
         base_url: Optional[str] = None,
         endpoint: Optional[str] = None,
         model_kwargs: Optional[dict[str, Any]] = None,
-        http_client_proxies: Optional[Union[Dict, str]] = None,
-        http_async_client_proxies: Optional[Union[Dict, str]] = None,
+        http_client_proxies: Optional[dict | str] = None,
+        http_async_client_proxies: Optional[dict | str] = None,
         local: Optional[bool] = False,
         default_headers: Optional[Mapping[str, str]] = None,
         api_version: Optional[str] = None,

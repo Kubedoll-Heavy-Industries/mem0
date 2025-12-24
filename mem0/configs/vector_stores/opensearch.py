@@ -1,4 +1,4 @@
-from typing import Any, Optional, Union
+from typing import Any
 
 from pydantic import BaseModel, Field, model_validator
 
@@ -7,16 +7,14 @@ class OpenSearchConfig(BaseModel):
     collection_name: str = Field("mem0", description="Name of the index")
     host: str = Field("localhost", description="OpenSearch host")
     port: int = Field(9200, description="OpenSearch port")
-    user: Optional[str] = Field(None, description="Username for authentication")
-    password: Optional[str] = Field(None, description="Password for authentication")
-    api_key: Optional[str] = Field(None, description="API key for authentication (if applicable)")
+    user: str | None = Field(None, description="Username for authentication")
+    password: str | None = Field(None, description="Password for authentication")
+    api_key: str | None = Field(None, description="API key for authentication (if applicable)")
     embedding_model_dims: int = Field(1536, description="Dimension of the embedding vector")
     verify_certs: bool = Field(False, description="Verify SSL certificates (default False for OpenSearch)")
     use_ssl: bool = Field(False, description="Use SSL for connection (default False for OpenSearch)")
-    http_auth: Optional[object] = Field(None, description="HTTP authentication method / AWS SigV4")
-    connection_class: Optional[Union[str, type]] = Field(
-        "RequestsHttpConnection", description="Connection class for OpenSearch"
-    )
+    http_auth: object | None = Field(None, description="HTTP authentication method / AWS SigV4")
+    connection_class: str | type | None = Field("RequestsHttpConnection", description="Connection class for OpenSearch")
     pool_maxsize: int = Field(20, description="Maximum number of connections in the pool")
 
     @model_validator(mode="before")

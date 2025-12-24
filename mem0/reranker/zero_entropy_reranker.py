@@ -1,5 +1,5 @@
 import os
-from typing import Any, Optional
+from typing import Any
 
 from mem0.reranker.base import BaseReranker
 
@@ -41,7 +41,7 @@ class ZeroEntropyReranker(BaseReranker):
         else:
             self.client = ZeroEntropy()  # Will use ZERO_ENTROPY_API_KEY from environment
 
-    def rerank(self, query: str, documents: list[dict[str, Any]], top_k: Optional[int] = None) -> list[dict[str, Any]]:
+    def rerank(self, query: str, documents: list[dict[str, Any]], top_k: int | None = None) -> list[dict[str, Any]]:
         """
         Rerank documents using Zero Entropy's rerank API.
 

@@ -31,7 +31,7 @@ describe("OPENAI MEM0 Tests", () => {
         ],
       },
     ];
-    
+
     const { text } = await generateText({
       model: mem0("gpt-4-turbo"),
       messages: messages

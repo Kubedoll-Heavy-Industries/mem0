@@ -1,5 +1,5 @@
 import os
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -19,12 +19,12 @@ class MemoryItem(BaseModel):
     memory: str = Field(
         ..., description="The memory deduced from the text data"
     )  # TODO After prompt changes from platform, update this
-    hash: Optional[str] = Field(None, description="The hash of the memory")
+    hash: str | None = Field(None, description="The hash of the memory")
     # The metadata value can be anything and not just string. Fix it
-    metadata: Optional[dict[str, Any]] = Field(None, description="Additional metadata for the text data")
-    score: Optional[float] = Field(None, description="The score associated with the text data")
-    created_at: Optional[str] = Field(None, description="The timestamp when the memory was created")
-    updated_at: Optional[str] = Field(None, description="The timestamp when the memory was updated")
+    metadata: dict[str, Any] | None = Field(None, description="Additional metadata for the text data")
+    score: float | None = Field(None, description="The score associated with the text data")
+    created_at: str | None = Field(None, description="The timestamp when the memory was created")
+    updated_at: str | None = Field(None, description="The timestamp when the memory was updated")
 
 
 class MemoryConfig(BaseModel):
@@ -48,7 +48,7 @@ class MemoryConfig(BaseModel):
         description="Configuration for the graph",
         default_factory=GraphStoreConfig,
     )
-    reranker: Optional[RerankerConfig] = Field(
+    reranker: RerankerConfig | None = Field(
         description="Configuration for the reranker",
         default=None,
     )
@@ -56,11 +56,11 @@ class MemoryConfig(BaseModel):
         description="The version of the API",
         default="v1.1",
     )
-    custom_fact_extraction_prompt: Optional[str] = Field(
+    custom_fact_extraction_prompt: str | None = Field(
         description="Custom prompt for the fact extraction",
         default=None,
     )
-    custom_update_memory_prompt: Optional[str] = Field(
+    custom_update_memory_prompt: str | None = Field(
         description="Custom prompt for the update memory",
         default=None,
     )
@@ -85,6 +85,6 @@ class AzureConfig(BaseModel):
     azure_deployment: str = Field(description="The name of the Azure deployment.", default=None)
     azure_endpoint: str = Field(description="The endpoint URL for the Azure service.", default=None)
     api_version: str = Field(description="The version of the Azure API being used.", default=None)
-    default_headers: Optional[dict[str, str]] = Field(
+    default_headers: dict[str, str] | None = Field(
         description="Headers to include in requests to the Azure API.", default=None
     )

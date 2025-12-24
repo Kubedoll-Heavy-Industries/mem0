@@ -9,7 +9,7 @@ async function filterStream(originalStream: ReadableStream) {
                     break;
                 }
                 try {
-                    const chunk = JSON.parse(value); 
+                    const chunk = JSON.parse(value);
                     if (chunk.type !== "step-finish") {
                         controller.enqueue(value);
                     }

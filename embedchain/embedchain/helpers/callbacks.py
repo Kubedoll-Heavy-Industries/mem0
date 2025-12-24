@@ -1,5 +1,5 @@
 import queue
-from typing import Any, Union
+from typing import Any
 
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain.schema import LLMResult
@@ -42,7 +42,7 @@ class StreamingStdOutCallbackHandlerYield(StreamingStdOutCallbackHandler):
         """Run when LLM ends running."""
         self.q.put(STOP_ITEM)
 
-    def on_llm_error(self, error: Union[Exception, KeyboardInterrupt], **kwargs: Any) -> None:
+    def on_llm_error(self, error: Exception | KeyboardInterrupt, **kwargs: Any) -> None:
         """Run when LLM errors."""
         self.q.put("%s: %s" % (type(error).__name__, str(error)))
         self.q.put(STOP_ITEM)

@@ -425,7 +425,7 @@ llm:
    model: "https://clarifai.com/mistralai/completion/models/mistral-7B-Instruct"
    model_kwargs:
      temperature: 0.5
-     max_tokens: 1000  
+     max_tokens: 1000
 embedder:
  provider: clarifai
  config:
@@ -586,7 +586,7 @@ config = {
       "provider": "huggingface",
       "config": {
         "endpoint": "https://api-inference.huggingface.co/models/gpt2",
-        "model_params": {"temprature": 0.1, "max_new_tokens": 100}
+        "model_params": {"temperature": 0.1, "max_new_tokens": 100}
       },
   },
 }
@@ -597,7 +597,7 @@ app = App.from_config(config=config)
 
 Currently only supports `text-generation` and `text2text-generation` for now [[ref](https://api.python.langchain.com/en/latest/llms/langchain_community.llms.huggingface_endpoint.HuggingFaceEndpoint.html?highlight=huggingfaceendpoint#)].
 
-See langchain's [hugging face endpoint](https://python.langchain.com/docs/integrations/chat/huggingface#huggingfaceendpoint) for more information. 
+See langchain's [hugging face endpoint](https://python.langchain.com/docs/integrations/chat/huggingface#huggingfaceendpoint) for more information.
 
 ## Llama2
 
@@ -658,7 +658,7 @@ llm:
 Obtain the Mistral AI api key from their [console](https://console.mistral.ai/).
 
 <CodeGroup>
- 
+
  ```python main.py
 os.environ["MISTRAL_API_KEY"] = "xxx"
 
@@ -675,7 +675,7 @@ response = app.chat("which companies does elon own?")
 response = app.chat("what question did I ask you already?")
 # You have asked me several times already which companies Elon Musk owns, specifically Tesla, SpaceX, Boring Company, Twitter, and X.
 ```
-  
+
 ```yaml config.yaml
 llm:
   provider: mistralai
@@ -853,7 +853,7 @@ The list of paid LLMs that support token usage are:
 
 Here is an example of how to use token usage:
 <CodeGroup>
- 
+
 ```python main.py
 os.environ["OPENAI_API_KEY"] = "xxx"
 
@@ -864,9 +864,9 @@ app.add("https://www.forbes.com/profile/elon-musk")
 response = app.query("what is the net worth of Elon Musk?")
 # {'answer': 'Elon Musk's net worth is $209.9 billion as of 6/9/24.',
 #   'usage': {'prompt_tokens': 1228,
-#   'completion_tokens': 21, 
-#   'total_tokens': 1249, 
-#   'total_cost': 0.001884, 
+#   'completion_tokens': 21,
+#   'total_tokens': 1249,
+#   'total_cost': 0.001884,
 #   'cost_currency': 'USD'}
 # }
 
@@ -880,7 +880,7 @@ response = app.chat("Which companies did Elon Musk found?")
 #   'cost_currency': 'USD'}
 # }
 ```
-  
+
 ```yaml config.yaml
 llm:
   provider: openai

@@ -46,11 +46,11 @@ const Header = (props: {
         </div>
         <div className="flex items-center space-x-2 text-sm">
           <div className="flex">
-            <Input 
-              placeholder="UserId" 
-              className="w-full rounded-3xl pr-6 pl-4" 
+            <Input
+              placeholder="UserId"
+              className="w-full rounded-3xl pr-6 pl-4"
               value={userId}
-              onChange={handleSelectUser} 
+              onChange={handleSelectUser}
               onKeyDown={handleKeyDown} // Attach the key down handler here
             />
             <Button variant="ghost" size="icon" onClick={handleClearUser} className="relative hover:bg-transparent hover:text-neutral-400 right-8">

@@ -1,6 +1,6 @@
 import logging
 import os
-from typing import Any, Optional
+from typing import Any
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
@@ -75,18 +75,18 @@ class Message(BaseModel):
 
 class MemoryCreate(BaseModel):
     messages: list[Message] = Field(..., description="List of messages to store.")
-    user_id: Optional[str] = None
-    agent_id: Optional[str] = None
-    run_id: Optional[str] = None
-    metadata: Optional[dict[str, Any]] = None
+    user_id: str | None = None
+    agent_id: str | None = None
+    run_id: str | None = None
+    metadata: dict[str, Any] | None = None
 
 
 class SearchRequest(BaseModel):
     query: str = Field(..., description="Search query.")
-    user_id: Optional[str] = None
-    run_id: Optional[str] = None
-    agent_id: Optional[str] = None
-    filters: Optional[dict[str, Any]] = None
+    user_id: str | None = None
+    run_id: str | None = None
+    agent_id: str | None = None
+    filters: dict[str, Any] | None = None
 
 
 @app.post("/configure", summary="Configure Mem0")
@@ -114,9 +114,9 @@ def add_memory(memory_create: MemoryCreate):
 
 @app.get("/memories", summary="Get memories")
 def get_all_memories(
-    user_id: Optional[str] = None,
-    run_id: Optional[str] = None,
-    agent_id: Optional[str] = None,
+    user_id: str | None = None,
+    run_id: str | None = None,
+    agent_id: str | None = None,
 ):
     """Retrieve stored memories."""
     if not any([user_id, run_id, agent_id]):
@@ -193,9 +193,9 @@ def delete_memory(memory_id: str):
 
 @app.delete("/memories", summary="Delete all memories")
 def delete_all_memories(
-    user_id: Optional[str] = None,
-    run_id: Optional[str] = None,
-    agent_id: Optional[str] = None,
+    user_id: str | None = None,
+    run_id: str | None = None,
+    agent_id: str | None = None,
 ):
     """Delete all memories for a given identifier."""
     if not any([user_id, run_id, agent_id]):

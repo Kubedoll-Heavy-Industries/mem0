@@ -1,5 +1,4 @@
 import logging
-from typing import Optional
 
 from pydantic import BaseModel
 
@@ -15,21 +14,21 @@ logger = logging.getLogger(__name__)
 
 
 class OutputData(BaseModel):
-    id: Optional[str]  # memory id
-    score: Optional[float]  # distance
-    payload: Optional[dict]  # metadata
+    id: str | None  # memory id
+    score: float | None  # distance
+    payload: dict | None  # metadata
 
 
 class ChromaDB(VectorStoreBase):
     def __init__(
         self,
         collection_name: str,
-        client: Optional[chromadb.Client] = None,
-        host: Optional[str] = None,
-        port: Optional[int] = None,
-        path: Optional[str] = None,
-        api_key: Optional[str] = None,
-        tenant: Optional[str] = None,
+        client: chromadb.Client | None = None,
+        host: str | None = None,
+        port: int | None = None,
+        path: str | None = None,
+        api_key: str | None = None,
+        tenant: str | None = None,
     ):
         """
         Initialize the Chromadb vector store.
@@ -106,7 +105,7 @@ class ChromaDB(VectorStoreBase):
 
         return result
 
-    def create_col(self, name: str, embedding_fn: Optional[callable] = None):
+    def create_col(self, name: str, embedding_fn: callable | None = None):
         """
         Create a new collection.
 
@@ -126,8 +125,8 @@ class ChromaDB(VectorStoreBase):
     def insert(
         self,
         vectors: list[list],
-        payloads: Optional[list[dict]] = None,
-        ids: Optional[list[str]] = None,
+        payloads: list[dict] | None = None,
+        ids: list[str] | None = None,
     ):
         """
         Insert vectors into a collection.
@@ -140,9 +139,7 @@ class ChromaDB(VectorStoreBase):
         logger.info(f"Inserting {len(vectors)} vectors into collection {self.collection_name}")
         self.collection.add(ids=ids, embeddings=vectors, metadatas=payloads)
 
-    def search(
-        self, query: str, vectors: list[list], limit: int = 5, filters: Optional[dict] = None
-    ) -> list[OutputData]:
+    def search(self, query: str, vectors: list[list], limit: int = 5, filters: dict | None = None) -> list[OutputData]:
         """
         Search for similar vectors.
 
@@ -172,8 +169,8 @@ class ChromaDB(VectorStoreBase):
     def update(
         self,
         vector_id: str,
-        vector: Optional[list[float]] = None,
-        payload: Optional[dict] = None,
+        vector: list[float] | None = None,
+        payload: dict | None = None,
     ):
         """
         Update a vector and its payload.
@@ -222,7 +219,7 @@ class ChromaDB(VectorStoreBase):
         """
         return self.client.get_collection(name=self.collection_name)
 
-    def list(self, filters: Optional[dict] = None, limit: int = 100) -> list[OutputData]:
+    def list(self, filters: dict | None = None, limit: int = 100) -> list[OutputData]:
         """
         List all vectors in a collection.
 

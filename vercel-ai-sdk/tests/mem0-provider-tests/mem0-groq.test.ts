@@ -34,7 +34,7 @@ describe("GROQ MEM0 Tests", () => {
       },
     ];
 
-    
+
     const { text } = await generateText({
       // @ts-ignore
       model: mem0("llama3-8b-8192"),

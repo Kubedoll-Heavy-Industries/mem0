@@ -1,5 +1,4 @@
 import os
-from typing import Optional
 
 from openai import OpenAI
 
@@ -8,7 +7,7 @@ from mem0.llms.base import LLMBase
 
 
 class OpenAIStructuredLLM(LLMBase):
-    def __init__(self, config: Optional[BaseLlmConfig] = None):
+    def __init__(self, config: BaseLlmConfig | None = None):
         super().__init__(config)
 
         if not self.config.model:
@@ -21,8 +20,8 @@ class OpenAIStructuredLLM(LLMBase):
     def generate_response(
         self,
         messages: list[dict[str, str]],
-        response_format: Optional[str] = None,
-        tools: Optional[list[dict]] = None,
+        response_format: str | None = None,
+        tools: list[dict] | None = None,
         tool_choice: str = "auto",
     ) -> str:
         """

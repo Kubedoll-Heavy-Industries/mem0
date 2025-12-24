@@ -19,4 +19,4 @@ export const useUI = () => {
     handleOpenUpdateMemoryDialog,
     handleCloseUpdateMemoryDialog,
   };
-}; 
+};

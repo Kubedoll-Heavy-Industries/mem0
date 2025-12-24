@@ -48,7 +48,7 @@ export default function SettingsPage() {
         })
       }
     }
-    
+
     loadConfig()
   }, [])
 
@@ -63,9 +63,9 @@ export default function SettingsPage() {
 
   const handleSave = async () => {
     try {
-      await saveConfig({ 
+      await saveConfig({
         openmemory: settings.openmemory,
-        mem0: settings.mem0 
+        mem0: settings.mem0
       })
       toast({
         title: "Settings saved",
@@ -129,7 +129,7 @@ export default function SettingsPage() {
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
-            
+
             <Button onClick={handleSave} className="bg-primary hover:bg-primary/90 animate-fade-slide-down" disabled={isLoading}>
               <SaveIcon className="mr-2 h-4 w-4" />
               {isLoading ? "Saving..." : "Save Configuration"}

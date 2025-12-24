@@ -1,7 +1,6 @@
 import json
 import logging
 from datetime import datetime
-from typing import Optional
 
 import numpy as np
 import pytz
@@ -266,7 +265,7 @@ class ValkeyDB(VectorStoreBase):
             logger.exception(f"Error creating collection {collection_name}: {e}")
             raise
 
-    def insert(self, vectors: list, payloads: Optional[list] = None, ids: Optional[list] = None):
+    def insert(self, vectors: list, payloads: list | None = None, ids: list | None = None):
         """
         Insert vectors and their payloads into the index.
 
@@ -416,8 +415,8 @@ class ValkeyDB(VectorStoreBase):
         query: str,
         vectors: list,
         limit: int = 5,
-        filters: Optional[dict] = None,
-        ef_runtime: Optional[int] = None,
+        filters: dict | None = None,
+        ef_runtime: int | None = None,
     ):
         """
         Search for similar vectors in the index.
@@ -770,7 +769,7 @@ class ValkeyDB(VectorStoreBase):
 
         return q
 
-    def list(self, filters: Optional[dict] = None, limit: Optional[int] = None) -> list:
+    def list(self, filters: dict | None = None, limit: int | None = None) -> list:
         """
         List all recent created memories from the vector store.
 
@@ -798,7 +797,7 @@ class ValkeyDB(VectorStoreBase):
 
             # Convert search results to list format (match Redis format)
             class MemoryResult:
-                def __init__(self, id: str, payload: dict, score: Optional[float] = None):
+                def __init__(self, id: str, payload: dict, score: float | None = None):
                     self.id = id
                     self.payload = payload
                     self.score = score

@@ -1,0 +1,5 @@
+# Default owners for everything
+* @Kubedoll-Heavy-Industries/engineering
+
+# Workflows require additional review
+.github/ @Kubedoll-Heavy-Industries/engineering

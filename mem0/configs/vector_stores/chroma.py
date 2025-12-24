@@ -1,4 +1,4 @@
-from typing import Any, ClassVar, Optional
+from typing import Any, ClassVar
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -11,13 +11,13 @@ class ChromaDbConfig(BaseModel):
     Client: ClassVar[type] = Client
 
     collection_name: str = Field("mem0", description="Default name for the collection/database")
-    client: Optional[Client] = Field(None, description="Existing ChromaDB client instance")
-    path: Optional[str] = Field(None, description="Path to the database directory")
-    host: Optional[str] = Field(None, description="Database connection remote host")
-    port: Optional[int] = Field(None, description="Database connection remote port")
+    client: Client | None = Field(None, description="Existing ChromaDB client instance")
+    path: str | None = Field(None, description="Path to the database directory")
+    host: str | None = Field(None, description="Database connection remote host")
+    port: int | None = Field(None, description="Database connection remote port")
     # ChromaDB Cloud configuration
-    api_key: Optional[str] = Field(None, description="ChromaDB Cloud API key")
-    tenant: Optional[str] = Field(None, description="ChromaDB Cloud tenant ID")
+    api_key: str | None = Field(None, description="ChromaDB Cloud API key")
+    tenant: str | None = Field(None, description="ChromaDB Cloud tenant ID")
 
     @model_validator(mode="before")
     def check_connection_config(cls, values):

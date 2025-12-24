@@ -553,7 +553,7 @@ function prepareMessagesWithContext() {
       Title: ${chatState.videoContext.title}
       Channel: ${chatState.videoContext.channel}
       URL: ${chatState.videoContext.url}
-      
+
       ${
         userMemoriesSection
           ? `Use the user memories below to personalize your response based on their past interactions and interests. These memories represent relevant past conversations and information about the user.
@@ -570,7 +570,7 @@ function prepareMessagesWithContext() {
         `
           : "Since the transcript is not available, focus on general questions about the topic and use the video title for context. If asked about specific parts of the video content, politely explain that the video doesn't have a transcript."
       }
-      
+
       Be concise and helpful in your responses.
     `;
 
@@ -601,7 +601,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (chatState.currentStreamingMessage) {
       const currentContent = chatState.currentStreamingMessage.innerHTML;
       chatState.currentStreamingMessage.innerHTML = formatStreamingText(currentContent + message.chunk);
-      
+
       // Scroll to bottom
       const messagesContainer = document.getElementById("ai-chat-messages");
       messagesContainer.scrollTop = messagesContainer.scrollHeight;

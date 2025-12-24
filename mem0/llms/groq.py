@@ -1,6 +1,5 @@
 import json
 import os
-from typing import Optional
 
 try:
     from groq import Groq
@@ -13,7 +12,7 @@ from mem0.memory.utils import extract_json
 
 
 class GroqLLM(LLMBase):
-    def __init__(self, config: Optional[BaseLlmConfig] = None):
+    def __init__(self, config: BaseLlmConfig | None = None):
         super().__init__(config)
 
         if not self.config.model:
@@ -56,7 +55,7 @@ class GroqLLM(LLMBase):
         self,
         messages: list[dict[str, str]],
         response_format=None,
-        tools: Optional[list[dict]] = None,
+        tools: list[dict] | None = None,
         tool_choice: str = "auto",
     ):
         """

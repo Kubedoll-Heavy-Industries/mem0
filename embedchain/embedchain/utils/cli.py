@@ -194,7 +194,7 @@ def read_env_file(env_file_path):
     """
     env_vars = {}
     pattern = re.compile(r"(\w+)=(.*)")  # compile regular expression for better performance
-    with open(env_file_path, "r") as file:
+    with open(env_file_path) as file:
         lines = file.readlines()  # readlines is faster as it reads all at once
         for line in lines:
             line = line.strip()
@@ -210,7 +210,7 @@ def read_env_file(env_file_path):
 
 def deploy_fly():
     app_name = ""
-    with open("fly.toml", "r") as file:
+    with open("fly.toml") as file:
         for line in file:
             if line.strip().startswith("app ="):
                 app_name = line.split("=")[1].strip().strip('"')
@@ -287,7 +287,7 @@ def deploy_render():
         console.print(f"❌ [bold red]An error occurred: {e}[/bold red]")
     except FileNotFoundError:
         console.print(
-            "❌ [bold red]'render' command not found. Please ensure Render CLI is installed and in your PATH.[/bold red]"  # noqa:E501
+            "❌ [bold red]'render' command not found. Please ensure Render CLI is installed and in your PATH.[/bold red]"
         )
 
 
@@ -302,7 +302,7 @@ def deploy_gradio_app():
         console.print(f"❌ [bold red]An error occurred: {e}[/bold red]")
     except FileNotFoundError:
         console.print(
-            "❌ [bold red]'gradio' command not found. Please ensure Gradio CLI is installed and in your PATH.[/bold red]"  # noqa:E501
+            "❌ [bold red]'gradio' command not found. Please ensure Gradio CLI is installed and in your PATH.[/bold red]"
         )
 
 

@@ -1,4 +1,4 @@
-from typing import Any, ClassVar, Optional
+from typing import Any, ClassVar
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -9,14 +9,14 @@ class QdrantConfig(BaseModel):
     QdrantClient: ClassVar[type] = QdrantClient
 
     collection_name: str = Field("mem0", description="Name of the collection")
-    embedding_model_dims: Optional[int] = Field(1536, description="Dimensions of the embedding model")
-    client: Optional[QdrantClient] = Field(None, description="Existing Qdrant client instance")
-    host: Optional[str] = Field(None, description="Host address for Qdrant server")
-    port: Optional[int] = Field(None, description="Port for Qdrant server")
-    path: Optional[str] = Field("/tmp/qdrant", description="Path for local Qdrant database")
-    url: Optional[str] = Field(None, description="Full URL for Qdrant server")
-    api_key: Optional[str] = Field(None, description="API key for Qdrant server")
-    on_disk: Optional[bool] = Field(False, description="Enables persistent storage")
+    embedding_model_dims: int | None = Field(1536, description="Dimensions of the embedding model")
+    client: QdrantClient | None = Field(None, description="Existing Qdrant client instance")
+    host: str | None = Field(None, description="Host address for Qdrant server")
+    port: int | None = Field(None, description="Port for Qdrant server")
+    path: str | None = Field("/tmp/qdrant", description="Path for local Qdrant database")
+    url: str | None = Field(None, description="Full URL for Qdrant server")
+    api_key: str | None = Field(None, description="API key for Qdrant server")
+    on_disk: bool | None = Field(False, description="Enables persistent storage")
 
     @model_validator(mode="before")
     @classmethod

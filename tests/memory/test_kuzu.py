@@ -104,7 +104,7 @@ class TestKuzu:
     def test_kuzu_memory_initialization_invalid_embedding_dims(
         self, mock_embedder_factory, embedding_dims, mock_config
     ):
-        """Test that Kuzu memory raises ValuError when initialized with invalid embedding_dims"""
+        """Test that Kuzu memory raises ValueError when initialized with invalid embedding_dims"""
         # Setup mocks
         mock_embedding_model = Mock()
         mock_embedding_model.config.embedding_dims = embedding_dims

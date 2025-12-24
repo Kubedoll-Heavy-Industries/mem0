@@ -36,7 +36,7 @@ export const useChat = ({ user, mem0ApiKey, openaiApiKey }: UseChatProps): UseCh
   const [thinking, setThinking] = useState(false);
 
   const openai = new OpenAI({ apiKey: openaiApiKey, dangerouslyAllowBrowser: true});
-  
+
   const updateMemories = async (messages: PromptMessage[]) => {
     const memoryClient = new MemoryClient({ apiKey: mem0ApiKey || '' });
     try {
@@ -115,7 +115,7 @@ export const useChat = ({ user, mem0ApiKey, openaiApiKey }: UseChatProps): UseCh
     try {
       // Get only the last assistant message (if exists) and the current user message
       const lastAssistantMessage = messages.filter(msg => msg.sender === 'assistant').slice(-1)[0];
-      let messagesForLLM = lastAssistantMessage 
+      let messagesForLLM = lastAssistantMessage
         ? [
             formatMessagesForPrompt([lastAssistantMessage])[0],
             formatMessagesForPrompt([userMessage])[0]
@@ -220,4 +220,4 @@ export const useChat = ({ user, mem0ApiKey, openaiApiKey }: UseChatProps): UseCh
     thinking,
     sendMessage,
   };
-}; 
+};

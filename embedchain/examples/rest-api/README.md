@@ -18,4 +18,3 @@ docker build -t embedchain/rest-api:latest .
 docker run -d --name embedchain -p 8080:8080 embedchain/rest-api:latest
 docker image push embedchain/rest-api:latest
 ```
-

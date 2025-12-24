@@ -36,7 +36,7 @@ RUN_ID = "smart_editing_session"
 ```python
 def store_writing_preferences():
     """Store your writing preferences in Mem0."""
-    
+
     preferences = """My writing preferences:
 1. Use headings and sub-headings for structure.
 2. Keep paragraphs concise (8–10 sentences max).
@@ -116,23 +116,23 @@ Preferences:
 ```python
 def content_writing_workflow(content):
     """Automated workflow for editing a document based on writing preferences."""
-    
+
     # Store writing preferences (if not already stored)
     store_writing_preferences()  # Ideally done once, or with a conditional check
-    
+
     # Edit the document with Mem0 preferences
     edited_content = apply_writing_style(content)
-    
+
     if not edited_content:
         return "Failed to edit document."
-    
+
     # Display results
     print("\n=== ORIGINAL DOCUMENT ===\n")
     print(content)
-    
+
     print("\n=== EDITED DOCUMENT ===\n")
     print(edited_content)
-    
+
     return edited_content
 ```
 
@@ -141,8 +141,8 @@ def content_writing_workflow(content):
 ```python
 # Define your document
 original_content = """Project Proposal
-    
-The following proposal outlines our strategy for the Q3 marketing campaign. 
+
+The following proposal outlines our strategy for the Q3 marketing campaign.
 We believe this approach will significantly increase our market share.
 
 Increase brand awareness
@@ -163,8 +163,8 @@ Your document will be transformed into a structured, well-formatted version base
 ### **Original Document**
 ```
 Project Proposal
-    
-The following proposal outlines our strategy for the Q3 marketing campaign. 
+
+The following proposal outlines our strategy for the Q3 marketing campaign.
 We believe this approach will significantly increase our market share.
 
 Increase brand awareness

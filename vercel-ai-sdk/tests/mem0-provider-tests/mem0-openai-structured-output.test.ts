@@ -102,7 +102,7 @@ describe("OPENAI Structured Outputs", () => {
       // The response structure might vary, so let's be more flexible
       expect(object).toBeDefined();
       expect(typeof object).toBe("object");
-      
+
       // Check if it has cars property or if it's an array
       if (object && typeof object === "object" && "cars" in object && Array.isArray((object as any).cars)) {
         const cars = (object as any).cars;

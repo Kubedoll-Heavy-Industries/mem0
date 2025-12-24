@@ -44,7 +44,7 @@ load_dotenv()
 os.environ["AGENTOPS_API_KEY"] = os.getenv("AGENTOPS_API_KEY")
 os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
 
-#Set up the configuration for local memory storage and define sample user data. 
+#Set up the configuration for local memory storage and define sample user data.
 local_config = {
     "llm": {
         "provider": "openai",
@@ -85,7 +85,7 @@ def demonstrate_sync_memory(local_config, sample_messages, sample_preferences, u
 
     agentops.start_trace("mem0_memory_example", tags=["mem0_memory_example"])
     try:
-        
+
         memory = Memory.from_config(local_config)
 
         result = memory.add(
@@ -94,7 +94,7 @@ def demonstrate_sync_memory(local_config, sample_messages, sample_preferences, u
 
         for i, preference in enumerate(sample_preferences):
             result = memory.add(preference, user_id=user_id, metadata={"type": "preference", "index": i})
-       
+
         search_queries = [
             "What movies does the user like?",
             "What are the user's food preferences?",
@@ -103,9 +103,9 @@ def demonstrate_sync_memory(local_config, sample_messages, sample_preferences, u
 
         for query in search_queries:
             results = memory.search(query, user_id=user_id)
-        
+
             if results and "results" in results:
-                for j, result in enumerate(results['results']): 
+                for j, result in enumerate(results['results']):
                     print(f"Result {j+1}: {result.get('memory', 'N/A')}")
             else:
                 print("No results found")
@@ -169,5 +169,4 @@ Organize your monitoring with structured sessions:
 - [AgentOps Dashboard](https://app.agentops.ai/)
 - [Mem0 Platform](https://app.mem0.ai/)
 
-<Snippet file="get-help.mdx" /> 
- 
+<Snippet file="get-help.mdx" />

@@ -698,31 +698,31 @@ class PersonalAssistant:
     def __init__(self):
         self.memory = Memory()
         self.llm = OpenAI()  # Your LLM client
-    
+
     def chat(self, user_input: str, user_id: str) -> str:
         # Retrieve relevant memories
         memories = self.memory.search(user_input, user_id=user_id, limit=5)
-        
+
         # Build context from memories
         context = "\n".join([f"- {m['memory']}" for m in memories['results']])
-        
+
         # Generate response with context
         prompt = f"""
         Context from previous conversations:
         {context}
-        
+
         User: {user_input}
         Assistant:
         """
-        
+
         response = self.llm.generate(prompt)
-        
+
         # Store the conversation
         self.memory.add([
             {"role": "user", "content": user_input},
             {"role": "assistant", "content": response}
         ], user_id=user_id)
-        
+
         return response
 ```
 
@@ -732,7 +732,7 @@ class PersonalAssistant:
 class SupportBot:
     def __init__(self):
         self.memory = MemoryClient(api_key="your-key")
-    
+
     def handle_ticket(self, customer_id: str, issue: str) -> str:
         # Get customer history
         history = self.memory.search(
@@ -740,18 +740,18 @@ class SupportBot:
             user_id=customer_id,
             limit=10
         )
-        
+
         # Check for similar past issues
         similar_issues = [m for m in history if m['score'] > 0.8]
-        
+
         if similar_issues:
             context = f"Previous similar issues: {similar_issues[0]['memory']}"
         else:
             context = "No previous similar issues found."
-        
+
         # Generate response
         response = self.generate_support_response(issue, context)
-        
+
         # Store interaction
         self.memory.add([
             {"role": "user", "content": f"Issue: {issue}"},
@@ -760,7 +760,7 @@ class SupportBot:
             "category": "support_ticket",
             "timestamp": datetime.now().isoformat()
         })
-        
+
         return response
 ```
 
@@ -770,7 +770,7 @@ class SupportBot:
 class StudyBuddy:
     def __init__(self):
         self.memory = Memory()
-    
+
     def study_session(self, student_id: str, topic: str, content: str):
         # Store study material
         self.memory.add(
@@ -782,7 +782,7 @@ class StudyBuddy:
                 "type": "study_session"
             }
         )
-    
+
     def quiz_student(self, student_id: str, topic: str) -> list:
         # Get relevant study materials
         materials = self.memory.search(
@@ -790,24 +790,24 @@ class StudyBuddy:
             user_id=student_id,
             filters={"metadata.type": "study_session"}
         )
-        
+
         # Generate quiz questions based on materials
         questions = self.generate_quiz_questions(materials)
         return questions
-    
+
     def track_progress(self, student_id: str) -> dict:
         # Get all study sessions
         sessions = self.memory.get_all(
             user_id=student_id,
             filters={"metadata.type": "study_session"}
         )
-        
+
         # Analyze progress
         topics_studied = {}
         for session in sessions['results']:
             topic = session['metadata']['topic']
             topics_studied[topic] = topics_studied.get(topic, 0) + 1
-        
+
         return {
             "total_sessions": len(sessions['results']),
             "topics_covered": len(topics_studied),
@@ -826,7 +826,7 @@ class MultiAgentSystem:
             "writer": WriterAgent(),
             "reviewer": ReviewAgent()
         }
-    
+
     def collaborative_task(self, task: str, session_id: str):
         # Research phase
         research_results = self.agents["researcher"].research(task)
@@ -836,7 +836,7 @@ class MultiAgentSystem:
             run_id=session_id,
             metadata={"phase": "research"}
         )
-        
+
         # Writing phase
         research_context = self.shared_memory.search(
             "research findings",
@@ -849,11 +849,11 @@ class MultiAgentSystem:
             run_id=session_id,
             metadata={"phase": "writing"}
         )
-        
+
         # Review phase
         all_context = self.shared_memory.get_all(run_id=session_id)
         final_output = self.agents["reviewer"].review(draft, all_context)
-        
+
         return final_output
 ```
 
@@ -869,41 +869,41 @@ class VoiceAssistant:
         self.memory = Memory()
         self.recognizer = sr.Recognizer()
         self.microphone = sr.Microphone()
-    
+
     def listen_and_respond(self, user_id: str):
         # Listen to user
         with self.microphone as source:
             audio = self.recognizer.listen(source)
-        
+
         try:
             # Convert speech to text
             user_input = self.recognizer.recognize_google(audio)
             print(f"User said: {user_input}")
-            
+
             # Get relevant memories
             memories = self.memory.search(user_input, user_id=user_id)
             context = "\n".join([m['memory'] for m in memories['results'][:3]])
-            
+
             # Generate response
             response = self.generate_response(user_input, context)
-            
+
             # Store conversation
             self.memory.add([
                 {"role": "user", "content": user_input},
                 {"role": "assistant", "content": response}
             ], user_id=user_id)
-            
+
             # Convert response to speech
             tts = gTTS(text=response, lang='en')
             tts.save("response.mp3")
-            
+
             # Play response
             pygame.mixer.init()
             pygame.mixer.music.load("response.mp3")
             pygame.mixer.music.play()
-            
+
             return response
-            
+
         except sr.UnknownValueError:
             return "Sorry, I didn't understand that."
 ```
@@ -961,7 +961,7 @@ recent_conversations = memory.get_all(
 # Regular cleanup of old memories
 def cleanup_old_memories(memory_client, days_old=90):
     cutoff_date = datetime.now() - timedelta(days=days_old)
-    
+
     all_memories = memory_client.get_all()
     for mem in all_memories:
         if datetime.fromisoformat(mem['created_at']) < cutoff_date:
@@ -1052,34 +1052,34 @@ class Mem0LangChainMemory(ConversationBufferMemory):
         super().__init__(**kwargs)
         self.mem0 = Memory()
         self.user_id = user_id
-    
+
     def save_context(self, inputs, outputs):
         # Save to both LangChain and Mem0
         super().save_context(inputs, outputs)
-        
+
         # Store in Mem0 for long-term memory
         self.mem0.add([
             {"role": "user", "content": str(inputs)},
             {"role": "assistant", "content": str(outputs)}
         ], user_id=self.user_id)
-    
+
     def load_memory_variables(self, inputs):
         # Load from LangChain buffer
         variables = super().load_memory_variables(inputs)
-        
+
         # Enhance with relevant long-term memories
         relevant_memories = self.mem0.search(
             str(inputs),
             user_id=self.user_id,
             limit=3
         )
-        
+
         if relevant_memories['results']:
             long_term_context = "\n".join([
                 f"- {m['memory']}" for m in relevant_memories['results']
             ])
             variables['history'] += f"\n\nRelevant past context:\n{long_term_context}"
-        
+
         return variables
 ```
 
@@ -1104,17 +1104,17 @@ if st.button("Send"):
         user_id=user_id,
         limit=5
     )
-    
+
     # Display memories
     if memories['results']:
         st.subheader("Relevant Memories:")
         for memory in memories['results']:
             st.write(f"- {memory['memory']} (Score: {memory['score']:.2f})")
-    
+
     # Generate and display response
     response = generate_response(user_message, memories)
     st.write(f"Assistant: {response}")
-    
+
     # Store conversation
     st.session_state.memory.add([
         {"role": "user", "content": user_message},
@@ -1215,7 +1215,7 @@ async def delete_memory(memory_id: str):
        user_id=user_id,
        threshold=0.5  # Lower threshold
    )
-   
+
    # Check if memories exist for user
    all_memories = memory.get_all(user_id=user_id)
    if not all_memories['results']:
@@ -1238,7 +1238,7 @@ async def delete_memory(memory_id: str):
    ```python
    import time
    from functools import wraps
-   
+
    def rate_limit_retry(max_retries=3, delay=1):
        def decorator(func):
            @wraps(func)
@@ -1253,7 +1253,7 @@ async def delete_memory(memory_id: str):
                        raise e
                return wrapper
            return decorator
-   
+
    @rate_limit_retry()
    def safe_memory_add(memory, content, user_id):
        return memory.add(content, user_id=user_id)
@@ -1301,7 +1301,7 @@ async def delete_memory(memory_id: str):
                key=lambda x: x['created_at'],
                reverse=True
            )
-           
+
            # Delete oldest memories
            for memory in sorted_memories[max_memories:]:
                memory_client.delete(memory['id'])
@@ -1319,4 +1319,3 @@ async def delete_memory(memory_id: str):
 ## License
 
 Mem0 is available under the Apache 2.0 License. See the [LICENSE](https://github.com/mem0ai/mem0/blob/main/LICENSE) file for more details.
-

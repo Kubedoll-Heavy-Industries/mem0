@@ -36,4 +36,4 @@ export function MemoryCardSkeleton() {
       </div>
     </div>
   )
-} 
+}

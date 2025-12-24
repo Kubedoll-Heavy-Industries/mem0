@@ -25,7 +25,7 @@ interface MemoryResponse {
   categories: string[];
 }
 
-type MessageContent = 
+type MessageContent =
   | { type: 'text'; text: string }
   | { type: 'image'; image: string }
   | { type: 'file'; mimeType: string; data: Buffer };
@@ -166,4 +166,4 @@ export const useChat = ({ user, mem0ApiKey, openaiApiKey, provider }: UseChatPro
     thinking,
     sendMessage,
   };
-}; 
+};

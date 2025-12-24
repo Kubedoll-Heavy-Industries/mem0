@@ -1,7 +1,6 @@
-from typing import Tuple
+from sqlalchemy.orm import Session
 
 from app.models import App, User
-from sqlalchemy.orm import Session
 
 
 def get_or_create_user(db: Session, user_id: str) -> User:
@@ -26,7 +25,7 @@ def get_or_create_app(db: Session, user: User, app_id: str) -> App:
     return app
 
 
-def get_user_and_app(db: Session, user_id: str, app_id: str) -> Tuple[User, App]:
+def get_user_and_app(db: Session, user_id: str, app_id: str) -> tuple[User, App]:
     """Get or create both user and their app"""
     user = get_or_create_user(db, user_id)
     app = get_or_create_app(db, user, app_id)

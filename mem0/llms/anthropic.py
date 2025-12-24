@@ -1,5 +1,4 @@
 import os
-from typing import Optional, Union
 
 try:
     import anthropic
@@ -12,7 +11,7 @@ from mem0.llms.base import LLMBase
 
 
 class AnthropicLLM(LLMBase):
-    def __init__(self, config: Optional[Union[BaseLlmConfig, AnthropicConfig, dict]] = None):
+    def __init__(self, config: BaseLlmConfig | AnthropicConfig | dict | None = None):
         # Convert to AnthropicConfig if needed
         if config is None:
             config = AnthropicConfig()
@@ -44,7 +43,7 @@ class AnthropicLLM(LLMBase):
         self,
         messages: list[dict[str, str]],
         response_format=None,
-        tools: Optional[list[dict]] = None,
+        tools: list[dict] | None = None,
         tool_choice: str = "auto",
         **kwargs,
     ):

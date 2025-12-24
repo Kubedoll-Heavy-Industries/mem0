@@ -8,7 +8,7 @@ from embedchain.loaders.base_loader import BaseLoader
 class MdxLoader(BaseLoader):
     def load_data(self, url):
         """Load data from a mdx file."""
-        with open(url, "r", encoding="utf-8") as infile:
+        with open(url, encoding="utf-8") as infile:
             content = infile.read()
         metadata = {
             "url": url,
