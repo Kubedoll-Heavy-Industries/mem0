@@ -1,4 +1,6 @@
 {
   ".": "1.0.1",
-  "embedchain": "0.1.128"
+  "embedchain": "0.1.128",
+  "mem0-ts": "2.1.38",
+  "vercel-ai-sdk": "2.0.4"
 }

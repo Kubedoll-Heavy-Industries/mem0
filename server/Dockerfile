@@ -9,6 +9,12 @@ ARG VERSION=dev
 ARG COMMIT=unknown
 ARG BUILD_DATE=unknown
 
+# OCI label arguments (defaults to upstream, override in CI for fork)
+ARG OCI_SOURCE="https://github.com/mem0ai/mem0"
+ARG OCI_URL="https://mem0.ai"
+ARG OCI_VENDOR="Mem0"
+ARG OCI_AUTHORS=""
+
 # -----------------------------------------------------------------------------
 # Stage 1: Build dependencies with uv
 # -----------------------------------------------------------------------------
@@ -37,6 +43,10 @@ FROM python:3.12-slim AS runtime
 ARG VERSION
 ARG COMMIT
 ARG BUILD_DATE
+ARG OCI_SOURCE
+ARG OCI_URL
+ARG OCI_VENDOR
+ARG OCI_AUTHORS
 
 # OCI Image Format Specification labels
 # https://github.com/opencontainers/image-spec/blob/main/annotations.md
@@ -45,10 +55,11 @@ LABEL org.opencontainers.image.title="mem0-server" \
       org.opencontainers.image.version="${VERSION}" \
       org.opencontainers.image.revision="${COMMIT}" \
       org.opencontainers.image.created="${BUILD_DATE}" \
-      org.opencontainers.image.source="https://github.com/mem0ai/mem0" \
-      org.opencontainers.image.url="https://mem0.ai" \
+      org.opencontainers.image.source="${OCI_SOURCE}" \
+      org.opencontainers.image.url="${OCI_URL}" \
       org.opencontainers.image.documentation="https://docs.mem0.ai" \
-      org.opencontainers.image.vendor="Mem0" \
+      org.opencontainers.image.vendor="${OCI_VENDOR}" \
+      org.opencontainers.image.authors="${OCI_AUTHORS}" \
       org.opencontainers.image.licenses="Apache-2.0" \
       org.opencontainers.image.base.name="python:3.12-slim"
 

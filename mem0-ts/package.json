@@ -75,6 +75,13 @@
     "ai"
   ],
   "author": "Deshraj Yadav",
+  "maintainers": [
+    {
+      "name": "Cadence Agyirey",
+      "email": "8145742+cagyirey@users.noreply.github.com",
+      "url": "https://github.com/cagyirey"
+    }
+  ],
   "license": "Apache-2.0",
   "devDependencies": {
     "@types/node": "^22.7.6",
