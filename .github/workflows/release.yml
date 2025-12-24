@@ -1,0 +1,193 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Release target"
+        required: true
+        type: choice
+        options:
+          - all
+          - pypi
+          - docker
+      package:
+        description: "PyPI package (ignored for docker-only)"
+        required: false
+        type: choice
+        default: both
+        options:
+          - mem0ai
+          - embedchain
+          - both
+      dry_run:
+        description: "Dry run (don't actually publish)"
+        required: false
+        type: boolean
+        default: true
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}/mem0-server
+
+jobs:
+  # ===========================================================================
+  # Build Python packages
+  # ===========================================================================
+  build-pypi:
+    name: Build ${{ matrix.package }}
+    runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_dispatch' || inputs.target == 'all' || inputs.target == 'pypi'
+    strategy:
+      matrix:
+        package: ${{ github.event_name == 'workflow_dispatch' && inputs.package != 'both' && fromJson(format('["{0}"]', inputs.package)) || fromJson('["mem0ai", "embedchain"]') }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Build mem0ai
+        if: matrix.package == 'mem0ai'
+        run: uv build
+
+      - name: Build embedchain
+        if: matrix.package == 'embedchain'
+        run: uv build --package embedchain
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ matrix.package }}
+          path: dist/
+
+  # ===========================================================================
+  # Publish to PyPI
+  # ===========================================================================
+  publish-mem0ai:
+    name: Publish mem0ai to PyPI
+    needs: build-pypi
+    runs-on: ubuntu-latest
+    if: |
+      (github.event_name != 'workflow_dispatch' || inputs.target == 'all' || inputs.target == 'pypi') &&
+      (github.event_name != 'workflow_dispatch' || inputs.package == 'mem0ai' || inputs.package == 'both')
+    environment:
+      name: pypi
+      url: https://pypi.org/project/mem0ai/
+    permissions:
+      id-token: write
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-mem0ai
+          path: dist/
+
+      - name: Publish to PyPI
+        if: github.event_name != 'workflow_dispatch' || !inputs.dry_run
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist/
+
+  publish-embedchain:
+    name: Publish embedchain to PyPI
+    needs: build-pypi
+    runs-on: ubuntu-latest
+    if: |
+      (github.event_name != 'workflow_dispatch' || inputs.target == 'all' || inputs.target == 'pypi') &&
+      (github.event_name != 'workflow_dispatch' || inputs.package == 'embedchain' || inputs.package == 'both')
+    environment:
+      name: pypi
+      url: https://pypi.org/project/embedchain/
+    permissions:
+      id-token: write
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-embedchain
+          path: dist/
+
+      - name: Publish to PyPI
+        if: github.event_name != 'workflow_dispatch' || !inputs.dry_run
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist/
+
+  # ===========================================================================
+  # Build and publish Docker image
+  # ===========================================================================
+  docker:
+    name: Docker
+    runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_dispatch' || inputs.target == 'all' || inputs.target == 'docker'
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        if: github.event_name != 'workflow_dispatch' || !inputs.dry_run
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha,prefix=
+
+      - name: Build and push Docker image
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./server/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: ${{ github.event_name != 'workflow_dispatch' || !inputs.dry_run }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            VERSION=${{ github.ref_name }}
+            COMMIT=${{ github.sha }}
+            BUILD_DATE=${{ github.event.head_commit.timestamp || github.event.release.created_at || '' }}
+
+      - name: Generate artifact attestation
+        if: github.event_name != 'workflow_dispatch' || !inputs.dry_run
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          subject-digest: ${{ steps.build.outputs.digest }}
+          push-to-registry: true
