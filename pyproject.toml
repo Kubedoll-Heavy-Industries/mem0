@@ -16,6 +16,9 @@ description = "Long-term memory for AI Agents"
 authors = [
     { name = "Mem0", email = "founders@mem0.ai" }
 ]
+maintainers = [
+    { name = "Cadence Agyirey", email = "8145742+cagyirey@users.noreply.github.com" }
+]
 readme = "README.md"
 license = "Apache-2.0"
 license-files = ["LICENSE"]

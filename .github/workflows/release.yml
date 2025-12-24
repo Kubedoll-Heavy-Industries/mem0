@@ -3,9 +3,11 @@ name: Release
 on:
   push:
     tags:
-      - "v*"              # Legacy: v1.0.0
-      - "mem0ai-v*"       # release-please: mem0ai-v1.0.2
-      - "embedchain-v*"   # release-please: embedchain-v0.1.129
+      - "v*"                        # Legacy: v1.0.0
+      - "mem0ai-v*"                 # release-please: mem0ai-v1.0.2
+      - "embedchain-v*"             # release-please: embedchain-v0.1.129
+      - "mem0-ts-v*"                # release-please: mem0-ts-v2.1.39
+      - "@mem0/vercel-ai-provider-v*"  # release-please: @mem0/vercel-ai-provider-v2.0.5
   release:
     types: [published]
   workflow_dispatch:
@@ -16,10 +18,10 @@ on:
         type: choice
         options:
           - all
-          - pypi
+          - packages
           - docker
       package:
-        description: "PyPI package (ignored for docker-only)"
+        description: "Package to build (ignored for docker-only)"
         required: false
         type: choice
         default: both
@@ -35,16 +37,17 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}/mem0-server
+  # Use lowercase for Docker registry (GitHub lowercases automatically, but explicit is safer)
+  IMAGE_NAME: kubedoll-heavy-industries/mem0-server
 
 jobs:
   # ===========================================================================
   # Build Python packages
   # ===========================================================================
-  build-pypi:
+  build:
     name: Build ${{ matrix.package }}
     runs-on: ubuntu-latest
-    if: github.event_name != 'workflow_dispatch' || inputs.target == 'all' || inputs.target == 'pypi'
+    if: github.event_name != 'workflow_dispatch' || inputs.target == 'all' || inputs.target == 'packages'
     strategy:
       matrix:
         package: ${{ github.event_name == 'workflow_dispatch' && inputs.package != 'both' && fromJson(format('["{0}"]', inputs.package)) || fromJson('["mem0ai", "embedchain"]') }}
@@ -68,67 +71,92 @@ jobs:
         if: matrix.package == 'embedchain'
         run: uv build --package embedchain
 
-      - name: Upload artifacts
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: dist-${{ matrix.package }}
           path: dist/
 
   # ===========================================================================
-  # Publish to PyPI
+  # Build TypeScript packages
   # ===========================================================================
-  publish-mem0ai:
-    name: Publish mem0ai to PyPI
-    needs: build-pypi
+  build-ts:
+    name: Build TypeScript packages
     runs-on: ubuntu-latest
-    if: |
-      (github.event_name != 'workflow_dispatch' || inputs.target == 'all' || inputs.target == 'pypi') &&
-      (github.event_name != 'workflow_dispatch' || inputs.package == 'mem0ai' || inputs.package == 'both')
-    environment:
-      name: pypi
-      url: https://pypi.org/project/mem0ai/
-    permissions:
-      id-token: write
+    if: github.event_name != 'workflow_dispatch' || inputs.target == 'all' || inputs.target == 'packages'
     steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: dist-mem0ai
-          path: dist/
+      - uses: actions/checkout@v4
 
-      - name: Publish to PyPI
-        if: github.event_name != 'workflow_dispatch' || !inputs.dry_run
-        uses: pypa/gh-action-pypi-publish@release/v1
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
         with:
-          packages-dir: dist/
+          version: 10
 
-  publish-embedchain:
-    name: Publish embedchain to PyPI
-    needs: build-pypi
-    runs-on: ubuntu-latest
-    if: |
-      (github.event_name != 'workflow_dispatch' || inputs.target == 'all' || inputs.target == 'pypi') &&
-      (github.event_name != 'workflow_dispatch' || inputs.package == 'embedchain' || inputs.package == 'both')
-    environment:
-      name: pypi
-      url: https://pypi.org/project/embedchain/
-    permissions:
-      id-token: write
-    steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          name: dist-embedchain
-          path: dist/
+          node-version: "20"
+          cache: "pnpm"
+          cache-dependency-path: |
+            mem0-ts/pnpm-lock.yaml
+            vercel-ai-sdk/pnpm-lock.yaml
 
-      - name: Publish to PyPI
-        if: github.event_name != 'workflow_dispatch' || !inputs.dry_run
-        uses: pypa/gh-action-pypi-publish@release/v1
+      - name: Build mem0-ts
+        working-directory: mem0-ts
+        run: |
+          pnpm install
+          pnpm run build
+          pnpm pack
+
+      - name: Build vercel-ai-sdk
+        working-directory: vercel-ai-sdk
+        run: |
+          pnpm install
+          pnpm run build
+          pnpm pack
+
+      - name: Upload mem0-ts artifact
+        uses: actions/upload-artifact@v4
         with:
-          packages-dir: dist/
+          name: dist-mem0-ts
+          path: mem0-ts/*.tgz
+
+      - name: Upload vercel-ai-sdk artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-vercel-ai-sdk
+          path: vercel-ai-sdk/*.tgz
 
   # ===========================================================================
-  # Build and publish Docker image
+  # Upload packages as GitHub Release assets
+  # ===========================================================================
+  upload-release-assets:
+    name: Upload Release Assets
+    needs: [build, build-ts]
+    runs-on: ubuntu-latest
+    # Only upload to releases (not manual dispatch unless explicitly releasing)
+    if: github.event_name == 'release' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/'))
+    permissions:
+      contents: write
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist/
+          pattern: dist-*
+          merge-multiple: true
+
+      - name: List artifacts
+        run: ls -la dist/
+
+      - name: Upload to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          fail_on_unmatched_files: false
+
+  # ===========================================================================
+  # Build and publish Docker image to GHCR
   # ===========================================================================
   docker:
     name: Docker
@@ -189,6 +217,10 @@ jobs:
             VERSION=${{ github.ref_name }}
             COMMIT=${{ github.sha }}
             BUILD_DATE=${{ github.event.head_commit.timestamp || github.event.release.created_at || '' }}
+            OCI_SOURCE=https://github.com/${{ github.repository }}
+            OCI_URL=https://github.com/${{ github.repository }}
+            OCI_VENDOR=Kubedoll Heavy Industries
+            OCI_AUTHORS=Cadence Agyirey <8145742+cagyirey@users.noreply.github.com>
 
       - name: Generate artifact attestation
         if: github.event_name != 'workflow_dispatch' || !inputs.dry_run

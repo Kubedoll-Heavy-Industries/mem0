@@ -24,6 +24,13 @@
     "vercel-ai"
   ],
   "author": "Saket Aryan <saketaryan2002@gmail.com>",
+  "maintainers": [
+    {
+      "name": "Cadence Agyirey",
+      "email": "8145742+cagyirey@users.noreply.github.com",
+      "url": "https://github.com/cagyirey"
+    }
+  ],
   "license": "Apache-2.0",
   "dependencies": {
     "@ai-sdk/anthropic": "2.0.0",

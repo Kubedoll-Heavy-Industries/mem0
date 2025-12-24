@@ -35,6 +35,16 @@
       "extra-files": [
         "pyproject.toml"
       ]
+    },
+    "mem0-ts": {
+      "release-type": "node",
+      "package-name": "mem0ai",
+      "changelog-path": "CHANGELOG.md"
+    },
+    "vercel-ai-sdk": {
+      "release-type": "node",
+      "package-name": "@mem0/vercel-ai-provider",
+      "changelog-path": "CHANGELOG.md"
     }
   }
 }
