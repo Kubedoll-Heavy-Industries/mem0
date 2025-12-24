@@ -25,8 +25,8 @@ jobs:
       - name: Set up Python ${{ matrix.python-version }}
         run: uv python install ${{ matrix.python-version }}
 
-      - name: Install dependencies
-        run: uv sync --group test
+      - name: Install dependencies with all extras
+        run: uv sync --group test --all-extras
 
       - name: Run tests
         run: uv run pytest tests/ -v --tb=short
@@ -62,8 +62,8 @@ jobs:
       - name: Set up Python ${{ matrix.python-version }}
         run: uv python install ${{ matrix.python-version }}
 
-      - name: Install embedchain with dev dependencies
-        run: uv sync --package embedchain --group dev
+      - name: Install embedchain with dev dependencies and all extras
+        run: uv sync --package embedchain --group dev --all-extras
 
       - name: Run tests
         run: uv run pytest embedchain/tests/ -v --tb=short
