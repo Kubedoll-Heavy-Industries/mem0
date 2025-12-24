@@ -1,6 +1,4 @@
 import logging
-import subprocess
-import sys
 import threading
 from typing import Optional, Union
 
@@ -11,12 +9,7 @@ import mem0
 try:
     import litellm
 except ImportError:
-    try:
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "litellm"])
-        import litellm
-    except subprocess.CalledProcessError:
-        print("Failed to install 'litellm'. Please install it manually using 'pip install litellm'.")
-        sys.exit(1)
+    litellm = None
 
 from mem0 import Memory, MemoryClient
 from mem0.configs.prompts import MEMORY_ANSWER_PROMPT
@@ -92,6 +85,8 @@ class Completions:
         api_key: Optional[str] = None,
         model_list: Optional[list] = None,  # pass in a list of api_base,keys, etc.
     ):
+        if litellm is None:
+            raise ImportError("litellm is required for the proxy module. Install it with: pip install litellm")
         if messages is None:
             messages = []
         if not any([user_id, agent_id, run_id]):
