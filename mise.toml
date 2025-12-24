@@ -1,0 +1,116 @@
+# mise configuration for mem0
+# Install: https://mise.jdx.dev/getting-started.html
+# Run `mise install` to set up the toolchain
+
+[env]
+_.python.venv = { path = ".venv", create = true }
+
+[tools]
+python = "3.12"
+node = "22"       # For mem0-ts and vercel-ai-sdk
+uv = "latest"
+ruff = "latest"
+
+[tasks.install]
+description = "Install all dependencies"
+run = "uv sync --all-groups"
+
+[tasks.install-dev]
+description = "Install with dev dependencies"
+run = "uv sync --group dev"
+
+[tasks.lock]
+description = "Update lock file"
+run = "uv lock"
+
+[tasks.lint]
+description = "Run linter"
+run = "uv run ruff check ."
+
+[tasks.lint-fix]
+description = "Run linter with auto-fix"
+run = "uv run ruff check --fix ."
+
+[tasks.format]
+description = "Format code"
+run = "uv run ruff format ."
+
+[tasks.format-check]
+description = "Check code formatting"
+run = "uv run ruff format --check ."
+
+[tasks.typecheck]
+description = "Run type checker"
+run = "uv run ty check"
+
+[tasks.test]
+description = "Run tests"
+run = "uv run pytest"
+
+[tasks.test-cov]
+description = "Run tests with coverage"
+run = "uv run pytest --cov=mem0 --cov-report=term-missing"
+
+[tasks.test-fast]
+description = "Run tests in parallel"
+run = "uv run pytest -n auto"
+
+[tasks.check]
+description = "Run all checks (lint, format, typecheck, test)"
+depends = ["lint", "format-check", "typecheck", "test"]
+
+[tasks.build]
+description = "Build the package"
+run = "uv build"
+
+[tasks.clean]
+description = "Clean build artifacts"
+run = "rm -rf dist/ build/ *.egg-info .pytest_cache .ruff_cache .coverage htmlcov/"
+
+# Server tasks
+[tasks."server:dev"]
+description = "Run server in development mode"
+dir = "server"
+run = "uv run uvicorn main:app --reload --host 0.0.0.0 --port 8000"
+
+[tasks."server:build"]
+description = "Build server Docker image"
+run = "docker build -t mem0-server:dev ./server"
+
+[tasks."server:test"]
+description = "Test server Docker image"
+run = """
+docker run --rm mem0-server:dev python -c "import fastapi, uvicorn, pydantic, psycopg_pool, mem0; print('All imports OK')"
+"""
+
+# OpenMemory tasks
+[tasks."openmemory:dev"]
+description = "Run OpenMemory API in development mode"
+dir = "openmemory/api"
+run = "uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8080"
+
+# TypeScript tasks
+[tasks."ts:install"]
+description = "Install TypeScript dependencies"
+dir = "mem0-ts"
+run = "npm install"
+
+[tasks."ts:build"]
+description = "Build TypeScript SDK"
+dir = "mem0-ts"
+run = "npm run build"
+
+# Documentation
+[tasks.docs]
+description = "Serve documentation locally"
+dir = "docs"
+run = "mintlify dev"
+
+# Pre-commit
+[tasks."pre-commit:install"]
+description = "Install pre-commit hooks"
+run = "uv run pre-commit install"
+
+[tasks."pre-commit:run"]
+description = "Run pre-commit on all files"
+run = "uv run pre-commit run --all-files"
