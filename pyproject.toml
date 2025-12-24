@@ -2,6 +2,13 @@
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+[tool.uv.workspace]
+members = ["server", "openmemory/api"]
+
+[tool.uv.sources]
+# Use local mem0ai for workspace members
+mem0ai = { workspace = true }
+
 [project]
 name = "mem0ai"
 version = "1.0.1"
@@ -75,19 +82,38 @@ extras = [
     "opensearch-py>=2.0.0",
     "fastembed>=0.3.1",
 ]
+
+[dependency-groups]
 test = [
-    "pytest>=8.2.2",
+    "pytest>=8.3.0",
     "pytest-mock>=3.14.0",
-    "pytest-asyncio>=0.23.7",
+    "pytest-asyncio>=0.25.0",
+    "pytest-cov>=6.0.0",
+    "pytest-xdist>=3.5.0",
+    "pytest-timeout>=2.3.0",
 ]
 dev = [
-    "ruff>=0.6.5",
-    "isort>=5.13.2",
-    "pytest>=8.2.2",
+    "ruff>=0.14.0",
+    "ty>=0.0.1a0",
+    "pre-commit>=4.0.0",
+    "nox>=2025.0.0",
+    { include-group = "test" },
 ]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+addopts = [
+    "-v",
+    "--strict-markers",
+    "--tb=short",
+]
+timeout = 300
 
 [tool.hatch.build]
 include = [
@@ -105,63 +131,48 @@ only-include = ["mem0"]
 [tool.hatch.build.targets.wheel.shared-data]
 "README.md" = "README.md"
 
-[tool.hatch.envs.dev_py_3_9]
-python = "3.9"
-features = [
-  "test",
-  "graph",
-  "vector_stores",
-  "llms",
-  "extras",
-]
-
-[tool.hatch.envs.dev_py_3_10]
-python = "3.10"
-features = [
-  "test",
-  "graph",
-  "vector_stores",
-  "llms",
-  "extras",
-]
-
-[tool.hatch.envs.dev_py_3_11]
-python = "3.11"
-features = [
-  "test",
-  "graph",
-  "vector_stores",
-  "llms",
-  "extras",
-]
-
-[tool.hatch.envs.dev_py_3_12]
-python = "3.12"
-features = [
-  "test",
-  "graph",
-  "vector_stores",
-  "llms",
-  "extras",
-]
-
-[tool.hatch.envs.default.scripts]
-format = [
-    "ruff format",
-]
-format-check = [
-    "ruff format --check",
-]
-lint = [
-    "ruff check",
-]
-lint-fix = [
-    "ruff check --fix",
-]
-test = [
-    "pytest tests/ {args}",
-]
+# Use uv for environment management instead of hatch envs
+# Run: uv sync --group dev
+# Test: uv run pytest
+# Lint: uv run ruff check
+# Format: uv run ruff format
+# Type check: uv run ty check
 
 [tool.ruff]
 line-length = 120
+target-version = "py39"
 exclude = ["embedchain/", "openmemory/"]
+
+[tool.ruff.lint]
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # pyflakes
+    "I",      # isort
+    "B",      # flake8-bugbear
+    "C4",     # flake8-comprehensions
+    "UP",     # pyupgrade
+    "SIM",    # flake8-simplify
+    "TCH",    # flake8-type-checking
+    "PTH",    # flake8-use-pathlib
+    "RUF",    # ruff-specific
+]
+ignore = [
+    "E501",   # line too long (handled by formatter)
+    "B008",   # function call in default argument
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["mem0"]
+
+[tool.coverage.run]
+source = ["mem0"]
+omit = [
+    "*/tests/*",
+    "*/__pycache__/*",
+]
+
+[tool.coverage.report]
+precision = 2
+show_missing = true
+skip_covered = false
