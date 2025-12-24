@@ -75,13 +75,23 @@ run = "uv run uvicorn main:app --reload --host 0.0.0.0 --port 8000"
 
 [tasks."server:build"]
 description = "Build server Docker image"
-run = "docker build -t mem0-server:dev ./server"
+run = "docker build -f server/Dockerfile -t mem0-server:dev ."
 
 [tasks."server:test"]
 description = "Test server Docker image"
 run = """
 docker run --rm mem0-server:dev python -c "import fastapi, uvicorn, pydantic, psycopg_pool, mem0; print('All imports OK')"
 """
+
+# Embedchain tasks
+[tasks."embedchain:test"]
+description = "Run embedchain tests"
+dir = "embedchain"
+run = "uv run pytest tests/"
+
+[tasks."embedchain:cli"]
+description = "Run embedchain CLI"
+run = "uv run ec"
 
 # OpenMemory tasks
 [tasks."openmemory:dev"]
