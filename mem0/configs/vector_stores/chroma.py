@@ -1,4 +1,4 @@
-from typing import Any, ClassVar, Dict, Optional
+from typing import Any, ClassVar, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -23,29 +23,31 @@ class ChromaDbConfig(BaseModel):
     def check_connection_config(cls, values):
         host, port, path = values.get("host"), values.get("port"), values.get("path")
         api_key, tenant = values.get("api_key"), values.get("tenant")
-        
+
         # Check if cloud configuration is provided
         cloud_config = bool(api_key and tenant)
-        
+
         # If cloud configuration is provided, remove any default path that might have been added
         if cloud_config and path == "/tmp/chroma":
             values.pop("path", None)
             return values
-        
+
         # Check if local/server configuration is provided (excluding default tmp path for cloud config)
         local_config = bool(path and path != "/tmp/chroma") or bool(host and port)
-        
+
         if not cloud_config and not local_config:
-            raise ValueError("Either ChromaDB Cloud configuration (api_key, tenant) or local configuration (path or host/port) must be provided.")
-        
+            raise ValueError(
+                "Either ChromaDB Cloud configuration (api_key, tenant) or local configuration (path or host/port) must be provided."
+            )
+
         if cloud_config and local_config:
             raise ValueError("Cannot specify both cloud configuration and local configuration. Choose one.")
-            
+
         return values
 
     @model_validator(mode="before")
     @classmethod
-    def validate_extra_fields(cls, values: Dict[str, Any]) -> Dict[str, Any]:
+    def validate_extra_fields(cls, values: dict[str, Any]) -> dict[str, Any]:
         allowed_fields = set(cls.model_fields.keys())
         input_fields = set(values.keys())
         extra_fields = input_fields - allowed_fields

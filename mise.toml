@@ -11,6 +11,10 @@ node = "22"       # For mem0-ts and vercel-ai-sdk
 uv = "latest"
 ruff = "latest"
 
+# =============================================================================
+# Core Development Tasks
+# =============================================================================
+
 [tasks.install]
 description = "Install all dependencies"
 run = "uv sync --all-groups"
@@ -19,9 +23,17 @@ run = "uv sync --all-groups"
 description = "Install with dev dependencies"
 run = "uv sync --group dev"
 
+[tasks.install-all]
+description = "Install all groups and extras"
+run = "uv sync --all-groups --all-extras"
+
 [tasks.lock]
 description = "Update lock file"
 run = "uv lock"
+
+# =============================================================================
+# Code Quality
+# =============================================================================
 
 [tasks.lint]
 description = "Run linter"
@@ -43,31 +55,57 @@ run = "uv run ruff format --check ."
 description = "Run type checker"
 run = "uv run ty check"
 
+# =============================================================================
+# Testing
+# =============================================================================
+
 [tasks.test]
 description = "Run tests"
-run = "uv run pytest"
+run = "uv run pytest tests/"
 
 [tasks.test-cov]
 description = "Run tests with coverage"
-run = "uv run pytest --cov=mem0 --cov-report=term-missing"
+run = "uv run pytest tests/ --cov=mem0 --cov-report=term-missing"
 
 [tasks.test-fast]
 description = "Run tests in parallel"
-run = "uv run pytest -n auto"
+run = "uv run pytest tests/ -n auto"
 
-[tasks.check]
-description = "Run all checks (lint, format, typecheck, test)"
-depends = ["lint", "format-check", "typecheck", "test"]
+# =============================================================================
+# Build & Release
+# =============================================================================
 
 [tasks.build]
-description = "Build the package"
+description = "Build mem0ai package"
 run = "uv build"
+
+[tasks.build-all]
+description = "Build all packages"
+run = """
+uv build
+uv build --package embedchain
+"""
 
 [tasks.clean]
 description = "Clean build artifacts"
 run = "rm -rf dist/ build/ *.egg-info .pytest_cache .ruff_cache .coverage htmlcov/"
 
-# Server tasks
+# =============================================================================
+# CI/CD Shortcuts
+# =============================================================================
+
+[tasks.check]
+description = "Run all checks (lint, format, typecheck, test)"
+depends = ["lint", "format-check", "typecheck", "test"]
+
+[tasks.ci]
+description = "Run full CI pipeline locally"
+depends = ["format-check", "lint", "typecheck", "test"]
+
+# =============================================================================
+# Server Tasks
+# =============================================================================
+
 [tasks."server:dev"]
 description = "Run server in development mode"
 dir = "server"
@@ -75,7 +113,7 @@ run = "uv run uvicorn main:app --reload --host 0.0.0.0 --port 8000"
 
 [tasks."server:build"]
 description = "Build server Docker image"
-run = "docker build -t mem0-server:dev ./server"
+run = "docker build -f server/Dockerfile -t mem0-server:dev ."
 
 [tasks."server:test"]
 description = "Test server Docker image"
@@ -83,13 +121,77 @@ run = """
 docker run --rm mem0-server:dev python -c "import fastapi, uvicorn, pydantic, psycopg_pool, mem0; print('All imports OK')"
 """
 
-# OpenMemory tasks
+# =============================================================================
+# Embedchain Tasks
+# =============================================================================
+
+[tasks."embedchain:install"]
+description = "Install embedchain dependencies"
+run = "uv sync --package embedchain"
+
+[tasks."embedchain:test"]
+description = "Run embedchain tests"
+run = "uv run pytest embedchain/tests/ -v"
+
+[tasks."embedchain:test-cov"]
+description = "Run embedchain tests with coverage"
+run = "uv run pytest embedchain/tests/ --cov=embedchain --cov-report=term-missing"
+
+[tasks."embedchain:build"]
+description = "Build embedchain package"
+run = "uv build --package embedchain"
+
+[tasks."embedchain:cli"]
+description = "Run embedchain CLI"
+run = "uv run ec"
+
+# =============================================================================
+# OpenMemory Tasks
+# =============================================================================
+
 [tasks."openmemory:dev"]
 description = "Run OpenMemory API in development mode"
 dir = "openmemory/api"
 run = "uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8080"
 
-# TypeScript tasks
+[tasks."openmemory:env"]
+description = "Set up OpenMemory environment files"
+dir = "openmemory"
+run = """
+cd api && cp -n .env.example .env 2>/dev/null || true
+cd ../ui && cp -n .env.example .env 2>/dev/null || true
+echo "Environment files created (if they didn't exist)"
+"""
+
+[tasks."openmemory:up"]
+description = "Start OpenMemory containers"
+dir = "openmemory"
+run = "docker compose up"
+
+[tasks."openmemory:down"]
+description = "Stop OpenMemory containers"
+dir = "openmemory"
+run = "docker compose down -v && rm -f api/openmemory.db"
+
+[tasks."openmemory:logs"]
+description = "Show OpenMemory container logs"
+dir = "openmemory"
+run = "docker compose logs -f"
+
+[tasks."openmemory:migrate"]
+description = "Run database migrations"
+dir = "openmemory"
+run = "docker compose exec api alembic upgrade head"
+
+[tasks."openmemory:ui"]
+description = "Start OpenMemory UI in dev mode"
+dir = "openmemory/ui"
+run = "pnpm install && pnpm dev"
+
+# =============================================================================
+# TypeScript SDK Tasks
+# =============================================================================
+
 [tasks."ts:install"]
 description = "Install TypeScript dependencies"
 dir = "mem0-ts"
@@ -100,13 +202,19 @@ description = "Build TypeScript SDK"
 dir = "mem0-ts"
 run = "npm run build"
 
+# =============================================================================
 # Documentation
+# =============================================================================
+
 [tasks.docs]
 description = "Serve documentation locally"
 dir = "docs"
 run = "mintlify dev"
 
+# =============================================================================
 # Pre-commit
+# =============================================================================
+
 [tasks."pre-commit:install"]
 description = "Install pre-commit hooks"
 run = "uv run pre-commit install"
@@ -114,3 +222,22 @@ run = "uv run pre-commit install"
 [tasks."pre-commit:run"]
 description = "Run pre-commit on all files"
 run = "uv run pre-commit run --all-files"
+
+# =============================================================================
+# Evaluation/Benchmarks
+# =============================================================================
+
+[tasks."eval:mem0-add"]
+description = "Run mem0 add experiments"
+dir = "evaluation"
+run = "uv run python run_experiments.py --technique_type mem0 --method add"
+
+[tasks."eval:mem0-search"]
+description = "Run mem0 search experiments"
+dir = "evaluation"
+run = "uv run python run_experiments.py --technique_type mem0 --method search --output_folder results/ --top_k 30"
+
+[tasks."eval:rag"]
+description = "Run RAG experiments"
+dir = "evaluation"
+run = "uv run python run_experiments.py --technique_type rag --chunk_size 500 --num_chunks 1 --output_folder results/"

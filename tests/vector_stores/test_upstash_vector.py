@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, List, Optional
+from typing import Optional
 from unittest.mock import MagicMock, call, patch
 
 import pytest
@@ -11,8 +11,8 @@ from mem0.vector_stores.upstash_vector import UpstashVector
 class QueryResult:
     id: str
     score: Optional[float]
-    vector: Optional[List[float]] = None
-    metadata: Optional[Dict] = None
+    vector: Optional[list[float]] = None
+    metadata: Optional[dict] = None
     data: Optional[str] = None
 
 

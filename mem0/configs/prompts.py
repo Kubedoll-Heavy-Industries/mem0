@@ -59,8 +59,8 @@ You should detect the language of the user input and record the facts in the sam
 """
 
 # USER_MEMORY_EXTRACTION_PROMPT - Enhanced version based on platform implementation
-USER_MEMORY_EXTRACTION_PROMPT = f"""You are a Personal Information Organizer, specialized in accurately storing facts, user memories, and preferences. 
-Your primary role is to extract relevant pieces of information from conversations and organize them into distinct, manageable facts. 
+USER_MEMORY_EXTRACTION_PROMPT = f"""You are a Personal Information Organizer, specialized in accurately storing facts, user memories, and preferences.
+Your primary role is to extract relevant pieces of information from conversations and organize them into distinct, manageable facts.
 This allows for easy retrieval and personalization in future interactions. Below are the types of information you need to focus on and the detailed instructions on how to handle the input data.
 
 # [IMPORTANT]: GENERATE FACTS SOLELY BASED ON THE USER'S MESSAGES. DO NOT INCLUDE INFORMATION FROM ASSISTANT OR SYSTEM MESSAGES.
@@ -120,8 +120,8 @@ Following is a conversation between the user and the assistant. You have to extr
 """
 
 # AGENT_MEMORY_EXTRACTION_PROMPT - Enhanced version based on platform implementation
-AGENT_MEMORY_EXTRACTION_PROMPT = f"""You are an Assistant Information Organizer, specialized in accurately storing facts, preferences, and characteristics about the AI assistant from conversations. 
-Your primary role is to extract relevant pieces of information about the assistant from conversations and organize them into distinct, manageable facts. 
+AGENT_MEMORY_EXTRACTION_PROMPT = f"""You are an Assistant Information Organizer, specialized in accurately storing facts, preferences, and characteristics about the AI assistant from conversations.
+Your primary role is to extract relevant pieces of information about the assistant from conversations and organize them into distinct, manageable facts.
 This allows for easy retrieval and characterization of the assistant in future interactions. Below are the types of information you need to focus on and the detailed instructions on how to handle the input data.
 
 # [IMPORTANT]: GENERATE FACTS SOLELY BASED ON THE ASSISTANT'S MESSAGES. DO NOT INCLUDE INFORMATION FROM USER OR SYSTEM MESSAGES.
@@ -212,8 +212,8 @@ There are specific guidelines to select which operation to perform:
 
         }
 
-2. **Update**: If the retrieved facts contain information that is already present in the memory but the information is totally different, then you have to update it. 
-If the retrieved fact contains information that conveys the same thing as the elements present in the memory, then you have to keep the fact which has the most information. 
+2. **Update**: If the retrieved facts contain information that is already present in the memory but the information is totally different, then you have to update it.
+If the retrieved fact contains information that conveys the same thing as the elements present in the memory, then you have to keep the fact which has the most information.
 Example (a) -- if the memory contains "User likes to play cricket" and the retrieved fact is "Loves to play cricket with friends", then update the memory with the retrieved facts.
 Example (b) -- if the memory contains "Likes cheese pizza" and the retrieved fact is "Loves cheese pizza", then you do not need to update it because they convey the same information.
 If the direction is to update the memory, then you have to update it.
@@ -365,36 +365,36 @@ You are a memory summarization system that records and preserves the complete in
 **Task Objective**: Scrape blog post titles and full content from the OpenAI blog.
 **Progress Status**: 10% complete — 5 out of 50 blog posts processed.
 
-1. **Agent Action**: Opened URL "https://openai.com"  
-   **Action Result**:  
-      "HTML Content of the homepage including navigation bar with links: 'Blog', 'API', 'ChatGPT', etc."  
-   **Key Findings**: Navigation bar loaded correctly.  
-   **Navigation History**: Visited homepage: "https://openai.com"  
+1. **Agent Action**: Opened URL "https://openai.com"
+   **Action Result**:
+      "HTML Content of the homepage including navigation bar with links: 'Blog', 'API', 'ChatGPT', etc."
+   **Key Findings**: Navigation bar loaded correctly.
+   **Navigation History**: Visited homepage: "https://openai.com"
    **Current Context**: Homepage loaded; ready to click on the 'Blog' link.
 
-2. **Agent Action**: Clicked on the "Blog" link in the navigation bar.  
-   **Action Result**:  
-      "Navigated to 'https://openai.com/blog/' with the blog listing fully rendered."  
-   **Key Findings**: Blog listing shows 10 blog previews.  
-   **Navigation History**: Transitioned from homepage to blog listing page.  
+2. **Agent Action**: Clicked on the "Blog" link in the navigation bar.
+   **Action Result**:
+      "Navigated to 'https://openai.com/blog/' with the blog listing fully rendered."
+   **Key Findings**: Blog listing shows 10 blog previews.
+   **Navigation History**: Transitioned from homepage to blog listing page.
    **Current Context**: Blog listing page displayed.
 
-3. **Agent Action**: Extracted the first 5 blog post links from the blog listing page.  
-   **Action Result**:  
-      "[ '/blog/chatgpt-updates', '/blog/ai-and-education', '/blog/openai-api-announcement', '/blog/gpt-4-release', '/blog/safety-and-alignment' ]"  
-   **Key Findings**: Identified 5 valid blog post URLs.  
+3. **Agent Action**: Extracted the first 5 blog post links from the blog listing page.
+   **Action Result**:
+      "[ '/blog/chatgpt-updates', '/blog/ai-and-education', '/blog/openai-api-announcement', '/blog/gpt-4-release', '/blog/safety-and-alignment' ]"
+   **Key Findings**: Identified 5 valid blog post URLs.
    **Current Context**: URLs stored in memory for further processing.
 
-4. **Agent Action**: Visited URL "https://openai.com/blog/chatgpt-updates"  
-   **Action Result**:  
-      "HTML content loaded for the blog post including full article text."  
-   **Key Findings**: Extracted blog title "ChatGPT Updates – March 2025" and article content excerpt.  
+4. **Agent Action**: Visited URL "https://openai.com/blog/chatgpt-updates"
+   **Action Result**:
+      "HTML content loaded for the blog post including full article text."
+   **Key Findings**: Extracted blog title "ChatGPT Updates – March 2025" and article content excerpt.
    **Current Context**: Blog post content extracted and stored.
 
-5. **Agent Action**: Extracted blog title and full article content from "https://openai.com/blog/chatgpt-updates"  
-   **Action Result**:  
-      "{ 'title': 'ChatGPT Updates – March 2025', 'content': 'We\'re introducing new updates to ChatGPT, including improved browsing capabilities and memory recall... (full content)' }"  
-   **Key Findings**: Full content captured for later summarization.  
+5. **Agent Action**: Extracted blog title and full article content from "https://openai.com/blog/chatgpt-updates"
+   **Action Result**:
+      "{ 'title': 'ChatGPT Updates – March 2025', 'content': 'We\'re introducing new updates to ChatGPT, including improved browsing capabilities and memory recall... (full content)' }"
+   **Key Findings**: Full content captured for later summarization.
    **Current Context**: Data stored; ready to proceed to next blog post.
 
 ... (Additional numbered steps for subsequent actions)
@@ -406,7 +406,6 @@ def get_update_memory_messages(retrieved_old_memory_dict, response_content, cust
     if custom_update_memory_prompt is None:
         global DEFAULT_UPDATE_MEMORY_PROMPT
         custom_update_memory_prompt = DEFAULT_UPDATE_MEMORY_PROMPT
-
 
     if retrieved_old_memory_dict:
         current_memory_part = f"""

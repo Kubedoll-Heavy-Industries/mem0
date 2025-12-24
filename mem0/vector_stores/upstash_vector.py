@@ -1,5 +1,6 @@
+import builtins
 import logging
-from typing import Dict, List, Optional
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -17,7 +18,7 @@ logger = logging.getLogger(__name__)
 class OutputData(BaseModel):
     id: Optional[str]  # memory id
     score: Optional[float]  # is None for `get` method
-    payload: Optional[Dict]  # metadata
+    payload: Optional[dict]  # metadata
 
 
 class UpstashVector(VectorStoreBase):
@@ -51,9 +52,9 @@ class UpstashVector(VectorStoreBase):
 
     def insert(
         self,
-        vectors: List[list],
-        payloads: Optional[List[Dict]] = None,
-        ids: Optional[List[str]] = None,
+        vectors: list[list],
+        payloads: Optional[list[dict]] = None,
+        ids: Optional[list[str]] = None,
     ):
         """
         Insert vectors
@@ -97,10 +98,10 @@ class UpstashVector(VectorStoreBase):
     def search(
         self,
         query: str,
-        vectors: List[list],
+        vectors: list[list],
         limit: int = 5,
-        filters: Optional[Dict] = None,
-    ) -> List[OutputData]:
+        filters: Optional[dict] = None,
+    ) -> list[OutputData]:
         """
         Search for similar vectors.
 
@@ -205,7 +206,7 @@ class UpstashVector(VectorStoreBase):
             return None
         return OutputData(id=vector.id, score=None, payload=vector.metadata)
 
-    def list(self, filters: Optional[Dict] = None, limit: int = 100) -> List[List[OutputData]]:
+    def list(self, filters: Optional[dict] = None, limit: int = 100) -> list[list[OutputData]]:
         """
         List all memories.
         Args:
@@ -258,7 +259,7 @@ class UpstashVector(VectorStoreBase):
         """
         pass
 
-    def list_cols(self) -> List[str]:
+    def list_cols(self) -> builtins.list[str]:
         """
         Lists all namespaces in the Upstash Vector index.
         Returns:

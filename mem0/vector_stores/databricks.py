@@ -1,19 +1,28 @@
+import contextlib
 import json
 import logging
 import uuid
-from typing import Optional, List
-from datetime import datetime, date
-from databricks.sdk.service.catalog import ColumnInfo, ColumnTypeName, TableType, DataSourceFormat
-from databricks.sdk.service.catalog import TableConstraint, PrimaryKeyConstraint
+from datetime import date, datetime
+from typing import Optional
+
 from databricks.sdk import WorkspaceClient
+from databricks.sdk.service.catalog import (
+    ColumnInfo,
+    ColumnTypeName,
+    DataSourceFormat,
+    PrimaryKeyConstraint,
+    TableConstraint,
+    TableType,
+)
 from databricks.sdk.service.vectorsearch import (
-    VectorIndexType,
     DeltaSyncVectorIndexSpecRequest,
     DirectAccessVectorIndexSpec,
     EmbeddingSourceColumn,
     EmbeddingVectorColumn,
+    VectorIndexType,
 )
 from pydantic import BaseModel
+
 from mem0.memory.utils import extract_json
 from mem0.vector_stores.base import VectorStoreBase
 
@@ -38,10 +47,10 @@ class Databricks(VectorStoreBase):
         client_secret: Optional[str] = None,
         azure_client_id: Optional[str] = None,
         azure_client_secret: Optional[str] = None,
-        endpoint_name: str = None,
-        catalog: str = None,
-        schema: str = None,
-        table_name: str = None,
+        endpoint_name: Optional[str] = None,
+        catalog: Optional[str] = None,
+        schema: Optional[str] = None,
+        table_name: Optional[str] = None,
         collection_name: str = "mem0",
         index_type: str = "DELTA_SYNC",
         embedding_model_endpoint_name: Optional[str] = None,
@@ -376,7 +385,7 @@ class Databricks(VectorStoreBase):
         s = str(v).replace("'", "''")
         return f"'{s}'"
 
-    def insert(self, vectors: list, payloads: list = None, ids: list = None):
+    def insert(self, vectors: list, payloads: Optional[list] = None, ids: Optional[list] = None):
         """
         Insert vectors into the index.
 
@@ -423,7 +432,7 @@ class Databricks(VectorStoreBase):
             logger.error(f"Insert operation failed: {e}")
             raise
 
-    def search(self, query: str, vectors: list, limit: int = 5, filters: dict = None) -> List[MemoryResult]:
+    def search(self, query: str, vectors: list, limit: int = 5, filters: Optional[dict] = None) -> list[MemoryResult]:
         """
         Search for similar vectors or text using the Databricks Vector Search index.
 
@@ -589,7 +598,9 @@ class Databricks(VectorStoreBase):
                 raise KeyError(f"Vector with ID {vector_id} not found")
 
             result = data_array[0]
-            columns = columns = [col.name for col in results.manifest.columns] if results.manifest and results.manifest.columns else []
+            columns = columns = (
+                [col.name for col in results.manifest.columns] if results.manifest and results.manifest.columns else []
+            )
             row_data = dict(zip(columns, result))
 
             # Build payload following the standard schema
@@ -609,7 +620,7 @@ class Databricks(VectorStoreBase):
                     payload[field] = row_data[field]
 
             # Add metadata
-            if "metadata" in row_data and row_data.get('metadata'):
+            if "metadata" in row_data and row_data.get("metadata"):
                 try:
                     metadata = json.loads(extract_json(row_data["metadata"]))
                     payload.update(metadata)
@@ -623,7 +634,7 @@ class Databricks(VectorStoreBase):
             logger.error(f"Failed to get vector with ID {vector_id}: {e}")
             raise
 
-    def list_cols(self) -> List[str]:
+    def list_cols(self) -> list[str]:
         """
         List all collections (indexes).
 
@@ -671,7 +682,7 @@ class Databricks(VectorStoreBase):
             logger.error(f"Failed to get info for index '{name or self.index_name}': {e}")
             raise
 
-    def list(self, filters: dict = None, limit: int = None) -> list[MemoryResult]:
+    def list(self, filters: Optional[dict] = None, limit: Optional[int] = None) -> list[MemoryResult]:
         """
         List all recent created memories from the vector store.
 
@@ -702,13 +713,11 @@ class Databricks(VectorStoreBase):
                 row_dict = dict(zip(columns, row)) if isinstance(row, (list, tuple)) else row
                 payload = {k: row_dict.get(k) for k in columns}
                 # Parse metadata if present
-                if "metadata" in payload and payload["metadata"]:
-                    try:
+                if payload.get("metadata"):
+                    with contextlib.suppress(Exception):
                         payload.update(json.loads(payload["metadata"]))
-                    except Exception:
-                        pass
                 memory_id = row_dict.get("memory_id") or row_dict.get("id")
-                payload['data'] = payload['memory']
+                payload["data"] = payload["memory"]
                 memory_results.append(MemoryResult(id=memory_id, payload=payload))
             return [memory_results]
         except Exception as e:

@@ -258,18 +258,17 @@ def test_col_info(faiss_instance, mock_faiss_index):
 
 def test_delete_col(faiss_instance):
     # Mock the os.remove function
-    with patch("os.remove") as mock_remove:
-        with patch("os.path.exists", return_value=True):
-            # Call delete_col
-            faiss_instance.delete_col()
+    with patch("os.remove") as mock_remove, patch("os.path.exists", return_value=True):
+        # Call delete_col
+        faiss_instance.delete_col()
 
-            # Verify os.remove was called twice (for index and docstore files)
-            assert mock_remove.call_count == 2
+        # Verify os.remove was called twice (for index and docstore files)
+        assert mock_remove.call_count == 2
 
-            # Verify the internal state was reset
-            assert faiss_instance.index is None
-            assert faiss_instance.docstore == {}
-            assert faiss_instance.index_to_id == {}
+        # Verify the internal state was reset
+        assert faiss_instance.index is None
+        assert faiss_instance.docstore == {}
+        assert faiss_instance.index_to_id == {}
 
 
 def test_normalize_L2(faiss_instance, mock_faiss_index):

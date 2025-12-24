@@ -4,6 +4,11 @@
 # Usage: docker build -f server/Dockerfile -t mem0-server .
 # =============================================================================
 
+# Build-time arguments for versioning and labels
+ARG VERSION=dev
+ARG COMMIT=unknown
+ARG BUILD_DATE=unknown
+
 # -----------------------------------------------------------------------------
 # Stage 1: Build dependencies with uv
 # -----------------------------------------------------------------------------
@@ -28,6 +33,25 @@ RUN uv sync --frozen --no-dev --package mem0-server --no-editable
 # -----------------------------------------------------------------------------
 FROM python:3.12-slim AS runtime
 
+# Re-declare ARGs for use in this stage
+ARG VERSION
+ARG COMMIT
+ARG BUILD_DATE
+
+# OCI Image Format Specification labels
+# https://github.com/opencontainers/image-spec/blob/main/annotations.md
+LABEL org.opencontainers.image.title="mem0-server" \
+      org.opencontainers.image.description="REST API server for Mem0 - Long-term memory for AI Agents" \
+      org.opencontainers.image.version="${VERSION}" \
+      org.opencontainers.image.revision="${COMMIT}" \
+      org.opencontainers.image.created="${BUILD_DATE}" \
+      org.opencontainers.image.source="https://github.com/mem0ai/mem0" \
+      org.opencontainers.image.url="https://mem0.ai" \
+      org.opencontainers.image.documentation="https://docs.mem0.ai" \
+      org.opencontainers.image.vendor="Mem0" \
+      org.opencontainers.image.licenses="Apache-2.0" \
+      org.opencontainers.image.base.name="python:3.12-slim"
+
 # Security: Create non-root user with high UID (distroless convention)
 # Create home directory for mem0 config/telemetry storage
 RUN groupadd --gid 65532 nonroot && \
@@ -47,7 +71,9 @@ RUN mkdir -p /app/history && chown -R nonroot:nonroot /app
 # Environment configuration
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    PATH="/app/.venv/bin:$PATH"
+    PATH="/app/.venv/bin:$PATH" \
+    MEM0_VERSION="${VERSION}" \
+    MEM0_COMMIT="${COMMIT}"
 
 USER nonroot
 

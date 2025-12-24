@@ -1,5 +1,5 @@
 import os
-from typing import Dict, List, Optional
+from typing import Optional
 
 import requests
 
@@ -28,7 +28,7 @@ class SarvamLLM(LLMBase):
             getattr(self.config, "sarvam_base_url", None) or os.getenv("SARVAM_API_BASE") or "https://api.sarvam.ai/v1"
         )
 
-    def generate_response(self, messages: List[Dict[str, str]], response_format=None) -> str:
+    def generate_response(self, messages: list[dict[str, str]], response_format=None) -> str:
         """
         Generate a response based on the given messages using Sarvam-M.
 

@@ -1,4 +1,4 @@
-from typing import Any, Callable, List, Optional
+from typing import Any, Callable, Optional
 
 from mem0.configs.llms.base import BaseLlmConfig
 
@@ -23,7 +23,7 @@ class OpenAIConfig(BaseLlmConfig):
         http_client_proxies: Optional[dict] = None,
         # OpenAI-specific parameters
         openai_base_url: Optional[str] = None,
-        models: Optional[List[str]] = None,
+        models: Optional[list[str]] = None,
         route: Optional[str] = "fallback",
         openrouter_base_url: Optional[str] = None,
         site_url: Optional[str] = None,

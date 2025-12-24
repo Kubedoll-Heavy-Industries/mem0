@@ -1,6 +1,7 @@
 import logging
 import uuid
 from datetime import datetime
+
 import pytz
 
 from .base import NeptuneBase
@@ -11,6 +12,7 @@ except ImportError:
     raise ImportError("langchain_aws is not installed. Please install it using 'make install_all'.")
 
 logger = logging.getLogger(__name__)
+
 
 class MemoryGraph(NeptuneBase):
     def __init__(self, config):
@@ -57,8 +59,8 @@ class MemoryGraph(NeptuneBase):
         self.llm = NeptuneBase._create_llm(self.config, self.llm_provider)
         self.user_id = None
         # Use threshold from graph_store config, default to 0.7 for backward compatibility
-        self.threshold = self.config.graph_store.threshold if hasattr(self.config.graph_store, 'threshold') else 0.7
-        self.vector_store_limit=5
+        self.threshold = self.config.graph_store.threshold if hasattr(self.config.graph_store, "threshold") else 0.7
+        self.vector_store_limit = 5
 
     def _delete_entities_cypher(self, source, destination, relationship, user_id):
         """
@@ -76,7 +78,7 @@ class MemoryGraph(NeptuneBase):
             -[r:{relationship}]->
             (m {self.node_label} {{name: $dest_name, user_id: $user_id}})
             DELETE r
-            RETURN 
+            RETURN
                 n.name AS source,
                 m.name AS target,
                 type(r) AS relationship
@@ -90,13 +92,13 @@ class MemoryGraph(NeptuneBase):
         return cypher, params
 
     def _add_entities_by_source_cypher(
-            self,
-            source_node_list,
-            destination,
-            dest_embedding,
-            destination_type,
-            relationship,
-            user_id,
+        self,
+        source_node_list,
+        destination,
+        dest_embedding,
+        destination_type,
+        relationship,
+        user_id,
     ):
         """
         Returns the OpenCypher query and parameters for adding entities in the graph DB
@@ -141,7 +143,7 @@ class MemoryGraph(NeptuneBase):
                     destination.updated = timestamp()
                 WITH source, destination
                 MERGE (source)-[r:{relationship}]->(destination)
-                ON CREATE SET 
+                ON CREATE SET
                     r.created = timestamp(),
                     r.updated = timestamp(),
                     r.mentions = 1
@@ -159,19 +161,17 @@ class MemoryGraph(NeptuneBase):
             "user_id": user_id,
         }
 
-        logger.debug(
-            f"_add_entities:\n  source_node_search_result={source_node_list[0]}\n  query={cypher}"
-        )
+        logger.debug(f"_add_entities:\n  source_node_search_result={source_node_list[0]}\n  query={cypher}")
         return cypher, params
 
     def _add_entities_by_destination_cypher(
-            self,
-            source,
-            source_embedding,
-            source_type,
-            destination_node_list,
-            relationship,
-            user_id,
+        self,
+        source,
+        source_embedding,
+        source_type,
+        destination_node_list,
+        relationship,
+        user_id,
     ):
         """
         Returns the OpenCypher query and parameters for adding entities in the graph DB
@@ -203,7 +203,7 @@ class MemoryGraph(NeptuneBase):
         cypher = f"""
                 MATCH (destination {{user_id: $user_id}})
                 WHERE id(destination) = $destination_id
-                SET 
+                SET
                     destination.mentions = coalesce(destination.mentions, 0) + 1,
                     destination.updated = timestamp()
                 WITH destination
@@ -218,7 +218,7 @@ class MemoryGraph(NeptuneBase):
                     source.updated = timestamp()
                 WITH source, destination
                 MERGE (source)-[r:{relationship}]->(destination)
-                ON CREATE SET 
+                ON CREATE SET
                     r.created = timestamp(),
                     r.updated = timestamp(),
                     r.mentions = 1
@@ -235,17 +235,15 @@ class MemoryGraph(NeptuneBase):
             "source_embedding": source_embedding,
             "user_id": user_id,
         }
-        logger.debug(
-            f"_add_entities:\n  destination_node_search_result={destination_node_list[0]}\n  query={cypher}"
-        )
+        logger.debug(f"_add_entities:\n  destination_node_search_result={destination_node_list[0]}\n  query={cypher}")
         return cypher, params
 
     def _add_relationship_entities_cypher(
-            self,
-            source_node_list,
-            destination_node_list,
-            relationship,
-            user_id,
+        self,
+        source_node_list,
+        destination_node_list,
+        relationship,
+        user_id,
     ):
         """
         Returns the OpenCypher query and parameters for adding entities in the graph DB
@@ -260,17 +258,17 @@ class MemoryGraph(NeptuneBase):
         cypher = f"""
                 MATCH (source {{user_id: $user_id}})
                 WHERE id(source) = $source_id
-                SET 
+                SET
                     source.mentions = coalesce(source.mentions, 0) + 1,
                     source.updated = timestamp()
                 WITH source
                 MATCH (destination {{user_id: $user_id}})
                 WHERE id(destination) = $destination_id
-                SET 
+                SET
                     destination.mentions = coalesce(destination.mentions) + 1,
                     destination.updated = timestamp()
                 MERGE (source)-[r:{relationship}]->(destination)
-                ON CREATE SET 
+                ON CREATE SET
                     r.created_at = timestamp(),
                     r.updated_at = timestamp(),
                     r.mentions = 1
@@ -363,9 +361,7 @@ class MemoryGraph(NeptuneBase):
             "dest_embedding": dest_embedding,
             "user_id": user_id,
         }
-        logger.debug(
-            f"_add_new_entities_cypher:\n  query={cypher}"
-        )
+        logger.debug(f"_add_new_entities_cypher:\n  query={cypher}")
         return cypher, params
 
     def _search_source_node_cypher(self, source_embedding, user_id, threshold):
@@ -498,7 +494,7 @@ class MemoryGraph(NeptuneBase):
             WHERE n.user_id = $user_id AND id(n) IN $n_ids
             RETURN n.name AS source, id(n) AS source_id, type(r) AS relationship, id(r) AS relation_id, m.name AS destination, id(m) AS destination_id
             UNION
-            MATCH (m)-[r]->(n {self.node_label}) 
+            MATCH (m)-[r]->(n {self.node_label})
             RETURN m.name AS source, id(m) AS source_id, type(r) AS relationship, id(r) AS relation_id, n.name AS destination, id(n) AS destination_id
             LIMIT $limit
         """

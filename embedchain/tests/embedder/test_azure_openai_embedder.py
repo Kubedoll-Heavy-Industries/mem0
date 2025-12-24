@@ -12,8 +12,8 @@ def test_azure_openai_embedder_with_http_client(monkeypatch):
     mock_http_client.return_value = mock_http_client_instance
 
     with patch("embedchain.embedder.azure_openai.AzureOpenAIEmbeddings") as mock_embeddings, patch(
-        "httpx.Client", new=mock_http_client
-    ) as mock_http_client:
+        "embedchain.config.embedder.base.httpx.Client", mock_http_client
+    ):
         config = BaseEmbedderConfig(
             deployment_name="text-embedding-ada-002",
             http_client_proxies="http://testproxy.mem0.net:8000",
@@ -26,7 +26,7 @@ def test_azure_openai_embedder_with_http_client(monkeypatch):
             http_client=mock_http_client_instance,
             http_async_client=None,
         )
-        mock_http_client.assert_called_once_with(proxies="http://testproxy.mem0.net:8000")
+        mock_http_client.assert_called_once_with(proxy="http://testproxy.mem0.net:8000")
 
 
 def test_azure_openai_embedder_with_http_async_client(monkeypatch):
@@ -35,8 +35,8 @@ def test_azure_openai_embedder_with_http_async_client(monkeypatch):
     mock_http_async_client.return_value = mock_http_async_client_instance
 
     with patch("embedchain.embedder.azure_openai.AzureOpenAIEmbeddings") as mock_embeddings, patch(
-        "httpx.AsyncClient", new=mock_http_async_client
-    ) as mock_http_async_client:
+        "embedchain.config.embedder.base.httpx.AsyncClient", mock_http_async_client
+    ):
         config = BaseEmbedderConfig(
             deployment_name="text-embedding-ada-002",
             http_async_client_proxies={"http://": "http://testproxy.mem0.net:8000"},
@@ -49,4 +49,4 @@ def test_azure_openai_embedder_with_http_async_client(monkeypatch):
             http_client=None,
             http_async_client=mock_http_async_client_instance,
         )
-        mock_http_async_client.assert_called_once_with(proxies={"http://": "http://testproxy.mem0.net:8000"})
+        mock_http_async_client.assert_called_once_with(proxy={"http://": "http://testproxy.mem0.net:8000"})

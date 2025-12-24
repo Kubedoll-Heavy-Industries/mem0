@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional
+from typing import Optional
 
 from mem0.configs.llms.base import BaseLlmConfig
 from mem0.llms.base import LLMBase
@@ -22,7 +22,7 @@ class LangchainLLM(LLMBase):
 
         self.langchain_model = self.config.model
 
-    def _parse_response(self, response: AIMessage, tools: Optional[List[Dict]]):
+    def _parse_response(self, response: AIMessage, tools: Optional[list[dict]]):
         """
         Process the response based on whether tools are used or not.
 
@@ -53,9 +53,9 @@ class LangchainLLM(LLMBase):
 
     def generate_response(
         self,
-        messages: List[Dict[str, str]],
+        messages: list[dict[str, str]],
         response_format=None,
-        tools: Optional[List[Dict]] = None,
+        tools: Optional[list[dict]] = None,
         tool_choice: str = "auto",
     ):
         """

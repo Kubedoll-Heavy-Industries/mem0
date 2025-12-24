@@ -34,7 +34,7 @@ class AWSBedrockEmbedding(EmbeddingBase):
             aws_access_key = self.config.aws_access_key_id
         if hasattr(self.config, "aws_secret_access_key"):
             aws_secret_key = self.config.aws_secret_access_key
-        
+
         # AWS region is always set in config - see BaseEmbedderConfig
         aws_region = self.config.aws_region or "us-west-2"
 
@@ -78,10 +78,7 @@ class AWSBedrockEmbedding(EmbeddingBase):
 
             response_body = json.loads(response.get("body").read())
 
-            if provider == "cohere":
-                embeddings = response_body.get("embeddings")[0]
-            else:
-                embeddings = response_body.get("embedding")
+            embeddings = response_body.get("embeddings")[0] if provider == "cohere" else response_body.get("embedding")
 
             return embeddings
         except Exception as e:

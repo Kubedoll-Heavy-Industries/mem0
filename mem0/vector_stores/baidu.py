@@ -1,6 +1,6 @@
 import logging
 import time
-from typing import Dict, Optional
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -42,7 +42,7 @@ logger = logging.getLogger(__name__)
 class OutputData(BaseModel):
     id: Optional[str]  # memory id
     score: Optional[float]  # distance
-    payload: Optional[Dict]  # metadata
+    payload: Optional[dict]  # metadata
 
 
 class BaiduDB(VectorStoreBase):
@@ -185,7 +185,7 @@ class BaiduDB(VectorStoreBase):
             row = Row(id=idx, vector=vector, metadata=metadata)
             self._table.upsert(rows=[row])
 
-    def search(self, query: str, vectors: list, limit: int = 5, filters: dict = None) -> list:
+    def search(self, query: str, vectors: list, limit: int = 5, filters: Optional[dict] = None) -> list:
         """
         Search for similar vectors.
 
@@ -313,7 +313,7 @@ class BaiduDB(VectorStoreBase):
         """
         return self._table.stats()
 
-    def list(self, filters: dict = None, limit: int = 100) -> list:
+    def list(self, filters: Optional[dict] = None, limit: int = 100) -> list:
         """
         List all vectors in the table.
 

@@ -12,6 +12,8 @@ try:
 except ImportError:
     raise ImportError("rank_bm25 is not installed. Please install it using pip install rank-bm25")
 
+import contextlib
+
 from mem0.graphs.tools import (
     DELETE_MEMORY_STRUCT_TOOL_GRAPH,
     DELETE_MEMORY_TOOL_GRAPH,
@@ -44,10 +46,8 @@ class MemoryGraph:
 
         if self.config.graph_store.config.base_label:
             # Safely add user_id index
-            try:
+            with contextlib.suppress(Exception):
                 self.graph.query(f"CREATE INDEX entity_single IF NOT EXISTS FOR (n {self.node_label}) ON (n.user_id)")
-            except Exception:
-                pass
             try:  # Safely try to add composite index (Enterprise only)
                 self.graph.query(
                     f"CREATE INDEX entity_composite IF NOT EXISTS FOR (n {self.node_label}) ON (n.name, n.user_id)"
@@ -71,7 +71,7 @@ class MemoryGraph:
         self.llm = LlmFactory.create(self.llm_provider, llm_config)
         self.user_id = None
         # Use threshold from graph_store config, default to 0.7 for backward compatibility
-        self.threshold = self.config.graph_store.threshold if hasattr(self.config.graph_store, 'threshold') else 0.7
+        self.threshold = self.config.graph_store.threshold if hasattr(self.config.graph_store, "threshold") else 0.7
 
     def add(self, data, filters):
         """
@@ -293,7 +293,7 @@ class MemoryGraph:
                 MATCH (n)-[r]->(m {self.node_label} {{{node_props_str}}})
                 RETURN n.name AS source, elementId(n) AS source_id, type(r) AS relationship, elementId(r) AS relation_id, m.name AS destination, elementId(m) AS destination_id
                 UNION
-                WITH n  
+                WITH n
                 MATCH (n)<-[r]-(m {self.node_label} {{{node_props_str}}})
                 RETURN m.name AS source, elementId(m) AS source_id, type(r) AS relationship, elementId(r) AS relation_id, n.name AS destination, elementId(n) AS destination_id
             }}
@@ -397,9 +397,9 @@ class MemoryGraph:
             MATCH (n {self.node_label} {{{source_props_str}}})
             -[r:{relationship}]->
             (m {self.node_label} {{{dest_props_str}}})
-            
+
             DELETE r
-            RETURN 
+            RETURN
                 n.name AS source,
                 m.name AS target,
                 type(r) AS relationship
@@ -436,7 +436,9 @@ class MemoryGraph:
 
             # search for the nodes with the closest embeddings
             source_node_search_result = self._search_source_node(source_embedding, filters, threshold=self.threshold)
-            destination_node_search_result = self._search_destination_node(dest_embedding, filters, threshold=self.threshold)
+            destination_node_search_result = self._search_destination_node(
+                dest_embedding, filters, threshold=self.threshold
+            )
 
             # TODO: Create a cypher query and common params for all the cases
             if not destination_node_search_result and source_node_search_result:
@@ -464,7 +466,7 @@ class MemoryGraph:
                 CALL db.create.setNodeVectorProperty(destination, 'embedding', $destination_embedding)
                 WITH source, destination
                 MERGE (source)-[r:{relationship}]->(destination)
-                ON CREATE SET 
+                ON CREATE SET
                     r.created = timestamp(),
                     r.mentions = 1
                 ON MATCH SET
@@ -508,7 +510,7 @@ class MemoryGraph:
                 CALL db.create.setNodeVectorProperty(source, 'embedding', $source_embedding)
                 WITH source, destination
                 MERGE (source)-[r:{relationship}]->(destination)
-                ON CREATE SET 
+                ON CREATE SET
                     r.created = timestamp(),
                     r.mentions = 1
                 ON MATCH SET
@@ -537,7 +539,7 @@ class MemoryGraph:
                 WHERE elementId(destination) = $destination_id
                 SET destination.mentions = coalesce(destination.mentions, 0) + 1
                 MERGE (source)-[r:{relationship}]->(destination)
-                ON CREATE SET 
+                ON CREATE SET
                     r.created_at = timestamp(),
                     r.updated_at = timestamp(),
                     r.mentions = 1

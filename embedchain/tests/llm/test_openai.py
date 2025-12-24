@@ -203,7 +203,7 @@ def test_get_llm_model_answer_with_http_client_proxies(env_config, mocker):
     mock_http_client_instance = mocker.Mock(spec=httpx.Client)
     mock_http_client.return_value = mock_http_client_instance
 
-    mocker.patch("httpx.Client", new=mock_http_client)
+    mocker.patch("embedchain.config.llm.base.httpx.Client", mock_http_client)
 
     config = BaseLlmConfig(
         temperature=0.7,
@@ -229,7 +229,7 @@ def test_get_llm_model_answer_with_http_client_proxies(env_config, mocker):
         http_client=mock_http_client_instance,
         http_async_client=None,
     )
-    mock_http_client.assert_called_once_with(proxies="http://testproxy.mem0.net:8000")
+    mock_http_client.assert_called_once_with(proxy="http://testproxy.mem0.net:8000")
 
 
 def test_get_llm_model_answer_with_http_async_client_proxies(env_config, mocker):
@@ -238,7 +238,7 @@ def test_get_llm_model_answer_with_http_async_client_proxies(env_config, mocker)
     mock_http_async_client_instance = mocker.Mock(spec=httpx.AsyncClient)
     mock_http_async_client.return_value = mock_http_async_client_instance
 
-    mocker.patch("httpx.AsyncClient", new=mock_http_async_client)
+    mocker.patch("embedchain.config.llm.base.httpx.AsyncClient", mock_http_async_client)
 
     config = BaseLlmConfig(
         temperature=0.7,
@@ -264,4 +264,4 @@ def test_get_llm_model_answer_with_http_async_client_proxies(env_config, mocker)
         http_client=None,
         http_async_client=mock_http_async_client_instance,
     )
-    mock_http_async_client.assert_called_once_with(proxies={"http://": "http://testproxy.mem0.net:8000"})
+    mock_http_async_client.assert_called_once_with(proxy={"http://": "http://testproxy.mem0.net:8000"})

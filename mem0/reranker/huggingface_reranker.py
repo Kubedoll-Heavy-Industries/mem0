@@ -1,13 +1,15 @@
-from typing import List, Dict, Any, Union
+from typing import Any, Optional, Union
+
 import numpy as np
 
-from mem0.reranker.base import BaseReranker
 from mem0.configs.rerankers.base import BaseRerankerConfig
 from mem0.configs.rerankers.huggingface import HuggingFaceRerankerConfig
+from mem0.reranker.base import BaseReranker
 
 try:
-    from transformers import AutoTokenizer, AutoModelForSequenceClassification
     import torch
+    from transformers import AutoModelForSequenceClassification, AutoTokenizer
+
     TRANSFORMERS_AVAILABLE = True
 except ImportError:
     TRANSFORMERS_AVAILABLE = False
@@ -16,7 +18,7 @@ except ImportError:
 class HuggingFaceReranker(BaseReranker):
     """HuggingFace Transformers based reranker implementation."""
 
-    def __init__(self, config: Union[BaseRerankerConfig, HuggingFaceRerankerConfig, Dict]):
+    def __init__(self, config: Union[BaseRerankerConfig, HuggingFaceRerankerConfig, dict]):
         """
         Initialize HuggingFace reranker.
 
@@ -24,7 +26,9 @@ class HuggingFaceReranker(BaseReranker):
             config: Configuration object with reranker parameters
         """
         if not TRANSFORMERS_AVAILABLE:
-            raise ImportError("transformers package is required for HuggingFaceReranker. Install with: pip install transformers torch")
+            raise ImportError(
+                "transformers package is required for HuggingFaceReranker. Install with: pip install transformers torch"
+            )
 
         # Convert to HuggingFaceRerankerConfig if needed
         if isinstance(config, dict):
@@ -32,10 +36,10 @@ class HuggingFaceReranker(BaseReranker):
         elif isinstance(config, BaseRerankerConfig) and not isinstance(config, HuggingFaceRerankerConfig):
             # Convert BaseRerankerConfig to HuggingFaceRerankerConfig with defaults
             config = HuggingFaceRerankerConfig(
-                provider=getattr(config, 'provider', 'huggingface'),
-                model=getattr(config, 'model', 'BAAI/bge-reranker-base'),
-                api_key=getattr(config, 'api_key', None),
-                top_k=getattr(config, 'top_k', None),
+                provider=getattr(config, "provider", "huggingface"),
+                model=getattr(config, "model", "BAAI/bge-reranker-base"),
+                api_key=getattr(config, "api_key", None),
+                top_k=getattr(config, "top_k", None),
                 device=None,  # Will auto-detect
                 batch_size=32,  # Default
                 max_length=512,  # Default
@@ -56,7 +60,7 @@ class HuggingFaceReranker(BaseReranker):
         self.model.to(self.device)
         self.model.eval()
 
-    def rerank(self, query: str, documents: List[Dict[str, Any]], top_k: int = None) -> List[Dict[str, Any]]:
+    def rerank(self, query: str, documents: list[dict[str, Any]], top_k: Optional[int] = None) -> list[dict[str, Any]]:
         """
         Rerank documents using HuggingFace cross-encoder model.
 
@@ -74,12 +78,12 @@ class HuggingFaceReranker(BaseReranker):
         # Extract text content for reranking
         doc_texts = []
         for doc in documents:
-            if 'memory' in doc:
-                doc_texts.append(doc['memory'])
-            elif 'text' in doc:
-                doc_texts.append(doc['text'])
-            elif 'content' in doc:
-                doc_texts.append(doc['content'])
+            if "memory" in doc:
+                doc_texts.append(doc["memory"])
+            elif "text" in doc:
+                doc_texts.append(doc["text"])
+            elif "content" in doc:
+                doc_texts.append(doc["content"])
             else:
                 doc_texts.append(str(doc))
 
@@ -88,16 +92,12 @@ class HuggingFaceReranker(BaseReranker):
 
             # Process documents in batches
             for i in range(0, len(doc_texts), self.config.batch_size):
-                batch_docs = doc_texts[i:i + self.config.batch_size]
+                batch_docs = doc_texts[i : i + self.config.batch_size]
                 batch_pairs = [[query, doc] for doc in batch_docs]
 
                 # Tokenize batch
                 inputs = self.tokenizer(
-                    batch_pairs,
-                    padding=True,
-                    truncation=True,
-                    max_length=self.config.max_length,
-                    return_tensors="pt"
+                    batch_pairs, padding=True, truncation=True, max_length=self.config.max_length, return_tensors="pt"
                 ).to(self.device)
 
                 # Get scores
@@ -106,10 +106,7 @@ class HuggingFaceReranker(BaseReranker):
                     batch_scores = outputs.logits.squeeze(-1).cpu().numpy()
 
                     # Handle single item case
-                    if batch_scores.ndim == 0:
-                        batch_scores = [float(batch_scores)]
-                    else:
-                        batch_scores = batch_scores.tolist()
+                    batch_scores = [float(batch_scores)] if batch_scores.ndim == 0 else batch_scores.tolist()
 
                     scores.extend(batch_scores)
 
@@ -134,7 +131,7 @@ class HuggingFaceReranker(BaseReranker):
             reranked_docs = []
             for doc, score in doc_score_pairs:
                 reranked_doc = doc.copy()
-                reranked_doc['rerank_score'] = float(score)
+                reranked_doc["rerank_score"] = float(score)
                 reranked_docs.append(reranked_doc)
 
             return reranked_docs
@@ -142,6 +139,6 @@ class HuggingFaceReranker(BaseReranker):
         except Exception:
             # Fallback to original order if reranking fails
             for doc in documents:
-                doc['rerank_score'] = 0.0
+                doc["rerank_score"] = 0.0
             final_top_k = top_k or self.config.top_k
             return documents[:final_top_k] if final_top_k else documents

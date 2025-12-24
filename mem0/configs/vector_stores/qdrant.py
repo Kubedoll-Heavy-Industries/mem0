@@ -1,4 +1,4 @@
-from typing import Any, ClassVar, Dict, Optional
+from typing import Any, ClassVar, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -20,7 +20,7 @@ class QdrantConfig(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def check_host_port_or_path(cls, values: Dict[str, Any]) -> Dict[str, Any]:
+    def check_host_port_or_path(cls, values: dict[str, Any]) -> dict[str, Any]:
         host, port, path, url, api_key = (
             values.get("host"),
             values.get("port"),
@@ -34,7 +34,7 @@ class QdrantConfig(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def validate_extra_fields(cls, values: Dict[str, Any]) -> Dict[str, Any]:
+    def validate_extra_fields(cls, values: dict[str, Any]) -> dict[str, Any]:
         allowed_fields = set(cls.model_fields.keys())
         input_fields = set(values.keys())
         extra_fields = input_fields - allowed_fields

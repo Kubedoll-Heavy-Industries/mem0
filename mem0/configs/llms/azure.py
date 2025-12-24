@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 from mem0.configs.base import AzureConfig
 from mem0.configs.llms.base import BaseLlmConfig
@@ -23,7 +23,7 @@ class AzureOpenAIConfig(BaseLlmConfig):
         vision_details: Optional[str] = "auto",
         http_client_proxies: Optional[dict] = None,
         # Azure OpenAI-specific parameters
-        azure_kwargs: Optional[Dict[str, Any]] = None,
+        azure_kwargs: Optional[dict[str, Any]] = None,
     ):
         """
         Initialize Azure OpenAI configuration.

@@ -167,7 +167,7 @@ def test_initialization(mock_clients):
 
 def test_initialization_with_compression_types(mock_clients):
     """Test initialization with different compression types."""
-    mock_search_client, mock_index_client, _ = mock_clients
+    _mock_search_client, mock_index_client, _ = mock_clients
 
     # Test with scalar compression
     instance = AzureAISearch(
@@ -225,7 +225,7 @@ def test_initialization_with_compression_types(mock_clients):
 
 def test_initialization_with_float_precision(mock_clients):
     """Test initialization with different float precision settings."""
-    mock_search_client, mock_index_client, _ = mock_clients
+    _mock_search_client, mock_index_client, _ = mock_clients
 
     # Test with half precision (float16)
     instance = AzureAISearch(
@@ -269,7 +269,7 @@ def test_initialization_with_float_precision(mock_clients):
 
 def test_create_col(azure_ai_search_instance):
     """Test the create_col method creates an index with the correct configuration."""
-    instance, _, mock_index_client = azure_ai_search_instance
+    _instance, _, mock_index_client = azure_ai_search_instance
 
     # create_col is called during initialization, so we check the call that was already made
     mock_index_client.create_or_update_index.assert_called_once()
@@ -314,7 +314,7 @@ def test_create_col(azure_ai_search_instance):
 
 def test_create_col_scalar_compression(mock_clients):
     """Test creating a collection with scalar compression."""
-    mock_search_client, mock_index_client, _ = mock_clients
+    _mock_search_client, mock_index_client, _ = mock_clients
 
     AzureAISearch(
         service_name="test-service",
@@ -339,7 +339,7 @@ def test_create_col_scalar_compression(mock_clients):
 
 def test_create_col_no_compression(mock_clients):
     """Test creating a collection with no compression."""
-    mock_search_client, mock_index_client, _ = mock_clients
+    _mock_search_client, mock_index_client, _ = mock_clients
 
     AzureAISearch(
         service_name="test-service",
@@ -542,7 +542,7 @@ def test_search_basic(azure_ai_search_instance):
     # Check parameters
     assert len(kwargs["vector_queries"]) == 1
     assert kwargs["vector_queries"][0].vector == query_vector
-    assert kwargs["vector_queries"][0].k_nearest_neighbors == 5
+    assert kwargs["vector_queries"][0].k == 5
     assert kwargs["vector_queries"][0].fields == "vector"
     assert kwargs["filter"] is None  # No filters
     assert kwargs["top"] == 5
@@ -592,7 +592,7 @@ def test_init_with_valid_api_key(mock_clients):
 
 def test_init_with_default_api_key_triggers_default_credential(monkeypatch, mock_clients):
     """Test __init__ uses DefaultAzureCredential if api_key is None or placeholder."""
-    mock_search_client, mock_index_client, mock_azure_key_credential = mock_clients
+    _mock_search_client, _mock_index_client, _mock_azure_key_credential = mock_clients
 
     # Patch DefaultAzureCredential to a mock so we can check if it's called
     with patch("mem0.vector_stores.azure_ai_search.DefaultAzureCredential") as mock_default_cred:
@@ -624,7 +624,7 @@ def test_init_with_default_api_key_triggers_default_credential(monkeypatch, mock
 
 def test_init_sets_compression_type_to_none_if_unspecified(mock_clients):
     """Test __init__ sets compression_type to 'none' if not specified."""
-    mock_search_client, mock_index_client, _ = mock_clients
+    _mock_search_client, _mock_index_client, _ = mock_clients
 
     instance = AzureAISearch(
         service_name="test-service",
@@ -637,7 +637,7 @@ def test_init_sets_compression_type_to_none_if_unspecified(mock_clients):
 
 def test_init_does_not_create_col_if_collection_exists(mock_clients):
     """Test __init__ does not call create_col if collection already exists."""
-    mock_search_client, mock_index_client, _ = mock_clients
+    _mock_search_client, mock_index_client, _ = mock_clients
     # Simulate collection already exists
     mock_index_client.list_index_names.return_value = ["test-index"]
 
@@ -653,7 +653,7 @@ def test_init_does_not_create_col_if_collection_exists(mock_clients):
 
 def test_init_calls_create_col_if_collection_missing(mock_clients):
     """Test __init__ calls create_col if collection does not exist."""
-    mock_search_client, mock_index_client, _ = mock_clients
+    _mock_search_client, mock_index_client, _ = mock_clients
     # Simulate collection does not exist
     mock_index_client.list_index_names.return_value = []
 

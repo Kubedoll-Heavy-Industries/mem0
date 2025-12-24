@@ -1,7 +1,7 @@
 import json
 import logging
 import re
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Optional, Union
 
 try:
     import boto3
@@ -9,16 +9,30 @@ try:
 except ImportError:
     raise ImportError("The 'boto3' library is required. Please install it using 'pip install boto3'.")
 
-from mem0.configs.llms.base import BaseLlmConfig
 from mem0.configs.llms.aws_bedrock import AWSBedrockConfig
+from mem0.configs.llms.base import BaseLlmConfig
 from mem0.llms.base import LLMBase
 from mem0.memory.utils import extract_json
 
 logger = logging.getLogger(__name__)
 
 PROVIDERS = [
-    "ai21", "amazon", "anthropic", "cohere", "meta", "mistral", "stability", "writer", 
-    "deepseek", "gpt-oss", "perplexity", "snowflake", "titan", "command", "j2", "llama"
+    "ai21",
+    "amazon",
+    "anthropic",
+    "cohere",
+    "meta",
+    "mistral",
+    "stability",
+    "writer",
+    "deepseek",
+    "gpt-oss",
+    "perplexity",
+    "snowflake",
+    "titan",
+    "command",
+    "j2",
+    "llama",
 ]
 
 
@@ -37,7 +51,7 @@ class AWSBedrockLLM(LLMBase):
     Supports all available Bedrock models with automatic provider detection.
     """
 
-    def __init__(self, config: Optional[Union[AWSBedrockConfig, BaseLlmConfig, Dict]] = None):
+    def __init__(self, config: Optional[Union[AWSBedrockConfig, BaseLlmConfig, dict]] = None):
         """
         Initialize AWS Bedrock LLM.
 
@@ -137,7 +151,7 @@ class AWSBedrockLLM(LLMBase):
         else:
             self._format_messages = self._format_messages_generic
 
-    def _format_messages_anthropic(self, messages: List[Dict[str, str]]) -> tuple[List[Dict[str, Any]], Optional[str]]:
+    def _format_messages_anthropic(self, messages: list[dict[str, str]]) -> tuple[list[dict[str, Any]], Optional[str]]:
         """Format messages for Anthropic models."""
         formatted_messages = []
         system_message = None
@@ -159,7 +173,7 @@ class AWSBedrockLLM(LLMBase):
 
         return formatted_messages, system_message
 
-    def _format_messages_cohere(self, messages: List[Dict[str, str]]) -> str:
+    def _format_messages_cohere(self, messages: list[dict[str, str]]) -> str:
         """Format messages for Cohere models."""
         formatted_messages = []
 
@@ -170,14 +184,14 @@ class AWSBedrockLLM(LLMBase):
 
         return "\n".join(formatted_messages)
 
-    def _format_messages_amazon(self, messages: List[Dict[str, str]]) -> List[Dict[str, Any]]:
+    def _format_messages_amazon(self, messages: list[dict[str, str]]) -> list[dict[str, Any]]:
         """Format messages for Amazon models (including Nova)."""
         formatted_messages = []
-        
+
         for message in messages:
             role = message["role"]
             content = message["content"]
-            
+
             if role == "system":
                 # Amazon models support system messages
                 formatted_messages.append({"role": "system", "content": content})
@@ -185,28 +199,28 @@ class AWSBedrockLLM(LLMBase):
                 formatted_messages.append({"role": "user", "content": content})
             elif role == "assistant":
                 formatted_messages.append({"role": "assistant", "content": content})
-        
+
         return formatted_messages
 
-    def _format_messages_meta(self, messages: List[Dict[str, str]]) -> str:
+    def _format_messages_meta(self, messages: list[dict[str, str]]) -> str:
         """Format messages for Meta models."""
         formatted_messages = []
-        
+
         for message in messages:
             role = message["role"].capitalize()
             content = message["content"]
             formatted_messages.append(f"{role}: {content}")
-        
+
         return "\n".join(formatted_messages)
 
-    def _format_messages_mistral(self, messages: List[Dict[str, str]]) -> List[Dict[str, Any]]:
+    def _format_messages_mistral(self, messages: list[dict[str, str]]) -> list[dict[str, Any]]:
         """Format messages for Mistral models."""
         formatted_messages = []
-        
+
         for message in messages:
             role = message["role"]
             content = message["content"]
-            
+
             if role == "system":
                 # Mistral supports system messages
                 formatted_messages.append({"role": "system", "content": content})
@@ -214,10 +228,10 @@ class AWSBedrockLLM(LLMBase):
                 formatted_messages.append({"role": "user", "content": content})
             elif role == "assistant":
                 formatted_messages.append({"role": "assistant", "content": content})
-        
+
         return formatted_messages
 
-    def _format_messages_generic(self, messages: List[Dict[str, str]]) -> str:
+    def _format_messages_generic(self, messages: list[dict[str, str]]) -> str:
         """Generic message formatting for other providers."""
         formatted_messages = []
 
@@ -228,7 +242,7 @@ class AWSBedrockLLM(LLMBase):
 
         return "\n\nHuman: " + "".join(formatted_messages) + "\n\nAssistant:"
 
-    def _prepare_input(self, prompt: str) -> Dict[str, Any]:
+    def _prepare_input(self, prompt: str) -> dict[str, Any]:
         """
         Prepare input for the current provider's model.
 
@@ -312,7 +326,7 @@ class AWSBedrockLLM(LLMBase):
 
         return input_body
 
-    def _convert_tool_format(self, original_tools: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def _convert_tool_format(self, original_tools: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """
         Convert tools to Bedrock-compatible format.
 
@@ -350,8 +364,8 @@ class AWSBedrockLLM(LLMBase):
         return new_tools
 
     def _parse_response(
-        self, response: Dict[str, Any], tools: Optional[List[Dict]] = None
-    ) -> Union[str, Dict[str, Any]]:
+        self, response: dict[str, Any], tools: Optional[list[dict]] = None
+    ) -> Union[str, dict[str, Any]]:
         """
         Parse response from Bedrock API.
 
@@ -423,13 +437,13 @@ class AWSBedrockLLM(LLMBase):
 
     def generate_response(
         self,
-        messages: List[Dict[str, str]],
+        messages: list[dict[str, str]],
         response_format: Optional[str] = None,
-        tools: Optional[List[Dict]] = None,
+        tools: Optional[list[dict]] = None,
         tool_choice: str = "auto",
         stream: bool = False,
         **kwargs,
-    ) -> Union[str, Dict[str, Any]]:
+    ) -> Union[str, dict[str, Any]]:
         """
         Generate response using AWS Bedrock.
 
@@ -457,7 +471,7 @@ class AWSBedrockLLM(LLMBase):
             raise RuntimeError(f"Failed to generate response: {e}")
 
     @staticmethod
-    def _convert_tools_to_converse_format(tools: List[Dict]) -> List[Dict]:
+    def _convert_tools_to_converse_format(tools: list[dict]) -> list[dict]:
         """Convert OpenAI-style tools to Converse API format."""
         if not tools:
             return []
@@ -470,16 +484,16 @@ class AWSBedrockLLM(LLMBase):
                     "toolSpec": {
                         "name": func["name"],
                         "description": func.get("description", ""),
-                        "inputSchema": {
-                            "json": func.get("parameters", {})
-                        }
+                        "inputSchema": {"json": func.get("parameters", {})},
                     }
                 }
                 converse_tools.append(converse_tool)
 
         return converse_tools
 
-    def _generate_with_tools(self, messages: List[Dict[str, str]], tools: List[Dict], stream: bool = False) -> Dict[str, Any]:
+    def _generate_with_tools(
+        self, messages: list[dict[str, str]], tools: list[dict], stream: bool = False
+    ) -> dict[str, Any]:
         """Generate response with tool calling support using correct message format."""
         # Format messages for tool-enabled models
         system_message = None
@@ -505,7 +519,7 @@ class AWSBedrockLLM(LLMBase):
                 "maxTokens": self.model_config.get("max_tokens", 2000),
                 "temperature": self.model_config.get("temperature", 0.1),
                 "topP": self.model_config.get("top_p", 0.9),
-            }
+            },
         }
 
         # Add system message if present (for Anthropic)
@@ -521,7 +535,7 @@ class AWSBedrockLLM(LLMBase):
 
         return self._parse_response(response, tools)
 
-    def _generate_standard(self, messages: List[Dict[str, str]], stream: bool = False) -> str:
+    def _generate_standard(self, messages: list[dict[str, str]], stream: bool = False) -> str:
         """Generate standard text response using Converse API for Anthropic models."""
         # For Anthropic models, always use Converse API
         if self.provider == "anthropic":
@@ -535,7 +549,7 @@ class AWSBedrockLLM(LLMBase):
                     "maxTokens": self.model_config.get("max_tokens", 2000),
                     "temperature": self.model_config.get("temperature", 0.1),
                     "topP": self.model_config.get("top_p", 0.9),
-                }
+                },
             }
 
             # Add system message if present
@@ -546,10 +560,10 @@ class AWSBedrockLLM(LLMBase):
             response = self.client.converse(**converse_params)
 
             # Parse Converse API response
-            if hasattr(response, 'output') and hasattr(response.output, 'message'):
+            if hasattr(response, "output") and hasattr(response.output, "message"):
                 return response.output.message.content[0].text
-            elif 'output' in response and 'message' in response['output']:
-                return response['output']['message']['content'][0]['text']
+            elif "output" in response and "message" in response["output"]:
+                return response["output"]["message"]["content"][0]["text"]
             else:
                 return str(response)
 
@@ -562,7 +576,7 @@ class AWSBedrockLLM(LLMBase):
                 "temperature": self.model_config.get("temperature", 0.1),
                 "top_p": self.model_config.get("top_p", 0.9),
             }
-            
+
             # Use converse API for Nova models
             response = self.client.converse(
                 modelId=self.config.model,
@@ -571,9 +585,9 @@ class AWSBedrockLLM(LLMBase):
                     "maxTokens": input_body["max_tokens"],
                     "temperature": input_body["temperature"],
                     "topP": input_body["top_p"],
-                }
+                },
             )
-            
+
             return self._parse_response(response)
         else:
             # For other providers and legacy Amazon models (like Titan)
@@ -597,7 +611,7 @@ class AWSBedrockLLM(LLMBase):
 
             return self._parse_response(response)
 
-    def list_available_models(self) -> List[Dict[str, Any]]:
+    def list_available_models(self) -> list[dict[str, Any]]:
         """List all available models in the current region."""
         try:
             bedrock_client = boto3.client("bedrock", **self.config.get_aws_config())
@@ -627,7 +641,7 @@ class AWSBedrockLLM(LLMBase):
             logger.warning(f"Could not list models: {e}")
             return []
 
-    def get_model_capabilities(self) -> Dict[str, Any]:
+    def get_model_capabilities(self) -> dict[str, Any]:
         """Get capabilities of the current model."""
         return {
             "model_id": self.config.model,
@@ -647,9 +661,7 @@ class AWSBedrockLLM(LLMBase):
                 # Test Nova model with converse API
                 test_messages = [{"role": "user", "content": "test"}]
                 self.client.converse(
-                    modelId=self.config.model,
-                    messages=test_messages,
-                    inferenceConfig={"maxTokens": 10}
+                    modelId=self.config.model, messages=test_messages, inferenceConfig={"maxTokens": 10}
                 )
             else:
                 # Test other models with invoke_model

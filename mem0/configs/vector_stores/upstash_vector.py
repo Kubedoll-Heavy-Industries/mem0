@@ -1,5 +1,5 @@
 import os
-from typing import Any, ClassVar, Dict, Optional
+from typing import Any, ClassVar, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -22,7 +22,7 @@ class UpstashVectorConfig(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def check_credentials_or_client(cls, values: Dict[str, Any]) -> Dict[str, Any]:
+    def check_credentials_or_client(cls, values: dict[str, Any]) -> dict[str, Any]:
         client = values.get("client")
         url = values.get("url") or os.environ.get("UPSTASH_VECTOR_REST_URL")
         token = values.get("token") or os.environ.get("UPSTASH_VECTOR_REST_TOKEN")

@@ -2,19 +2,18 @@ import logging
 import os
 import pickle
 import uuid
+import warnings
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Optional
 
 import numpy as np
 from pydantic import BaseModel
-
-import warnings
 
 try:
     # Suppress SWIG deprecation warnings from FAISS
     warnings.filterwarnings("ignore", category=DeprecationWarning, message=".*SwigPy.*")
     warnings.filterwarnings("ignore", category=DeprecationWarning, message=".*swigvarlink.*")
-    
+
     logging.getLogger("faiss").setLevel(logging.WARNING)
     logging.getLogger("faiss.loader").setLevel(logging.WARNING)
 
@@ -34,7 +33,7 @@ logger = logging.getLogger(__name__)
 class OutputData(BaseModel):
     id: Optional[str]  # memory id
     score: Optional[float]  # distance
-    payload: Optional[Dict]  # metadata
+    payload: Optional[dict]  # metadata
 
 
 class FAISS(VectorStoreBase):
@@ -115,7 +114,7 @@ class FAISS(VectorStoreBase):
         except Exception as e:
             logger.warning(f"Failed to save FAISS index: {e}")
 
-    def _parse_output(self, scores, ids, limit=None) -> List[OutputData]:
+    def _parse_output(self, scores, ids, limit=None) -> list[OutputData]:
         """
         Parse the output data.
 
@@ -156,7 +155,7 @@ class FAISS(VectorStoreBase):
 
         return results
 
-    def create_col(self, name: str, distance: str = None):
+    def create_col(self, name: str, distance: Optional[str] = None):
         """
         Create a new collection.
 
@@ -184,9 +183,9 @@ class FAISS(VectorStoreBase):
 
     def insert(
         self,
-        vectors: List[list],
-        payloads: Optional[List[Dict]] = None,
-        ids: Optional[List[str]] = None,
+        vectors: list[list],
+        payloads: Optional[list[dict]] = None,
+        ids: Optional[list[str]] = None,
     ):
         """
         Insert vectors into a collection.
@@ -225,8 +224,8 @@ class FAISS(VectorStoreBase):
         logger.info(f"Inserted {len(vectors)} vectors into collection {self.collection_name}")
 
     def search(
-        self, query: str, vectors: List[list], limit: int = 5, filters: Optional[Dict] = None
-    ) -> List[OutputData]:
+        self, query: str, vectors: list[list], limit: int = 5, filters: Optional[dict] = None
+    ) -> list[OutputData]:
         """
         Search for similar vectors.
 
@@ -266,7 +265,7 @@ class FAISS(VectorStoreBase):
 
         return results
 
-    def _apply_filters(self, payload: Dict, filters: Dict) -> bool:
+    def _apply_filters(self, payload: dict, filters: dict) -> bool:
         """
         Apply filters to a payload.
 
@@ -321,8 +320,8 @@ class FAISS(VectorStoreBase):
     def update(
         self,
         vector_id: str,
-        vector: Optional[List[float]] = None,
-        payload: Optional[Dict] = None,
+        vector: Optional[list[float]] = None,
+        payload: Optional[dict] = None,
     ):
         """
         Update a vector and its payload.
@@ -376,7 +375,7 @@ class FAISS(VectorStoreBase):
             payload=payload,
         )
 
-    def list_cols(self) -> List[str]:
+    def list_cols(self) -> list[str]:
         """
         List all collections.
 
@@ -418,7 +417,7 @@ class FAISS(VectorStoreBase):
         self.docstore = {}
         self.index_to_id = {}
 
-    def col_info(self) -> Dict:
+    def col_info(self) -> dict:
         """
         Get information about a collection.
 
@@ -435,7 +434,7 @@ class FAISS(VectorStoreBase):
             "distance": self.distance_strategy,
         }
 
-    def list(self, filters: Optional[Dict] = None, limit: int = 100) -> List[OutputData]:
+    def list(self, filters: Optional[dict] = None, limit: int = 100) -> list[OutputData]:
         """
         List all vectors in a collection.
 

@@ -1,10 +1,10 @@
 import os
-import uuid
-import httpx
 import unittest
+import uuid
 from unittest.mock import MagicMock, patch
 
 import dotenv
+import httpx
 import weaviate
 from weaviate.exceptions import UnexpectedStatusCodeException
 

@@ -10,9 +10,7 @@ if isinstance(MEM0_TELEMETRY, str):
 
 
 def use_telemetry():
-    if os.getenv("MEM0_TELEMETRY", "true").lower() == "true":
-        return True
-    return False
+    return os.getenv("MEM0_TELEMETRY", "true").lower() == "true"
 
 
 @pytest.fixture(autouse=True)

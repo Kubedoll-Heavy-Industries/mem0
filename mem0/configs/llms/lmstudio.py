@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 from mem0.configs.llms.base import BaseLlmConfig
 
@@ -23,7 +23,7 @@ class LMStudioConfig(BaseLlmConfig):
         http_client_proxies: Optional[dict] = None,
         # LM Studio-specific parameters
         lmstudio_base_url: Optional[str] = None,
-        lmstudio_response_format: Optional[Dict[str, Any]] = None,
+        lmstudio_response_format: Optional[dict[str, Any]] = None,
     ):
         """
         Initialize LM Studio configuration.

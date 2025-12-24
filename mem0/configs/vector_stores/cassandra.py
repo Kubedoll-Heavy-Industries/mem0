@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 from pydantic import BaseModel, Field, model_validator
 
@@ -6,9 +6,8 @@ from pydantic import BaseModel, Field, model_validator
 class CassandraConfig(BaseModel):
     """Configuration for Apache Cassandra vector database."""
 
-    contact_points: List[str] = Field(
-        ...,
-        description="List of contact point addresses (e.g., ['127.0.0.1', '127.0.0.2'])"
+    contact_points: list[str] = Field(
+        ..., description="List of contact point addresses (e.g., ['127.0.0.1', '127.0.0.2'])"
     )
     port: int = Field(9042, description="Cassandra port")
     username: Optional[str] = Field(None, description="Database username")
@@ -17,48 +16,40 @@ class CassandraConfig(BaseModel):
     collection_name: str = Field("memories", description="Table name")
     embedding_model_dims: int = Field(1536, description="Dimensions of the embedding model")
     secure_connect_bundle: Optional[str] = Field(
-        None,
-        description="Path to secure connect bundle for DataStax Astra DB"
+        None, description="Path to secure connect bundle for DataStax Astra DB"
     )
     protocol_version: int = Field(4, description="CQL protocol version")
-    load_balancing_policy: Optional[Any] = Field(
-        None,
-        description="Custom load balancing policy object"
-    )
+    load_balancing_policy: Optional[Any] = Field(None, description="Custom load balancing policy object")
 
     @model_validator(mode="before")
     @classmethod
-    def check_auth(cls, values: Dict[str, Any]) -> Dict[str, Any]:
+    def check_auth(cls, values: dict[str, Any]) -> dict[str, Any]:
         """Validate authentication parameters."""
         username = values.get("username")
         password = values.get("password")
 
         # Both username and password must be provided together or not at all
         if (username and not password) or (password and not username):
-            raise ValueError(
-                "Both 'username' and 'password' must be provided together for authentication"
-            )
+            raise ValueError("Both 'username' and 'password' must be provided together for authentication")
 
         return values
 
     @model_validator(mode="before")
     @classmethod
-    def check_connection_config(cls, values: Dict[str, Any]) -> Dict[str, Any]:
+    def check_connection_config(cls, values: dict[str, Any]) -> dict[str, Any]:
         """Validate connection configuration."""
         secure_connect_bundle = values.get("secure_connect_bundle")
         contact_points = values.get("contact_points")
 
         # Either secure_connect_bundle or contact_points must be provided
         if not secure_connect_bundle and not contact_points:
-            raise ValueError(
-                "Either 'contact_points' or 'secure_connect_bundle' must be provided"
-            )
+            raise ValueError("Either 'contact_points' or 'secure_connect_bundle' must be provided")
 
         return values
 
     @model_validator(mode="before")
     @classmethod
-    def validate_extra_fields(cls, values: Dict[str, Any]) -> Dict[str, Any]:
+    def validate_extra_fields(cls, values: dict[str, Any]) -> dict[str, Any]:
         """Validate that no extra fields are provided."""
         allowed_fields = set(cls.model_fields.keys())
         input_fields = set(values.keys())
@@ -74,4 +65,3 @@ class CassandraConfig(BaseModel):
 
     class Config:
         arbitrary_types_allowed = True
-

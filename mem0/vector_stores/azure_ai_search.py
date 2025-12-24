@@ -1,7 +1,7 @@
 import json
 import logging
 import re
-from typing import List, Optional
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -105,10 +105,7 @@ class AzureAISearch(VectorStoreBase):
     def create_col(self):
         """Create a new index in Azure AI Search."""
         # Determine vector type based on use_float16 setting.
-        if self.use_float16:
-            vector_type = "Collection(Edm.Half)"
-        else:
-            vector_type = "Collection(Edm.Single)"
+        vector_type = "Collection(Edm.Half)" if self.use_float16 else "Collection(Edm.Single)"
 
         # Configure compression settings based on the specified compression_type.
         compression_configurations = []
@@ -222,7 +219,7 @@ class AzureAISearch(VectorStoreBase):
         if filters:
             filter_expression = self._build_filter_expression(filters)
 
-        vector_query = VectorizedQuery(vector=vectors, k_nearest_neighbors=limit, fields="vector")
+        vector_query = VectorizedQuery(vector=vectors, k=limit, fields="vector")
         if self.hybrid_search:
             search_results = self.search_client.search(
                 search_text=query,
@@ -300,7 +297,7 @@ class AzureAISearch(VectorStoreBase):
         payload = json.loads(extract_json(result["payload"]))
         return OutputData(id=result["id"], score=None, payload=payload)
 
-    def list_cols(self) -> List[str]:
+    def list_cols(self) -> list[str]:
         """
         List all collections (indexes).
 

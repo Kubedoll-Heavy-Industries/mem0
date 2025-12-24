@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 try:
     from elasticsearch import Elasticsearch
@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 class OutputData(BaseModel):
     id: str
     score: float
-    payload: Dict
+    payload: dict
 
 
 class ElasticsearchDB(VectorStoreBase):
@@ -31,14 +31,14 @@ class ElasticsearchDB(VectorStoreBase):
                 cloud_id=config.cloud_id,
                 api_key=config.api_key,
                 verify_certs=config.verify_certs,
-                headers= config.headers or {},
+                headers=config.headers or {},
             )
         else:
             self.client = Elasticsearch(
                 hosts=[f"{config.host}" if config.port is None else f"{config.host}:{config.port}"],
                 basic_auth=(config.user, config.password) if (config.user and config.password) else None,
                 verify_certs=config.verify_certs,
-                headers= config.headers or {},
+                headers=config.headers or {},
             )
 
         self.collection_name = config.collection_name
@@ -94,8 +94,8 @@ class ElasticsearchDB(VectorStoreBase):
             logger.info(f"Created index {name}")
 
     def insert(
-        self, vectors: List[List[float]], payloads: Optional[List[Dict]] = None, ids: Optional[List[str]] = None
-    ) -> List[OutputData]:
+        self, vectors: list[list[float]], payloads: Optional[list[dict]] = None, ids: Optional[list[str]] = None
+    ) -> list[OutputData]:
         """Insert vectors into the index."""
         if not ids:
             ids = [str(i) for i in range(len(vectors))]
@@ -129,8 +129,8 @@ class ElasticsearchDB(VectorStoreBase):
         return results
 
     def search(
-        self, query: str, vectors: List[float], limit: int = 5, filters: Optional[Dict] = None
-    ) -> List[OutputData]:
+        self, query: str, vectors: list[float], limit: int = 5, filters: Optional[dict] = None
+    ) -> list[OutputData]:
         """
         Search with two options:
         1. Use custom search query if provided
@@ -162,7 +162,7 @@ class ElasticsearchDB(VectorStoreBase):
         """Delete a vector by ID."""
         self.client.delete(index=self.collection_name, id=vector_id)
 
-    def update(self, vector_id: str, vector: Optional[List[float]] = None, payload: Optional[Dict] = None) -> None:
+    def update(self, vector_id: str, vector: Optional[list[float]] = None, payload: Optional[dict] = None) -> None:
         """Update a vector and its payload."""
         doc = {}
         if vector is not None:
@@ -191,7 +191,7 @@ class ElasticsearchDB(VectorStoreBase):
             logger.error(f"Unexpected error while parsing Elasticsearch response: {e}")
             return None
 
-    def list_cols(self) -> List[str]:
+    def list_cols(self) -> list[str]:
         """List all collections (indices)."""
         return list(self.client.indices.get_alias().keys())
 
@@ -203,9 +203,9 @@ class ElasticsearchDB(VectorStoreBase):
         """Get information about a collection (index)."""
         return self.client.indices.get(index=name)
 
-    def list(self, filters: Optional[Dict] = None, limit: Optional[int] = None) -> List[List[OutputData]]:
+    def list(self, filters: Optional[dict] = None, limit: Optional[int] = None) -> list[list[OutputData]]:
         """List all memories."""
-        query: Dict[str, Any] = {"query": {"match_all": {}}}
+        query: dict[str, Any] = {"query": {"match_all": {}}}
 
         if filters:
             filter_conditions = []

@@ -1,6 +1,6 @@
 import logging
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
@@ -50,7 +50,10 @@ DEFAULT_CONFIG = {
         "provider": "neo4j",
         "config": {"url": NEO4J_URI, "username": NEO4J_USERNAME, "password": NEO4J_PASSWORD},
     },
-    "llm": {"provider": "openai", "config": {"api_key": OPENAI_API_KEY, "temperature": 0.2, "model": "gpt-4.1-nano-2025-04-14"}},
+    "llm": {
+        "provider": "openai",
+        "config": {"api_key": OPENAI_API_KEY, "temperature": 0.2, "model": "gpt-4.1-nano-2025-04-14"},
+    },
     "embedder": {"provider": "openai", "config": {"api_key": OPENAI_API_KEY, "model": "text-embedding-3-small"}},
     "history_db_path": HISTORY_DB_PATH,
 }
@@ -71,11 +74,11 @@ class Message(BaseModel):
 
 
 class MemoryCreate(BaseModel):
-    messages: List[Message] = Field(..., description="List of messages to store.")
+    messages: list[Message] = Field(..., description="List of messages to store.")
     user_id: Optional[str] = None
     agent_id: Optional[str] = None
     run_id: Optional[str] = None
-    metadata: Optional[Dict[str, Any]] = None
+    metadata: Optional[dict[str, Any]] = None
 
 
 class SearchRequest(BaseModel):
@@ -83,11 +86,11 @@ class SearchRequest(BaseModel):
     user_id: Optional[str] = None
     run_id: Optional[str] = None
     agent_id: Optional[str] = None
-    filters: Optional[Dict[str, Any]] = None
+    filters: Optional[dict[str, Any]] = None
 
 
 @app.post("/configure", summary="Configure Mem0")
-def set_config(config: Dict[str, Any]):
+def set_config(config: dict[str, Any]):
     """Set memory configuration."""
     global MEMORY_INSTANCE
     MEMORY_INSTANCE = Memory.from_config(config)
@@ -150,13 +153,13 @@ def search_memories(search_req: SearchRequest):
 
 
 @app.put("/memories/{memory_id}", summary="Update a memory")
-def update_memory(memory_id: str, updated_memory: Dict[str, Any]):
+def update_memory(memory_id: str, updated_memory: dict[str, Any]):
     """Update an existing memory with new content.
-    
+
     Args:
         memory_id (str): ID of the memory to update
         updated_memory (str): New content to update the memory with
-        
+
     Returns:
         dict: Success message indicating the memory was updated
     """

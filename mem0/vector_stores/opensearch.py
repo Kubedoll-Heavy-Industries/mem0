@@ -1,11 +1,13 @@
 import logging
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 try:
     from opensearchpy import OpenSearch, RequestsHttpConnection
 except ImportError:
     raise ImportError("OpenSearch requires extra dependencies. Install with `pip install opensearch-py`") from None
+
+import contextlib
 
 from pydantic import BaseModel
 
@@ -18,7 +20,7 @@ logger = logging.getLogger(__name__)
 class OutputData(BaseModel):
     id: str
     score: float
-    payload: Dict
+    payload: dict
 
 
 class OpenSearchDB(VectorStoreBase):
@@ -104,8 +106,8 @@ class OpenSearchDB(VectorStoreBase):
                     time.sleep(0.5)
 
     def insert(
-        self, vectors: List[List[float]], payloads: Optional[List[Dict]] = None, ids: Optional[List[str]] = None
-    ) -> List[OutputData]:
+        self, vectors: list[list[float]], payloads: Optional[list[dict]] = None, ids: Optional[list[str]] = None
+    ) -> list[OutputData]:
         """Insert vectors into the index."""
         if not ids:
             ids = [str(i) for i in range(len(vectors))]
@@ -124,12 +126,14 @@ class OpenSearchDB(VectorStoreBase):
                 self.client.index(index=self.collection_name, body=body)
                 # Force refresh to make documents immediately searchable for tests
                 self.client.indices.refresh(index=self.collection_name)
-                
-                results.append(OutputData(
-                    id=id_,
-                    score=1.0,  # No score for inserts
-                    payload=payloads[i]
-                ))
+
+                results.append(
+                    OutputData(
+                        id=id_,
+                        score=1.0,  # No score for inserts
+                        payload=payloads[i],
+                    )
+                )
             except Exception as e:
                 logger.error(f"Error inserting vector {id_}: {e}")
                 raise
@@ -137,8 +141,8 @@ class OpenSearchDB(VectorStoreBase):
         return results
 
     def search(
-        self, query: str, vectors: List[float], limit: int = 5, filters: Optional[Dict] = None
-    ) -> List[OutputData]:
+        self, query: str, vectors: list[float], limit: int = 5, filters: Optional[dict] = None
+    ) -> list[OutputData]:
         """Search for similar vectors using OpenSearch k-NN search with optional filters."""
 
         # Base KNN query
@@ -198,7 +202,7 @@ class OpenSearchDB(VectorStoreBase):
         # Delete using the actual document ID
         self.client.delete(index=self.collection_name, id=opensearch_id)
 
-    def update(self, vector_id: str, vector: Optional[List[float]] = None, payload: Optional[Dict] = None) -> None:
+    def update(self, vector_id: str, vector: Optional[list[float]] = None, payload: Optional[dict] = None) -> None:
         """Update a vector and its payload using the custom 'id' field."""
 
         # First, find the document by custom ID
@@ -220,10 +224,8 @@ class OpenSearchDB(VectorStoreBase):
             doc["payload"] = payload
 
         if doc:
-            try:
+            with contextlib.suppress(Exception):
                 response = self.client.update(index=self.collection_name, id=opensearch_id, body={"doc": doc})
-            except Exception:
-                pass
 
     def get(self, vector_id: str) -> Optional[OutputData]:
         """Retrieve a vector by ID."""
@@ -238,10 +240,10 @@ class OpenSearchDB(VectorStoreBase):
 
             return OutputData(id=hits[0]["_source"].get("id"), score=1.0, payload=hits[0]["_source"].get("payload", {}))
         except Exception as e:
-            logger.error(f"Error retrieving vector {vector_id}: {str(e)}")
+            logger.error(f"Error retrieving vector {vector_id}: {e!s}")
             return None
 
-    def list_cols(self) -> List[str]:
+    def list_cols(self) -> list[str]:
         """List all collections (indices)."""
         return list(self.client.indices.get_alias().keys())
 
@@ -253,10 +255,10 @@ class OpenSearchDB(VectorStoreBase):
         """Get information about a collection (index)."""
         return self.client.indices.get(index=name)
 
-    def list(self, filters: Optional[Dict] = None, limit: Optional[int] = None) -> List[OutputData]:
+    def list(self, filters: Optional[dict] = None, limit: Optional[int] = None) -> list[OutputData]:
         try:
             """List all memories with optional filters."""
-            query: Dict = {"query": {"match_all": {}}}
+            query: dict = {"query": {"match_all": {}}}
 
             filter_clauses = []
             if filters:
@@ -283,7 +285,6 @@ class OpenSearchDB(VectorStoreBase):
         except Exception as e:
             logger.error(f"Error listing vectors: {e}")
             return []
-        
 
     def reset(self):
         """Reset the index by deleting and recreating it."""

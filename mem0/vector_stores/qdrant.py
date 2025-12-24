@@ -1,6 +1,7 @@
 import logging
 import os
 import shutil
+from typing import Optional
 
 from qdrant_client import QdrantClient
 from qdrant_client.models import (
@@ -25,11 +26,11 @@ class Qdrant(VectorStoreBase):
         collection_name: str,
         embedding_model_dims: int,
         client: QdrantClient = None,
-        host: str = None,
-        port: int = None,
-        path: str = None,
-        url: str = None,
-        api_key: str = None,
+        host: Optional[str] = None,
+        port: Optional[int] = None,
+        path: Optional[str] = None,
+        url: Optional[str] = None,
+        api_key: Optional[str] = None,
         on_disk: bool = False,
     ):
         """
@@ -58,13 +59,12 @@ class Qdrant(VectorStoreBase):
             if host and port:
                 params["host"] = host
                 params["port"] = port
-            
+
             if not params:
                 params["path"] = path
                 self.is_local = True
-                if not on_disk:
-                    if os.path.exists(path) and os.path.isdir(path):
-                        shutil.rmtree(path)
+                if not on_disk and os.path.exists(path) and os.path.isdir(path):
+                    shutil.rmtree(path)
             else:
                 self.is_local = False
 
@@ -104,21 +104,19 @@ class Qdrant(VectorStoreBase):
         if self.is_local:
             logger.debug("Skipping payload index creation for local Qdrant (not supported)")
             return
-            
+
         common_fields = ["user_id", "agent_id", "run_id", "actor_id"]
-        
+
         for field in common_fields:
             try:
                 self.client.create_payload_index(
-                    collection_name=self.collection_name,
-                    field_name=field,
-                    field_schema="keyword"
+                    collection_name=self.collection_name, field_name=field, field_schema="keyword"
                 )
                 logger.info(f"Created index for {field} in collection {self.collection_name}")
             except Exception as e:
                 logger.debug(f"Index for {field} might already exist: {e}")
 
-    def insert(self, vectors: list, payloads: list = None, ids: list = None):
+    def insert(self, vectors: list, payloads: Optional[list] = None, ids: Optional[list] = None):
         """
         Insert vectors into a collection.
 
@@ -150,7 +148,7 @@ class Qdrant(VectorStoreBase):
         """
         if not filters:
             return None
-            
+
         conditions = []
         for key, value in filters.items():
             if isinstance(value, dict) and "gte" in value and "lte" in value:
@@ -159,7 +157,7 @@ class Qdrant(VectorStoreBase):
                 conditions.append(FieldCondition(key=key, match=MatchValue(value=value)))
         return Filter(must=conditions) if conditions else None
 
-    def search(self, query: str, vectors: list, limit: int = 5, filters: dict = None) -> list:
+    def search(self, query: str, vectors: list, limit: int = 5, filters: Optional[dict] = None) -> list:
         """
         Search for similar vectors.
 
@@ -195,7 +193,7 @@ class Qdrant(VectorStoreBase):
             ),
         )
 
-    def update(self, vector_id: int, vector: list = None, payload: dict = None):
+    def update(self, vector_id: int, vector: Optional[list] = None, payload: Optional[dict] = None):
         """
         Update a vector and its payload.
 
@@ -242,7 +240,7 @@ class Qdrant(VectorStoreBase):
         """
         return self.client.get_collection(collection_name=self.collection_name)
 
-    def list(self, filters: dict = None, limit: int = 100) -> list:
+    def list(self, filters: Optional[dict] = None, limit: int = 100) -> list:
         """
         List all vectors in a collection.
 

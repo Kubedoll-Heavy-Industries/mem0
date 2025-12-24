@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, List, Optional
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 class OutputData(BaseModel):
     id: Optional[str]  # memory id
     score: Optional[float]  # distance
-    payload: Optional[Dict]  # metadata
+    payload: Optional[dict]  # metadata
 
 
 class ChromaDB(VectorStoreBase):
@@ -51,7 +51,7 @@ class ChromaDB(VectorStoreBase):
             self.client = chromadb.CloudClient(
                 api_key=api_key,
                 tenant=tenant,
-                database="mem0"  # Use fixed database name for cloud
+                database="mem0",  # Use fixed database name for cloud
             )
         else:
             # Initialize local or server client
@@ -73,7 +73,7 @@ class ChromaDB(VectorStoreBase):
         self.collection_name = collection_name
         self.collection = self.create_col(collection_name)
 
-    def _parse_output(self, data: Dict) -> List[OutputData]:
+    def _parse_output(self, data: dict) -> list[OutputData]:
         """
         Parse the output data.
 
@@ -125,9 +125,9 @@ class ChromaDB(VectorStoreBase):
 
     def insert(
         self,
-        vectors: List[list],
-        payloads: Optional[List[Dict]] = None,
-        ids: Optional[List[str]] = None,
+        vectors: list[list],
+        payloads: Optional[list[dict]] = None,
+        ids: Optional[list[str]] = None,
     ):
         """
         Insert vectors into a collection.
@@ -141,8 +141,8 @@ class ChromaDB(VectorStoreBase):
         self.collection.add(ids=ids, embeddings=vectors, metadatas=payloads)
 
     def search(
-        self, query: str, vectors: List[list], limit: int = 5, filters: Optional[Dict] = None
-    ) -> List[OutputData]:
+        self, query: str, vectors: list[list], limit: int = 5, filters: Optional[dict] = None
+    ) -> list[OutputData]:
         """
         Search for similar vectors.
 
@@ -172,8 +172,8 @@ class ChromaDB(VectorStoreBase):
     def update(
         self,
         vector_id: str,
-        vector: Optional[List[float]] = None,
-        payload: Optional[Dict] = None,
+        vector: Optional[list[float]] = None,
+        payload: Optional[dict] = None,
     ):
         """
         Update a vector and its payload.
@@ -198,7 +198,7 @@ class ChromaDB(VectorStoreBase):
         result = self.collection.get(ids=[vector_id])
         return self._parse_output(result)[0]
 
-    def list_cols(self) -> List[chromadb.Collection]:
+    def list_cols(self) -> list[chromadb.Collection]:
         """
         List all collections.
 
@@ -213,7 +213,7 @@ class ChromaDB(VectorStoreBase):
         """
         self.client.delete_collection(name=self.collection_name)
 
-    def col_info(self) -> Dict:
+    def col_info(self) -> dict:
         """
         Get information about a collection.
 
@@ -222,7 +222,7 @@ class ChromaDB(VectorStoreBase):
         """
         return self.client.get_collection(name=self.collection_name)
 
-    def list(self, filters: Optional[Dict] = None, limit: int = 100) -> List[OutputData]:
+    def list(self, filters: Optional[dict] = None, limit: int = 100) -> list[OutputData]:
         """
         List all vectors in a collection.
 
@@ -247,16 +247,16 @@ class ChromaDB(VectorStoreBase):
     def _generate_where_clause(where: dict[str, any]) -> dict[str, any]:
         """
         Generate a properly formatted where clause for ChromaDB.
-        
+
         Args:
             where (dict[str, any]): The filter conditions.
-            
+
         Returns:
             dict[str, any]: Properly formatted where clause for ChromaDB.
         """
         if where is None:
             return {}
-        
+
         def convert_condition(key: str, value: any) -> dict:
             """Convert universal filter format to ChromaDB format."""
             if value == "*":
@@ -292,9 +292,9 @@ class ChromaDB(VectorStoreBase):
             else:
                 # Simple equality
                 return {key: {"$eq": value}}
-        
+
         processed_filters = []
-        
+
         for key, value in where.items():
             if key == "$or":
                 # Handle OR conditions
@@ -307,22 +307,22 @@ class ChromaDB(VectorStoreBase):
                             or_condition.update(converted)
                     if or_condition:
                         or_conditions.append(or_condition)
-                
+
                 if len(or_conditions) > 1:
                     processed_filters.append({"$or": or_conditions})
                 elif len(or_conditions) == 1:
                     processed_filters.append(or_conditions[0])
-            
+
             elif key == "$not":
                 # Handle NOT conditions - ChromaDB doesn't have direct NOT, so we'll skip for now
                 continue
-                
+
             else:
                 # Regular condition
                 converted = convert_condition(key, value)
                 if converted:
                     processed_filters.append(converted)
-        
+
         # Return appropriate format based on number of conditions
         if len(processed_filters) == 0:
             return {}

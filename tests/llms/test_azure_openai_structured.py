@@ -43,7 +43,7 @@ def test_init_with_api_key(mock_azure_openai):
     llm = AzureOpenAIStructuredLLM(config)
     assert llm.config.model == "test-model"
     mock_azure_openai.assert_called_once()
-    args, kwargs = mock_azure_openai.call_args
+    _args, kwargs = mock_azure_openai.call_args
     assert kwargs["api_key"] == "real-key"
     assert kwargs["azure_ad_token_provider"] is None
 
@@ -60,7 +60,7 @@ def test_init_with_default_credential(mock_credential, mock_token_provider, mock
     mock_credential.assert_called_once()
     mock_token_provider.assert_called_once_with(mock_credential.return_value, SCOPE)
     mock_azure_openai.assert_called_once()
-    args, kwargs = mock_azure_openai.call_args
+    _args, kwargs = mock_azure_openai.call_args
     assert kwargs["api_key"] is None
     assert kwargs["azure_ad_token_provider"] == "token-provider"
 
@@ -73,7 +73,7 @@ def test_init_with_env_vars(monkeypatch, mocker):
     config = DummyConfig(model="test-model", azure_kwargs=DummyAzureKwargs(api_key=None))
     AzureOpenAIStructuredLLM(config)
     mock_azure_openai.assert_called_once()
-    args, kwargs = mock_azure_openai.call_args
+    _args, kwargs = mock_azure_openai.call_args
     assert kwargs["api_key"] is None
     assert kwargs["azure_deployment"] == "test-deployment"
     assert kwargs["azure_endpoint"] == "https://test-endpoint.openai.azure.com"
@@ -95,6 +95,6 @@ def test_init_with_placeholder_api_key_uses_default_credential(
         mock_credential.assert_called_once()
         mock_token_provider.assert_called_once_with(mock_credential.return_value, SCOPE)
         mock_azure_openai.assert_called_once()
-        args, kwargs = mock_azure_openai.call_args
+        _args, kwargs = mock_azure_openai.call_args
         assert kwargs["api_key"] is None
         assert kwargs["azure_ad_token_provider"] == "token-provider"

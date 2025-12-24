@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Union
+from typing import Optional, Union
 
 try:
     from ollama import Client
@@ -11,7 +11,7 @@ from mem0.llms.base import LLMBase
 
 
 class OllamaLLM(LLMBase):
-    def __init__(self, config: Optional[Union[BaseLlmConfig, OllamaConfig, Dict]] = None):
+    def __init__(self, config: Optional[Union[BaseLlmConfig, OllamaConfig, dict]] = None):
         # Convert to OllamaConfig if needed
         if config is None:
             config = OllamaConfig()
@@ -50,10 +50,7 @@ class OllamaLLM(LLMBase):
             str or dict: The processed response.
         """
         # Get the content from response
-        if isinstance(response, dict):
-            content = response["message"]["content"]
-        else:
-            content = response.message.content
+        content = response["message"]["content"] if isinstance(response, dict) else response.message.content
 
         if tools:
             processed_response = {
@@ -68,9 +65,9 @@ class OllamaLLM(LLMBase):
 
     def generate_response(
         self,
-        messages: List[Dict[str, str]],
+        messages: list[dict[str, str]],
         response_format=None,
-        tools: Optional[List[Dict]] = None,
+        tools: Optional[list[dict]] = None,
         tool_choice: str = "auto",
         **kwargs,
     ):

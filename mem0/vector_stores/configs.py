@@ -1,4 +1,4 @@
-from typing import Dict, Optional
+from typing import Optional
 
 from pydantic import BaseModel, Field, model_validator
 
@@ -8,9 +8,9 @@ class VectorStoreConfig(BaseModel):
         description="Provider of the vector store (e.g., 'qdrant', 'chroma', 'upstash_vector')",
         default="qdrant",
     )
-    config: Optional[Dict] = Field(description="Configuration for the specific vector store", default=None)
+    config: Optional[dict] = Field(description="Configuration for the specific vector store", default=None)
 
-    _provider_configs: Dict[str, str] = {
+    _provider_configs: dict[str, str] = {
         "qdrant": "QdrantConfig",
         "chroma": "ChromaDbConfig",
         "pgvector": "PGVectorConfig",

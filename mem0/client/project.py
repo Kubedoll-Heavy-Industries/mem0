@@ -1,12 +1,13 @@
 import logging
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 import httpx
 from pydantic import BaseModel, ConfigDict, Field
 
 from mem0.client.utils import api_error_handler
 from mem0.memory.telemetry import capture_client_event
+
 # Exception classes are referenced in docstrings only
 
 logger = logging.getLogger(__name__)
@@ -81,7 +82,7 @@ class BaseProject(ABC):
         if not (self.config.org_id and self.config.project_id):
             raise ValueError("org_id and project_id must be set to access project operations")
 
-    def _prepare_params(self, kwargs: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def _prepare_params(self, kwargs: Optional[dict[str, Any]] = None) -> dict[str, Any]:
         """
         Prepare query parameters for API requests.
 
@@ -106,7 +107,7 @@ class BaseProject(ABC):
 
         return {k: v for k, v in kwargs.items() if v is not None}
 
-    def _prepare_org_params(self, kwargs: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def _prepare_org_params(self, kwargs: Optional[dict[str, Any]] = None) -> dict[str, Any]:
         """
         Prepare query parameters for organization-level API requests.
 
@@ -131,7 +132,7 @@ class BaseProject(ABC):
         return {k: v for k, v in kwargs.items() if v is not None}
 
     @abstractmethod
-    def get(self, fields: Optional[List[str]] = None) -> Dict[str, Any]:
+    def get(self, fields: Optional[list[str]] = None) -> dict[str, Any]:
         """
         Get project details.
 
@@ -151,7 +152,7 @@ class BaseProject(ABC):
         pass
 
     @abstractmethod
-    def create(self, name: str, description: Optional[str] = None) -> Dict[str, Any]:
+    def create(self, name: str, description: Optional[str] = None) -> dict[str, Any]:
         """
         Create a new project within the organization.
 
@@ -175,10 +176,10 @@ class BaseProject(ABC):
     def update(
         self,
         custom_instructions: Optional[str] = None,
-        custom_categories: Optional[List[str]] = None,
-        retrieval_criteria: Optional[List[Dict[str, Any]]] = None,
+        custom_categories: Optional[list[str]] = None,
+        retrieval_criteria: Optional[list[dict[str, Any]]] = None,
         enable_graph: Optional[bool] = None,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Update project settings.
 
@@ -201,7 +202,7 @@ class BaseProject(ABC):
         pass
 
     @abstractmethod
-    def delete(self) -> Dict[str, Any]:
+    def delete(self) -> dict[str, Any]:
         """
         Delete the current project and its related data.
 
@@ -218,7 +219,7 @@ class BaseProject(ABC):
         pass
 
     @abstractmethod
-    def get_members(self) -> Dict[str, Any]:
+    def get_members(self) -> dict[str, Any]:
         """
         Get all members of the current project.
 
@@ -235,7 +236,7 @@ class BaseProject(ABC):
         pass
 
     @abstractmethod
-    def add_member(self, email: str, role: str = "READER") -> Dict[str, Any]:
+    def add_member(self, email: str, role: str = "READER") -> dict[str, Any]:
         """
         Add a new member to the current project.
 
@@ -256,7 +257,7 @@ class BaseProject(ABC):
         pass
 
     @abstractmethod
-    def update_member(self, email: str, role: str) -> Dict[str, Any]:
+    def update_member(self, email: str, role: str) -> dict[str, Any]:
         """
         Update a member's role in the current project.
 
@@ -277,7 +278,7 @@ class BaseProject(ABC):
         pass
 
     @abstractmethod
-    def remove_member(self, email: str) -> Dict[str, Any]:
+    def remove_member(self, email: str) -> dict[str, Any]:
         """
         Remove a member from the current project.
 
@@ -324,7 +325,7 @@ class Project(BaseProject):
         self._validate_org_project()
 
     @api_error_handler
-    def get(self, fields: Optional[List[str]] = None) -> Dict[str, Any]:
+    def get(self, fields: Optional[list[str]] = None) -> dict[str, Any]:
         """
         Get project details.
 
@@ -355,7 +356,7 @@ class Project(BaseProject):
         return response.json()
 
     @api_error_handler
-    def create(self, name: str, description: Optional[str] = None) -> Dict[str, Any]:
+    def create(self, name: str, description: Optional[str] = None) -> dict[str, Any]:
         """
         Create a new project within the organization.
 
@@ -396,10 +397,10 @@ class Project(BaseProject):
     def update(
         self,
         custom_instructions: Optional[str] = None,
-        custom_categories: Optional[List[str]] = None,
-        retrieval_criteria: Optional[List[Dict[str, Any]]] = None,
+        custom_categories: Optional[list[str]] = None,
+        retrieval_criteria: Optional[list[dict[str, Any]]] = None,
         enable_graph: Optional[bool] = None,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Update project settings.
 
@@ -458,7 +459,7 @@ class Project(BaseProject):
         return response.json()
 
     @api_error_handler
-    def delete(self) -> Dict[str, Any]:
+    def delete(self) -> dict[str, Any]:
         """
         Delete the current project and its related data.
 
@@ -484,7 +485,7 @@ class Project(BaseProject):
         return response.json()
 
     @api_error_handler
-    def get_members(self) -> Dict[str, Any]:
+    def get_members(self) -> dict[str, Any]:
         """
         Get all members of the current project.
 
@@ -510,7 +511,7 @@ class Project(BaseProject):
         return response.json()
 
     @api_error_handler
-    def add_member(self, email: str, role: str = "READER") -> Dict[str, Any]:
+    def add_member(self, email: str, role: str = "READER") -> dict[str, Any]:
         """
         Add a new member to the current project.
 
@@ -546,7 +547,7 @@ class Project(BaseProject):
         return response.json()
 
     @api_error_handler
-    def update_member(self, email: str, role: str) -> Dict[str, Any]:
+    def update_member(self, email: str, role: str) -> dict[str, Any]:
         """
         Update a member's role in the current project.
 
@@ -582,7 +583,7 @@ class Project(BaseProject):
         return response.json()
 
     @api_error_handler
-    def remove_member(self, email: str) -> Dict[str, Any]:
+    def remove_member(self, email: str) -> dict[str, Any]:
         """
         Remove a member from the current project.
 
@@ -641,7 +642,7 @@ class AsyncProject(BaseProject):
         self._validate_org_project()
 
     @api_error_handler
-    async def get(self, fields: Optional[List[str]] = None) -> Dict[str, Any]:
+    async def get(self, fields: Optional[list[str]] = None) -> dict[str, Any]:
         """
         Get project details.
 
@@ -672,7 +673,7 @@ class AsyncProject(BaseProject):
         return response.json()
 
     @api_error_handler
-    async def create(self, name: str, description: Optional[str] = None) -> Dict[str, Any]:
+    async def create(self, name: str, description: Optional[str] = None) -> dict[str, Any]:
         """
         Create a new project within the organization.
 
@@ -713,10 +714,10 @@ class AsyncProject(BaseProject):
     async def update(
         self,
         custom_instructions: Optional[str] = None,
-        custom_categories: Optional[List[str]] = None,
-        retrieval_criteria: Optional[List[Dict[str, Any]]] = None,
+        custom_categories: Optional[list[str]] = None,
+        retrieval_criteria: Optional[list[dict[str, Any]]] = None,
         enable_graph: Optional[bool] = None,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Update project settings.
 
@@ -775,7 +776,7 @@ class AsyncProject(BaseProject):
         return response.json()
 
     @api_error_handler
-    async def delete(self) -> Dict[str, Any]:
+    async def delete(self) -> dict[str, Any]:
         """
         Delete the current project and its related data.
 
@@ -801,7 +802,7 @@ class AsyncProject(BaseProject):
         return response.json()
 
     @api_error_handler
-    async def get_members(self) -> Dict[str, Any]:
+    async def get_members(self) -> dict[str, Any]:
         """
         Get all members of the current project.
 
@@ -827,7 +828,7 @@ class AsyncProject(BaseProject):
         return response.json()
 
     @api_error_handler
-    async def add_member(self, email: str, role: str = "READER") -> Dict[str, Any]:
+    async def add_member(self, email: str, role: str = "READER") -> dict[str, Any]:
         """
         Add a new member to the current project.
 
@@ -863,7 +864,7 @@ class AsyncProject(BaseProject):
         return response.json()
 
     @api_error_handler
-    async def update_member(self, email: str, role: str) -> Dict[str, Any]:
+    async def update_member(self, email: str, role: str) -> dict[str, Any]:
         """
         Update a member's role in the current project.
 
@@ -899,7 +900,7 @@ class AsyncProject(BaseProject):
         return response.json()
 
     @api_error_handler
-    async def remove_member(self, email: str) -> Dict[str, Any]:
+    async def remove_member(self, email: str) -> dict[str, Any]:
         """
         Remove a member from the current project.
 
