@@ -1,0 +1,24 @@
+[project]
+name = "mem0-server"
+version = "1.0.0"
+description = "REST API server for Mem0 memory layer"
+requires-python = ">=3.10,<4.0"
+dependencies = [
+    "fastapi>=0.127.0,<1.0.0",
+    "uvicorn[standard]>=0.40.0,<1.0.0",
+    "pydantic>=2.12.0,<3.0.0",
+    "python-dotenv>=1.2.0,<2.0.0",
+    "psycopg[binary,pool]>=3.3.0,<4.0.0",
+    "mem0ai>=1.0.0,<2.0.0",
+]
+
+[project.optional-dependencies]
+graph = ["mem0ai[graph]>=1.0.0,<2.0.0"]
+vector-stores = ["mem0ai[vector_stores]>=1.0.0,<2.0.0"]
+full = ["mem0ai[graph,vector_stores,llms]>=1.0.0,<2.0.0"]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.8.0",
+    "ty>=0.0.1a0",
+]
