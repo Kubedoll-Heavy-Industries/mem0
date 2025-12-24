@@ -24,7 +24,7 @@ def get_user_id():
         return "anonymous_user"
 
     try:
-        with open(config_path, "r") as config_file:
+        with open(config_path) as config_file:
             config = json.load(config_file)
             user_id = config.get("user_id")
             return user_id

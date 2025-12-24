@@ -1,6 +1,6 @@
 import os
 from abc import ABC
-from typing import Dict, Optional, Union
+from typing import Optional, Union
 
 import httpx
 
@@ -25,8 +25,8 @@ class BaseEmbedderConfig(ABC):
         model_kwargs: Optional[dict] = None,
         huggingface_base_url: Optional[str] = None,
         # AzureOpenAI specific
-        azure_kwargs: Optional[AzureConfig] = {},
-        http_client_proxies: Optional[Union[Dict, str]] = None,
+        azure_kwargs: Optional[AzureConfig] = None,
+        http_client_proxies: Optional[Union[dict, str]] = None,
         # VertexAI specific
         vertex_credentials_json: Optional[str] = None,
         memory_add_embedding_type: Optional[str] = None,
@@ -74,6 +74,8 @@ class BaseEmbedderConfig(ABC):
         :type lmstudio_base_url: Optional[str], optional
         """
 
+        if azure_kwargs is None:
+            azure_kwargs = {}
         self.model = model
         self.api_key = api_key
         self.openai_base_url = openai_base_url
@@ -107,4 +109,3 @@ class BaseEmbedderConfig(ABC):
         self.aws_access_key_id = aws_access_key_id
         self.aws_secret_access_key = aws_secret_access_key
         self.aws_region = aws_region or os.environ.get("AWS_REGION") or "us-west-2"
-

@@ -1,7 +1,7 @@
 import logging
 import traceback
 import uuid
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Optional
 
 import google.api_core.exceptions
 from google.cloud import aiplatform, aiplatform_v1
@@ -13,6 +13,8 @@ try:
     from langchain_core.documents import Document
 except ImportError:  # pragma: no cover - fallback for older LangChain versions
     from langchain.schema import Document  # type: ignore[no-redef]
+
+import builtins
 
 from mem0.configs.vector_stores.vertex_ai_vector_search import (
     GoogleMatchingEngineConfig,
@@ -27,7 +29,7 @@ logger = logging.getLogger(__name__)
 class OutputData(BaseModel):
     id: Optional[str]  # memory id
     score: Optional[float]  # distance
-    payload: Optional[Dict]  # metadata
+    payload: Optional[dict]  # metadata
 
 
 class GoogleMatchingEngine(VectorStoreBase):
@@ -67,7 +69,7 @@ class GoogleMatchingEngine(VectorStoreBase):
             "project": self.project_id,
             "location": self.region,
         }
-        
+
         # Support both credentials_path and service_account_json
         if hasattr(config, "credentials_path") and config.credentials_path:
             logger.debug("Using credentials from file: %s", config.credentials_path)
@@ -99,9 +101,9 @@ class GoogleMatchingEngine(VectorStoreBase):
             logger.debug("Endpoint initialized successfully")
         except Exception as e:
             logger.error("Failed to initialize Matching Engine components: %s", str(e))
-            raise ValueError(f"Invalid configuration: {str(e)}")
+            raise ValueError(f"Invalid configuration: {e!s}")
 
-    def _parse_output(self, data: Dict) -> List[OutputData]:
+    def _parse_output(self, data: dict) -> list[OutputData]:
         """
         Parse the output data.
         Args:
@@ -135,7 +137,7 @@ class GoogleMatchingEngine(VectorStoreBase):
         return aiplatform_v1.types.index.IndexDatapoint.Restriction(namespace=key, allow_list=[str_value])
 
     def _create_datapoint(
-        self, vector_id: str, vector: List[float], payload: Optional[Dict] = None
+        self, vector_id: str, vector: list[float], payload: Optional[dict] = None
     ) -> aiplatform_v1.types.index.IndexDatapoint:
         """Create a datapoint object for the Matching Engine index.
 
@@ -157,9 +159,9 @@ class GoogleMatchingEngine(VectorStoreBase):
 
     def insert(
         self,
-        vectors: List[list],
-        payloads: Optional[List[Dict]] = None,
-        ids: Optional[List[str]] = None,
+        vectors: list[list],
+        payloads: Optional[list[dict]] = None,
+        ids: Optional[list[str]] = None,
     ) -> None:
         """Insert vectors into the Matching Engine index.
 
@@ -206,8 +208,8 @@ class GoogleMatchingEngine(VectorStoreBase):
             raise
 
     def search(
-        self, query: str, vectors: List[float], limit: int = 5, filters: Optional[Dict] = None
-    ) -> List[OutputData]:
+        self, query: str, vectors: list[float], limit: int = 5, filters: Optional[dict] = None
+    ) -> list[OutputData]:
         """
         Search for similar vectors.
         Args:
@@ -274,7 +276,7 @@ class GoogleMatchingEngine(VectorStoreBase):
             logger.error("Stack trace: %s", traceback.format_exc())
             raise
 
-    def delete(self, vector_id: Optional[str] = None, ids: Optional[List[str]] = None) -> bool:
+    def delete(self, vector_id: Optional[str] = None, ids: Optional[list[str]] = None) -> bool:
         """
         Delete vectors from the Matching Engine index.
         Args:
@@ -318,8 +320,8 @@ class GoogleMatchingEngine(VectorStoreBase):
     def update(
         self,
         vector_id: str,
-        vector: Optional[List[float]] = None,
-        payload: Optional[Dict] = None,
+        vector: Optional[list[float]] = None,
+        payload: Optional[dict] = None,
     ) -> bool:
         """Update a vector and its payload.
 
@@ -424,7 +426,7 @@ class GoogleMatchingEngine(VectorStoreBase):
             logger.error("Stack trace: %s", traceback.format_exc())
             raise
 
-    def list_cols(self) -> List[str]:
+    def list_cols(self) -> list[str]:
         """
         List all collections (indexes).
         Returns:
@@ -440,7 +442,7 @@ class GoogleMatchingEngine(VectorStoreBase):
         logger.warning("Delete collection operation is not supported for Google Matching Engine")
         pass
 
-    def col_info(self) -> Dict:
+    def col_info(self) -> dict:
         """
         Get information about a collection (index).
         Returns:
@@ -453,7 +455,7 @@ class GoogleMatchingEngine(VectorStoreBase):
             "region": self.region,
         }
 
-    def list(self, filters: Optional[Dict] = None, limit: Optional[int] = None) -> List[List[OutputData]]:
+    def list(self, filters: Optional[dict] = None, limit: Optional[int] = None) -> list[list[OutputData]]:
         """List vectors matching the given filters.
 
         Args:
@@ -501,7 +503,7 @@ class GoogleMatchingEngine(VectorStoreBase):
         # This method is included only to satisfy the abstract base class
         pass
 
-    def add(self, text: str, metadata: Optional[Dict] = None, user_id: Optional[str] = None) -> str:
+    def add(self, text: str, metadata: Optional[dict] = None, user_id: Optional[str] = None) -> str:
         logger.debug("Starting add operation")
         logger.debug("Text: %s", text)
         logger.debug("Metadata: %s", metadata)
@@ -532,10 +534,10 @@ class GoogleMatchingEngine(VectorStoreBase):
 
     def add_texts(
         self,
-        texts: List[str],
-        metadatas: Optional[List[dict]] = None,
-        ids: Optional[List[str]] = None,
-    ) -> List[str]:
+        texts: builtins.list[str],
+        metadatas: Optional[builtins.list[dict]] = None,
+        ids: Optional[builtins.list[str]] = None,
+    ) -> builtins.list[str]:
         """Add texts to the vector store.
 
         Args:
@@ -584,10 +586,10 @@ class GoogleMatchingEngine(VectorStoreBase):
     @classmethod
     def from_texts(
         cls,
-        texts: List[str],
+        texts: builtins.list[str],
         embedding: Any,
-        metadatas: Optional[List[dict]] = None,
-        ids: Optional[List[str]] = None,
+        metadatas: Optional[builtins.list[dict]] = None,
+        ids: Optional[builtins.list[str]] = None,
         **kwargs: Any,
     ) -> "GoogleMatchingEngine":
         """Create an instance from texts."""
@@ -600,8 +602,8 @@ class GoogleMatchingEngine(VectorStoreBase):
         self,
         query: str,
         k: int = 5,
-        filter: Optional[Dict] = None,
-    ) -> List[Tuple[Document, float]]:
+        filter: Optional[dict] = None,
+    ) -> builtins.list[tuple[Document, float]]:
         """Return documents most similar to query with scores."""
         logger.debug("Starting similarity search with score")
         logger.debug("Query: %s", query)
@@ -622,8 +624,8 @@ class GoogleMatchingEngine(VectorStoreBase):
         self,
         query: str,
         k: int = 5,
-        filter: Optional[Dict] = None,
-    ) -> List[Document]:
+        filter: Optional[dict] = None,
+    ) -> builtins.list[Document]:
         """Return documents most similar to query."""
         logger.debug("Starting similarity search")
         docs_and_scores = self.similarity_search_with_score(query, k, filter)

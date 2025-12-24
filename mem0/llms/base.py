@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Dict, List, Optional, Union
+from typing import Optional, Union
 
 from mem0.configs.llms.base import BaseLlmConfig
 
@@ -10,7 +10,7 @@ class LLMBase(ABC):
     Handles common functionality and delegates provider-specific logic to subclasses.
     """
 
-    def __init__(self, config: Optional[Union[BaseLlmConfig, Dict]] = None):
+    def __init__(self, config: Optional[Union[BaseLlmConfig, dict]] = None):
         """Initialize a base LLM class
 
         :param config: LLM configuration option class or dict, defaults to None
@@ -43,43 +43,46 @@ class LLMBase(ABC):
     def _is_reasoning_model(self, model: str) -> bool:
         """
         Check if the model is a reasoning model or GPT-5 series that doesn't support certain parameters.
-        
+
         Args:
             model: The model name to check
-            
+
         Returns:
             bool: True if the model is a reasoning model or GPT-5 series
         """
         reasoning_models = {
-            "o1", "o1-preview", "o3-mini", "o3",
-            "gpt-5", "gpt-5o", "gpt-5o-mini", "gpt-5o-micro",
+            "o1",
+            "o1-preview",
+            "o3-mini",
+            "o3",
+            "gpt-5",
+            "gpt-5o",
+            "gpt-5o-mini",
+            "gpt-5o-micro",
         }
-        
+
         if model.lower() in reasoning_models:
             return True
-        
-        model_lower = model.lower()
-        if any(reasoning_model in model_lower for reasoning_model in ["gpt-5", "o1", "o3"]):
-            return True
-            
-        return False
 
-    def _get_supported_params(self, **kwargs) -> Dict:
+        model_lower = model.lower()
+        return bool(any(reasoning_model in model_lower for reasoning_model in ["gpt-5", "o1", "o3"]))
+
+    def _get_supported_params(self, **kwargs) -> dict:
         """
         Get parameters that are supported by the current model.
         Filters out unsupported parameters for reasoning models and GPT-5 series.
-        
+
         Args:
             **kwargs: Additional parameters to include
-            
+
         Returns:
             Dict: Filtered parameters dictionary
         """
-        model = getattr(self.config, 'model', '')
-        
+        model = getattr(self.config, "model", "")
+
         if self._is_reasoning_model(model):
             supported_params = {}
-            
+
             if "messages" in kwargs:
                 supported_params["messages"] = kwargs["messages"]
             if "response_format" in kwargs:
@@ -88,7 +91,7 @@ class LLMBase(ABC):
                 supported_params["tools"] = kwargs["tools"]
             if "tool_choice" in kwargs:
                 supported_params["tool_choice"] = kwargs["tool_choice"]
-                
+
             return supported_params
         else:
             # For regular models, include all common parameters
@@ -96,7 +99,7 @@ class LLMBase(ABC):
 
     @abstractmethod
     def generate_response(
-        self, messages: List[Dict[str, str]], tools: Optional[List[Dict]] = None, tool_choice: str = "auto", **kwargs
+        self, messages: list[dict[str, str]], tools: Optional[list[dict]] = None, tool_choice: str = "auto", **kwargs
     ):
         """
         Generate a response based on the given messages.
@@ -112,7 +115,7 @@ class LLMBase(ABC):
         """
         pass
 
-    def _get_common_params(self, **kwargs) -> Dict:
+    def _get_common_params(self, **kwargs) -> dict:
         """
         Get common parameters that most providers use.
 

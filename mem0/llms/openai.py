@@ -1,7 +1,7 @@
 import json
 import logging
 import os
-from typing import Dict, List, Optional, Union
+from typing import Optional, Union
 
 from openai import OpenAI
 
@@ -12,7 +12,7 @@ from mem0.memory.utils import extract_json
 
 
 class OpenAILLM(LLMBase):
-    def __init__(self, config: Optional[Union[BaseLlmConfig, OpenAIConfig, Dict]] = None):
+    def __init__(self, config: Optional[Union[BaseLlmConfig, OpenAIConfig, dict]] = None):
         # Convert to OpenAIConfig if needed
         if config is None:
             config = OpenAIConfig()
@@ -82,9 +82,9 @@ class OpenAILLM(LLMBase):
 
     def generate_response(
         self,
-        messages: List[Dict[str, str]],
+        messages: list[dict[str, str]],
         response_format=None,
-        tools: Optional[List[Dict]] = None,
+        tools: Optional[list[dict]] = None,
         tool_choice: str = "auto",
         **kwargs,
     ):
@@ -102,11 +102,13 @@ class OpenAILLM(LLMBase):
             json: The generated response.
         """
         params = self._get_supported_params(messages=messages, **kwargs)
-        
-        params.update({
-            "model": self.config.model,
-            "messages": messages,
-        })
+
+        params.update(
+            {
+                "model": self.config.model,
+                "messages": messages,
+            }
+        )
 
         if os.getenv("OPENROUTER_API_KEY"):
             openrouter_params = {}
@@ -123,13 +125,13 @@ class OpenAILLM(LLMBase):
                 openrouter_params["extra_headers"] = extra_headers
 
             params.update(**openrouter_params)
-        
+
         else:
             openai_specific_generation_params = ["store"]
             for param in openai_specific_generation_params:
                 if hasattr(self.config, param):
                     params[param] = getattr(self.config, param)
-            
+
         if response_format:
             params["response_format"] = response_format
         if tools:  # TODO: Remove tools if no issues found with new memory addition logic

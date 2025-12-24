@@ -1,6 +1,6 @@
 import logging
 import os
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Optional, Union
 
 from pydantic import BaseModel
 
@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 class OutputData(BaseModel):
     id: Optional[str]  # memory id
     score: Optional[float]  # distance
-    payload: Optional[Dict]  # metadata
+    payload: Optional[dict]  # metadata
 
 
 class PineconeDB(VectorStoreBase):
@@ -30,12 +30,12 @@ class PineconeDB(VectorStoreBase):
         client: Optional["Pinecone"],
         api_key: Optional[str],
         environment: Optional[str],
-        serverless_config: Optional[Dict[str, Any]],
-        pod_config: Optional[Dict[str, Any]],
+        serverless_config: Optional[dict[str, Any]],
+        pod_config: Optional[dict[str, Any]],
         hybrid_search: bool,
         metric: str,
         batch_size: int,
-        extra_params: Optional[Dict[str, Any]],
+        extra_params: Optional[dict[str, Any]],
         namespace: Optional[str] = None,
     ):
         """
@@ -123,9 +123,9 @@ class PineconeDB(VectorStoreBase):
 
     def insert(
         self,
-        vectors: List[List[float]],
-        payloads: Optional[List[Dict]] = None,
-        ids: Optional[List[Union[str, int]]] = None,
+        vectors: list[list[float]],
+        payloads: Optional[list[dict]] = None,
+        ids: Optional[list[Union[str, int]]] = None,
     ):
         """
         Insert vectors into an index.
@@ -157,7 +157,7 @@ class PineconeDB(VectorStoreBase):
         if items:
             self.index.upsert(vectors=items, namespace=self.namespace)
 
-    def _parse_output(self, data: Dict) -> List[OutputData]:
+    def _parse_output(self, data: dict) -> list[OutputData]:
         """
         Parse the output data from Pinecone search results.
 
@@ -186,7 +186,7 @@ class PineconeDB(VectorStoreBase):
 
             return result
 
-    def _create_filter(self, filters: Optional[Dict]) -> Dict:
+    def _create_filter(self, filters: Optional[dict]) -> dict:
         """
         Create a filter dictionary from the provided filters.
         """
@@ -204,8 +204,8 @@ class PineconeDB(VectorStoreBase):
         return pinecone_filter
 
     def search(
-        self, query: str, vectors: List[float], limit: int = 5, filters: Optional[Dict] = None
-    ) -> List[OutputData]:
+        self, query: str, vectors: list[float], limit: int = 5, filters: Optional[dict] = None
+    ) -> list[OutputData]:
         """
         Search for similar vectors.
 
@@ -250,7 +250,7 @@ class PineconeDB(VectorStoreBase):
         """
         self.index.delete(ids=[str(vector_id)], namespace=self.namespace)
 
-    def update(self, vector_id: Union[str, int], vector: Optional[List[float]] = None, payload: Optional[Dict] = None):
+    def update(self, vector_id: Union[str, int], vector: Optional[list[float]] = None, payload: Optional[dict] = None):
         """
         Update a vector and its payload.
 
@@ -311,7 +311,7 @@ class PineconeDB(VectorStoreBase):
         except Exception as e:
             logger.error(f"Error deleting index {self.collection_name}: {e}")
 
-    def col_info(self) -> Dict:
+    def col_info(self) -> dict:
         """
         Get information about an index/collection.
 
@@ -320,7 +320,7 @@ class PineconeDB(VectorStoreBase):
         """
         return self.client.describe_index(self.collection_name)
 
-    def list(self, filters: Optional[Dict] = None, limit: int = 100) -> List[OutputData]:
+    def list(self, filters: Optional[dict] = None, limit: int = 100) -> list[OutputData]:
         """
         List vectors in an index with optional filtering.
 

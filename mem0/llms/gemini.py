@@ -1,5 +1,5 @@
 import os
-from typing import Dict, List, Optional
+from typing import Optional
 
 try:
     from google import genai
@@ -65,7 +65,7 @@ class GeminiLLM(LLMBase):
                         return part.text
             return ""
 
-    def _reformat_messages(self, messages: List[Dict[str, str]]):
+    def _reformat_messages(self, messages: list[dict[str, str]]):
         """
         Reformat messages for Gemini.
 
@@ -90,7 +90,7 @@ class GeminiLLM(LLMBase):
 
         return system_instruction, contents
 
-    def _reformat_tools(self, tools: Optional[List[Dict]]):
+    def _reformat_tools(self, tools: Optional[list[dict]]):
         """
         Reformat tools for Gemini.
 
@@ -107,7 +107,7 @@ class GeminiLLM(LLMBase):
                 filtered_dict = {
                     key: remove_additional_properties(value)
                     for key, value in data.items()
-                    if not (key == "additionalProperties")
+                    if key != "additionalProperties"
                 }
                 return filtered_dict
             else:
@@ -133,9 +133,9 @@ class GeminiLLM(LLMBase):
 
     def generate_response(
         self,
-        messages: List[Dict[str, str]],
+        messages: list[dict[str, str]],
         response_format=None,
-        tools: Optional[List[Dict]] = None,
+        tools: Optional[list[dict]] = None,
         tool_choice: str = "auto",
     ):
         """

@@ -1,7 +1,7 @@
 import json
 import logging
 from datetime import datetime
-from typing import Dict
+from typing import Optional
 
 import numpy as np
 import pytz
@@ -38,7 +38,7 @@ excluded_keys = {"user_id", "agent_id", "run_id", "hash", "data", "created_at", 
 class OutputData(BaseModel):
     id: str
     score: float
-    payload: Dict
+    payload: dict
 
 
 class ValkeyDB(VectorStoreBase):
@@ -168,7 +168,8 @@ class ValkeyDB(VectorStoreBase):
             "NUMERIC",
             "updated_at",
             "NUMERIC",
-        ] + vector_config
+            *vector_config,
+        ]
 
         return cmd
 
@@ -265,7 +266,7 @@ class ValkeyDB(VectorStoreBase):
             logger.exception(f"Error creating collection {collection_name}: {e}")
             raise
 
-    def insert(self, vectors: list, payloads: list = None, ids: list = None):
+    def insert(self, vectors: list, payloads: Optional[list] = None, ids: Optional[list] = None):
         """
         Insert vectors and their payloads into the index.
 
@@ -410,7 +411,14 @@ class ValkeyDB(VectorStoreBase):
 
         return memory_results
 
-    def search(self, query: str, vectors: list, limit: int = 5, filters: dict = None, ef_runtime: int = None):
+    def search(
+        self,
+        query: str,
+        vectors: list,
+        limit: int = 5,
+        filters: Optional[dict] = None,
+        ef_runtime: Optional[int] = None,
+    ):
         """
         Search for similar vectors in the index.
 
@@ -547,13 +555,12 @@ class ValkeyDB(VectorStoreBase):
 
         # Convert bytes to string for text fields
         for k in result:
-            if k not in ["embedding"]:
-                if isinstance(result[k], bytes):
-                    try:
-                        result[k] = result[k].decode("utf-8")
-                    except UnicodeDecodeError:
-                        # If decoding fails, keep the bytes
-                        pass
+            if k not in ["embedding"] and isinstance(result[k], bytes):
+                try:
+                    result[k] = result[k].decode("utf-8")
+                except UnicodeDecodeError:
+                    # If decoding fails, keep the bytes
+                    pass
 
         # Add required fields with error handling
         for field in ["hash", "memory", "created_at"]:
@@ -567,9 +574,7 @@ class ValkeyDB(VectorStoreBase):
                     payload[field] = result[field]
             else:
                 # Use default values for missing fields
-                if field == "hash":
-                    payload[field] = "unknown"
-                elif field == "memory":
+                if field == "hash" or field == "memory":
                     payload[field] = "unknown"
                 elif field == "created_at":
                     payload[field] = self._format_timestamp(
@@ -765,7 +770,7 @@ class ValkeyDB(VectorStoreBase):
 
         return q
 
-    def list(self, filters: dict = None, limit: int = None) -> list:
+    def list(self, filters: Optional[dict] = None, limit: Optional[int] = None) -> list:
         """
         List all recent created memories from the vector store.
 
@@ -793,7 +798,7 @@ class ValkeyDB(VectorStoreBase):
 
             # Convert search results to list format (match Redis format)
             class MemoryResult:
-                def __init__(self, id: str, payload: dict, score: float = None):
+                def __init__(self, id: str, payload: dict, score: Optional[float] = None):
                     self.id = id
                     self.payload = payload
                     self.score = score

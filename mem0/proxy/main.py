@@ -2,7 +2,7 @@ import logging
 import subprocess
 import sys
 import threading
-from typing import List, Optional, Union
+from typing import Optional, Union
 
 import httpx
 
@@ -52,7 +52,7 @@ class Completions:
     def create(
         self,
         model: str,
-        messages: List = [],
+        messages: Optional[list] = None,
         # Mem0 arguments
         user_id: Optional[str] = None,
         agent_id: Optional[str] = None,
@@ -76,7 +76,7 @@ class Completions:
         # openai v1.0+ new params
         response_format: Optional[dict] = None,
         seed: Optional[int] = None,
-        tools: Optional[List] = None,
+        tools: Optional[list] = None,
         tool_choice: Optional[Union[str, dict]] = None,
         logprobs: Optional[bool] = None,
         top_logprobs: Optional[int] = None,
@@ -84,7 +84,7 @@ class Completions:
         deployment_id=None,
         extra_headers: Optional[dict] = None,
         # soon to be deprecated params by OpenAI
-        functions: Optional[List] = None,
+        functions: Optional[list] = None,
         function_call: Optional[str] = None,
         # set api_base, api_version, api_key
         base_url: Optional[str] = None,
@@ -92,6 +92,8 @@ class Completions:
         api_key: Optional[str] = None,
         model_list: Optional[list] = None,  # pass in a list of api_base,keys, etc.
     ):
+        if messages is None:
+            messages = []
         if not any([user_id, agent_id, run_id]):
             raise ValueError("One of user_id, agent_id, run_id must be provided")
 
@@ -144,9 +146,9 @@ class Completions:
             capture_client_event("mem0.chat.create", self.mem0_client)
         return response
 
-    def _prepare_messages(self, messages: List[dict]) -> List[dict]:
+    def _prepare_messages(self, messages: list[dict]) -> list[dict]:
         if not messages or messages[0]["role"] != "system":
-            return [{"role": "system", "content": MEMORY_ANSWER_PROMPT}] + messages
+            return [{"role": "system", "content": MEMORY_ANSWER_PROMPT}, *messages]
         return messages
 
     def _async_add_to_memory(self, messages, user_id, agent_id, run_id, metadata, filters):
@@ -183,7 +185,7 @@ class Completions:
         if isinstance(self.mem0_client, mem0.memory.main.Memory):
             memories_text = "\n".join(memory["memory"] for memory in relevant_memories["results"])
             if relevant_memories.get("relations"):
-                entities = [entity for entity in relevant_memories["relations"]]
+                entities = list(relevant_memories["relations"])
         elif isinstance(self.mem0_client, mem0.client.main.MemoryClient):
             memories_text = "\n".join(memory["memory"] for memory in relevant_memories)
         return f"- Relevant Memories/Facts: {memories_text}\n\n- Entities: {entities}\n\n- User Question: {messages[-1]['content']}"

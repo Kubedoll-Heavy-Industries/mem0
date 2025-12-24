@@ -134,7 +134,16 @@ only-include = ["mem0"]
 [tool.ruff]
 line-length = 120
 target-version = "py39"
-exclude = ["embedchain/", "openmemory/"]
+exclude = [
+    "cookbooks/",
+    "docs/",
+    "embedchain/",
+    "evaluation/",
+    "examples/",
+    "mem0-ts/",
+    "openmemory/",
+    "vercel-ai-sdk/",
+]
 
 [tool.ruff.lint]
 select = [
@@ -146,13 +155,19 @@ select = [
     "C4",     # flake8-comprehensions
     "UP",     # pyupgrade
     "SIM",    # flake8-simplify
-    "TCH",    # flake8-type-checking
-    "PTH",    # flake8-use-pathlib
     "RUF",    # ruff-specific
 ]
 ignore = [
     "E501",   # line too long (handled by formatter)
     "B008",   # function call in default argument
+    "B024",   # abstract class without abstract methods
+    "B904",   # raise from err (too noisy for existing codebase)
+    "RUF001", # ambiguous unicode (intentional for CJK support)
+    "RUF012", # mutable class attributes (ClassVar annotations)
+    "SIM105", # use contextlib.suppress (style preference)
+    "SIM108", # use ternary (style preference)
+    "SIM115", # use context manager for open (style preference)
+    "SIM117", # combine with statements (style preference)
 ]
 
 [tool.ruff.lint.isort]

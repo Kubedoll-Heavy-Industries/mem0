@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import Dict, List, Optional
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 class OutputData(BaseModel):
     id: Optional[str]
     score: Optional[float]
-    payload: Optional[Dict]
+    payload: Optional[dict]
 
 
 class S3Vectors(VectorStoreBase):
@@ -69,7 +69,7 @@ class S3Vectors(VectorStoreBase):
             else:
                 raise
 
-    def _parse_output(self, vectors: List[Dict]) -> List[OutputData]:
+    def _parse_output(self, vectors: list[dict]) -> list[OutputData]:
         results = []
         for v in vectors:
             payload = v.get("metadata", {})

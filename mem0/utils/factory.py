@@ -1,5 +1,5 @@
 import importlib
-from typing import Dict, Optional, Union
+from typing import Optional, Union
 
 from mem0.configs.embeddings.base import BaseEmbedderConfig
 from mem0.configs.llms.anthropic import AnthropicConfig
@@ -12,10 +12,10 @@ from mem0.configs.llms.openai import OpenAIConfig
 from mem0.configs.llms.vllm import VllmConfig
 from mem0.configs.rerankers.base import BaseRerankerConfig
 from mem0.configs.rerankers.cohere import CohereRerankerConfig
+from mem0.configs.rerankers.huggingface import HuggingFaceRerankerConfig
+from mem0.configs.rerankers.llm import LLMRerankerConfig
 from mem0.configs.rerankers.sentence_transformer import SentenceTransformerRerankerConfig
 from mem0.configs.rerankers.zero_entropy import ZeroEntropyRerankerConfig
-from mem0.configs.rerankers.llm import LLMRerankerConfig
-from mem0.configs.rerankers.huggingface import HuggingFaceRerankerConfig
 from mem0.embeddings.mock import MockEmbeddings
 
 
@@ -53,7 +53,7 @@ class LlmFactory:
     }
 
     @classmethod
-    def create(cls, provider_name: str, config: Optional[Union[BaseLlmConfig, Dict]] = None, **kwargs):
+    def create(cls, provider_name: str, config: Optional[Union[BaseLlmConfig, dict]] = None, **kwargs):
         """
         Create an LLM instance with the appropriate configuration.
 
@@ -238,14 +238,17 @@ class RerankerFactory:
     # Provider mappings with their config classes
     provider_to_class = {
         "cohere": ("mem0.reranker.cohere_reranker.CohereReranker", CohereRerankerConfig),
-        "sentence_transformer": ("mem0.reranker.sentence_transformer_reranker.SentenceTransformerReranker", SentenceTransformerRerankerConfig),
+        "sentence_transformer": (
+            "mem0.reranker.sentence_transformer_reranker.SentenceTransformerReranker",
+            SentenceTransformerRerankerConfig,
+        ),
         "zero_entropy": ("mem0.reranker.zero_entropy_reranker.ZeroEntropyReranker", ZeroEntropyRerankerConfig),
         "llm_reranker": ("mem0.reranker.llm_reranker.LLMReranker", LLMRerankerConfig),
         "huggingface": ("mem0.reranker.huggingface_reranker.HuggingFaceReranker", HuggingFaceRerankerConfig),
     }
 
     @classmethod
-    def create(cls, provider_name: str, config: Optional[Union[BaseRerankerConfig, Dict]] = None, **kwargs):
+    def create(cls, provider_name: str, config: Optional[Union[BaseRerankerConfig, dict]] = None, **kwargs):
         """
         Create a reranker instance based on the provider and configuration.
 

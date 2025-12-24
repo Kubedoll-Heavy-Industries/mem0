@@ -1,5 +1,5 @@
 import os
-from typing import Dict, List, Optional, Union
+from typing import Optional, Union
 
 try:
     import anthropic
@@ -12,7 +12,7 @@ from mem0.llms.base import LLMBase
 
 
 class AnthropicLLM(LLMBase):
-    def __init__(self, config: Optional[Union[BaseLlmConfig, AnthropicConfig, Dict]] = None):
+    def __init__(self, config: Optional[Union[BaseLlmConfig, AnthropicConfig, dict]] = None):
         # Convert to AnthropicConfig if needed
         if config is None:
             config = AnthropicConfig()
@@ -42,9 +42,9 @@ class AnthropicLLM(LLMBase):
 
     def generate_response(
         self,
-        messages: List[Dict[str, str]],
+        messages: list[dict[str, str]],
         response_format=None,
-        tools: Optional[List[Dict]] = None,
+        tools: Optional[list[dict]] = None,
         tool_choice: str = "auto",
         **kwargs,
     ):

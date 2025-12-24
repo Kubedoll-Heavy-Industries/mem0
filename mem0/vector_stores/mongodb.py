@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 from pydantic import BaseModel
 
@@ -89,7 +89,7 @@ class MongoDB(VectorStoreBase):
             return None
 
     def insert(
-        self, vectors: List[List[float]], payloads: Optional[List[Dict]] = None, ids: Optional[List[str]] = None
+        self, vectors: list[list[float]], payloads: Optional[list[dict]] = None, ids: Optional[list[str]] = None
     ) -> None:
         """
         Insert vectors into the collection.
@@ -111,7 +111,7 @@ class MongoDB(VectorStoreBase):
         except PyMongoError as e:
             logger.error(f"Error inserting data: {e}")
 
-    def search(self, query: str, vectors: List[float], limit=5, filters: Optional[Dict] = None) -> List[OutputData]:
+    def search(self, query: str, vectors: list[float], limit=5, filters: Optional[dict] = None) -> list[OutputData]:
         """
         Search for similar vectors using the vector search index.
 
@@ -182,7 +182,7 @@ class MongoDB(VectorStoreBase):
         except PyMongoError as e:
             logger.error(f"Error deleting document: {e}")
 
-    def update(self, vector_id: str, vector: Optional[List[float]] = None, payload: Optional[Dict] = None) -> None:
+    def update(self, vector_id: str, vector: Optional[list[float]] = None, payload: Optional[dict] = None) -> None:
         """
         Update a vector and its payload.
 
@@ -229,7 +229,7 @@ class MongoDB(VectorStoreBase):
             logger.error(f"Error retrieving document: {e}")
             return None
 
-    def list_cols(self) -> List[str]:
+    def list_cols(self) -> list[str]:
         """
         List all collections in the database.
 
@@ -252,7 +252,7 @@ class MongoDB(VectorStoreBase):
         except PyMongoError as e:
             logger.error(f"Error deleting collection: {e}")
 
-    def col_info(self) -> Dict[str, Any]:
+    def col_info(self) -> dict[str, Any]:
         """
         Get information about the collection.
 
@@ -268,7 +268,7 @@ class MongoDB(VectorStoreBase):
             logger.error(f"Error getting collection info: {e}")
             return {}
 
-    def list(self, filters: Optional[Dict] = None, limit: int = 100) -> List[OutputData]:
+    def list(self, filters: Optional[dict] = None, limit: int = 100) -> list[OutputData]:
         """
         List vectors in the collection.
 

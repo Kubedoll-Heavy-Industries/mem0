@@ -57,10 +57,7 @@ class TestSQLiteManager:
     @pytest.mark.parametrize("db_type,path", [("file", "temp_db_path"), ("memory", ":memory:")])
     def test_initialization(self, db_type, path, request):
         """Test SQLiteManager initialization with different database types."""
-        if db_type == "file":
-            db_path = request.getfixturevalue(path)
-        else:
-            db_path = path
+        db_path = request.getfixturevalue(path) if db_type == "file" else path
 
         manager = SQLiteManager(db_path)
         assert manager.connection is not None
@@ -198,7 +195,7 @@ class TestSQLiteManager:
             sqlite_manager.add_history(
                 memory_id=sample_data["memory_id"],
                 old_memory=f"Memory {i}",
-                new_memory=f"Memory {i+1}",
+                new_memory=f"Memory {i + 1}",
                 event="ADD" if i == 0 else "UPDATE",
                 created_at=ts,
                 updated_at=ts if i > 0 else None,

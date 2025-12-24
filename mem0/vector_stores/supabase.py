@@ -1,6 +1,6 @@
 import logging
 import uuid
-from typing import List, Optional
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -90,11 +90,11 @@ class Supabase(VectorStoreBase):
             self.collection.create_index(method=self.index_method.value, measure=self.index_measure.value)
             logger.info(f"Successfully created collection {self.collection_name} with dimension {dims}")
         except Exception as e:
-            logger.error(f"Failed to create collection: {str(e)}")
+            logger.error(f"Failed to create collection: {e!s}")
             raise
 
     def insert(
-        self, vectors: List[List[float]], payloads: Optional[List[dict]] = None, ids: Optional[List[str]] = None
+        self, vectors: list[list[float]], payloads: Optional[list[dict]] = None, ids: Optional[list[str]] = None
     ):
         """
         Insert vectors into the collection.
@@ -116,8 +116,8 @@ class Supabase(VectorStoreBase):
         self.collection.upsert(records)
 
     def search(
-        self, query: str, vectors: List[float], limit: int = 5, filters: Optional[dict] = None
-    ) -> List[OutputData]:
+        self, query: str, vectors: list[float], limit: int = 5, filters: Optional[dict] = None
+    ) -> list[OutputData]:
         """
         Search for similar vectors.
 
@@ -146,7 +146,7 @@ class Supabase(VectorStoreBase):
         """
         self.collection.delete([(vector_id,)])
 
-    def update(self, vector_id: str, vector: Optional[List[float]] = None, payload: Optional[dict] = None):
+    def update(self, vector_id: str, vector: Optional[list[float]] = None, payload: Optional[dict] = None):
         """
         Update a vector and/or its payload.
 
@@ -181,7 +181,7 @@ class Supabase(VectorStoreBase):
         record = result[0]
         return OutputData(id=str(record.id), score=None, payload=record.metadata)
 
-    def list_cols(self) -> List[str]:
+    def list_cols(self) -> list[str]:
         """
         List all collections.
 
@@ -209,7 +209,7 @@ class Supabase(VectorStoreBase):
             "index": {"method": info.index_method, "metric": info.distance_metric},
         }
 
-    def list(self, filters: Optional[dict] = None, limit: int = 100) -> List[OutputData]:
+    def list(self, filters: Optional[dict] = None, limit: int = 100) -> list[OutputData]:
         """
         List vectors in the collection.
 

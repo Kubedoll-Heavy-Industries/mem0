@@ -1,6 +1,6 @@
 import json
 import os
-from typing import Dict, List, Optional, Union
+from typing import Optional, Union
 
 from openai import OpenAI
 
@@ -11,7 +11,7 @@ from mem0.memory.utils import extract_json
 
 
 class DeepSeekLLM(LLMBase):
-    def __init__(self, config: Optional[Union[BaseLlmConfig, DeepSeekConfig, Dict]] = None):
+    def __init__(self, config: Optional[Union[BaseLlmConfig, DeepSeekConfig, dict]] = None):
         # Convert to DeepSeekConfig if needed
         if config is None:
             config = DeepSeekConfig()
@@ -72,9 +72,9 @@ class DeepSeekLLM(LLMBase):
 
     def generate_response(
         self,
-        messages: List[Dict[str, str]],
+        messages: list[dict[str, str]],
         response_format=None,
-        tools: Optional[List[Dict]] = None,
+        tools: Optional[list[dict]] = None,
         tool_choice: str = "auto",
         **kwargs,
     ):

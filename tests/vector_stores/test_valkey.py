@@ -64,7 +64,7 @@ def test_search_filter_syntax(valkey_db, mock_valkey_client):
     )
 
     # Check that the search was called with the correct filter syntax
-    args, kwargs = mock_ft.search.call_args
+    args, _kwargs = mock_ft.search.call_args
     assert "@user_id:{test_user}" in args[0]
     assert "=>[KNN" in args[0]
 
@@ -77,7 +77,7 @@ def test_search_filter_syntax(valkey_db, mock_valkey_client):
     )
 
     # Check that the search was called with the correct filter syntax
-    args, kwargs = mock_ft.search.call_args
+    args, _kwargs = mock_ft.search.call_args
     assert "@user_id:{test_user}" in args[0]
     assert "@agent_id:{test_agent}" in args[0]
     assert "=>[KNN" in args[0]
@@ -108,7 +108,7 @@ def test_search_without_filters(valkey_db, mock_valkey_client):
     )
 
     # Check that the search was called with the correct syntax
-    args, kwargs = mock_ft.search.call_args
+    args, _kwargs = mock_ft.search.call_args
     assert "*=>[KNN" in args[0]
 
     # Check that results are processed correctly
@@ -154,7 +154,7 @@ def test_insert_handles_missing_created_at(valkey_db, mock_valkey_client):
 
     # Check that hset was called with the correct arguments
     mock_valkey_client.hset.assert_called_once()
-    args, kwargs = mock_valkey_client.hset.call_args
+    _args, kwargs = mock_valkey_client.hset.call_args
     assert "created_at" in kwargs["mapping"]  # Should be added automatically
 
 
@@ -200,7 +200,7 @@ def test_update_handles_missing_created_at(valkey_db, mock_valkey_client):
 
     # Check that hset was called with the correct arguments
     mock_valkey_client.hset.assert_called_once()
-    args, kwargs = mock_valkey_client.hset.call_args
+    _args, kwargs = mock_valkey_client.hset.call_args
     assert "created_at" in kwargs["mapping"]  # Should be added automatically
 
 
@@ -363,7 +363,7 @@ def test_list(valkey_db, mock_valkey_client):
 
     # Check that search was called with the correct arguments
     mock_ft.search.assert_called_once()
-    args, kwargs = mock_ft.search.call_args
+    args, _kwargs = mock_ft.search.call_args
     # Now expects full search query with KNN part due to dummy vector approach
     assert "@user_id:{test_user}" in args[0]
     assert "=>[KNN" in args[0]
@@ -633,7 +633,7 @@ def test_col_info_error(valkey_db, mock_valkey_client):
 
 def test_invalid_index_type():
     """Test validation of invalid index type."""
-    with pytest.raises(ValueError, match="Invalid index_type: invalid. Must be 'hnsw' or 'flat'"):
+    with pytest.raises(ValueError, match=r"Invalid index_type: invalid\. Must be 'hnsw' or 'flat'"):
         ValkeyDB(
             valkey_url="valkey://localhost:6379",
             collection_name="test_collection",
@@ -649,13 +649,12 @@ def test_index_existence_check_error(mock_valkey_client):
     mock_ft.info.side_effect = ResponseError("Some other error")
     mock_valkey_client.ft.return_value = mock_ft
 
-    with patch("valkey.from_url", return_value=mock_valkey_client):
-        with pytest.raises(ResponseError):
-            ValkeyDB(
-                valkey_url="valkey://localhost:6379",
-                collection_name="test_collection",
-                embedding_model_dims=1536,
-            )
+    with patch("valkey.from_url", return_value=mock_valkey_client), pytest.raises(ResponseError):
+        ValkeyDB(
+            valkey_url="valkey://localhost:6379",
+            collection_name="test_collection",
+            embedding_model_dims=1536,
+        )
 
 
 def test_flat_index_creation(mock_valkey_client):

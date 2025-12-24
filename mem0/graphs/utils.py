@@ -76,9 +76,9 @@ Guidelines:
 6. Temporal Awareness: Prioritize recency when timestamps are available.
 7. Necessity Principle: Only DELETE relationships that must be deleted and are contradictory/outdated to the new information to maintain an accurate and coherent memory graph.
 
-Note: DO NOT DELETE if their is a possibility of same type of relationship but different destination nodes. 
+Note: DO NOT DELETE if their is a possibility of same type of relationship but different destination nodes.
 
-For example: 
+For example:
 Existing Memory: alice -- loves_to_eat -- pizza
 New Information: Alice also loves to eat burger.
 

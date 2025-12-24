@@ -1,5 +1,5 @@
 import json
-from typing import Dict, List, Optional
+from typing import Optional
 
 try:
     import litellm
@@ -50,9 +50,9 @@ class LiteLLM(LLMBase):
 
     def generate_response(
         self,
-        messages: List[Dict[str, str]],
+        messages: list[dict[str, str]],
         response_format=None,
-        tools: Optional[List[Dict]] = None,
+        tools: Optional[list[dict]] = None,
         tool_choice: str = "auto",
     ):
         """

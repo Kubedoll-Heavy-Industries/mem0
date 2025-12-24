@@ -56,7 +56,7 @@ class MemoryGraph:
         self.llm = LlmFactory.create(self.llm_provider, llm_config)
         self.user_id = None
         # Use threshold from graph_store config, default to 0.7 for backward compatibility
-        self.threshold = self.config.graph_store.threshold if hasattr(self.config.graph_store, 'threshold') else 0.7
+        self.threshold = self.config.graph_store.threshold if hasattr(self.config.graph_store, "threshold") else 0.7
 
         # Setup Memgraph:
         # 1. Create vector index (created Entity label on all nodes)
@@ -390,7 +390,7 @@ class MemoryGraph:
             (m:Entity {{name: $dest_name, user_id: $user_id}})
             WHERE 1=1 {agent_filter}
             DELETE r
-            RETURN 
+            RETURN
                 n.name AS source,
                 m.name AS target,
                 type(r) AS relationship
@@ -424,7 +424,9 @@ class MemoryGraph:
 
             # search for the nodes with the closest embeddings
             source_node_search_result = self._search_source_node(source_embedding, filters, threshold=self.threshold)
-            destination_node_search_result = self._search_destination_node(dest_embedding, filters, threshold=self.threshold)
+            destination_node_search_result = self._search_destination_node(
+                dest_embedding, filters, threshold=self.threshold
+            )
 
             # Prepare agent_id for node creation
             agent_id_clause = ""
@@ -442,7 +444,7 @@ class MemoryGraph:
                         destination.embedding = $destination_embedding,
                         destination:Entity
                     MERGE (source)-[r:{relationship}]->(destination)
-                    ON CREATE SET 
+                    ON CREATE SET
                         r.created = timestamp()
                     RETURN source.name AS source, type(r) AS relationship, destination.name AS target
                     """
@@ -466,7 +468,7 @@ class MemoryGraph:
                         source.embedding = $source_embedding,
                         source:Entity
                     MERGE (source)-[r:{relationship}]->(destination)
-                    ON CREATE SET 
+                    ON CREATE SET
                         r.created = timestamp()
                     RETURN source.name AS source, type(r) AS relationship, destination.name AS target
                     """
@@ -487,7 +489,7 @@ class MemoryGraph:
                     MATCH (destination:Entity)
                     WHERE id(destination) = $destination_id
                     MERGE (source)-[r:{relationship}]->(destination)
-                    ON CREATE SET 
+                    ON CREATE SET
                         r.created_at = timestamp(),
                         r.updated_at = timestamp()
                     RETURN source.name AS source, type(r) AS relationship, destination.name AS target
@@ -541,11 +543,11 @@ class MemoryGraph:
 
         if agent_id:
             cypher = """
-                CALL vector_search.search("memzero", 1, $source_embedding) 
+                CALL vector_search.search("memzero", 1, $source_embedding)
                 YIELD distance, node, similarity
                 WITH node AS source_candidate, similarity
-                WHERE source_candidate.user_id = $user_id 
-                AND source_candidate.agent_id = $agent_id 
+                WHERE source_candidate.user_id = $user_id
+                AND source_candidate.agent_id = $agent_id
                 AND similarity >= $threshold
                 RETURN id(source_candidate);
                 """
@@ -557,10 +559,10 @@ class MemoryGraph:
             }
         else:
             cypher = """
-                CALL vector_search.search("memzero", 1, $source_embedding) 
+                CALL vector_search.search("memzero", 1, $source_embedding)
                 YIELD distance, node, similarity
                 WITH node AS source_candidate, similarity
-                WHERE source_candidate.user_id = $user_id 
+                WHERE source_candidate.user_id = $user_id
                 AND similarity >= $threshold
                 RETURN id(source_candidate);
                 """
@@ -580,11 +582,11 @@ class MemoryGraph:
 
         if agent_id:
             cypher = """
-                CALL vector_search.search("memzero", 1, $destination_embedding) 
+                CALL vector_search.search("memzero", 1, $destination_embedding)
                 YIELD distance, node, similarity
                 WITH node AS destination_candidate, similarity
-                WHERE node.user_id = $user_id 
-                AND node.agent_id = $agent_id 
+                WHERE node.user_id = $user_id
+                AND node.agent_id = $agent_id
                 AND similarity >= $threshold
                 RETURN id(destination_candidate);
                 """
@@ -596,10 +598,10 @@ class MemoryGraph:
             }
         else:
             cypher = """
-                CALL vector_search.search("memzero", 1, $destination_embedding) 
+                CALL vector_search.search("memzero", 1, $destination_embedding)
                 YIELD distance, node, similarity
                 WITH node AS destination_candidate, similarity
-                WHERE node.user_id = $user_id 
+                WHERE node.user_id = $user_id
                 AND similarity >= $threshold
                 RETURN id(destination_candidate);
                 """
@@ -611,7 +613,6 @@ class MemoryGraph:
 
         result = self.graph.query(cypher, params=params)
         return result
-
 
     def _vector_index_exists(self, index_info, index_name):
         """
@@ -628,9 +629,7 @@ class MemoryGraph:
 
         # Check for index by name regardless of version-specific format differences
         return any(
-            idx.get("index_name") == index_name or
-            idx.get("index name") == index_name or
-            idx.get("name") == index_name
+            idx.get("index_name") == index_name or idx.get("index name") == index_name or idx.get("name") == index_name
             for idx in vector_indexes
         )
 
@@ -649,9 +648,9 @@ class MemoryGraph:
         indexes = index_info.get("index_exists", [])
 
         return any(
-            (idx.get("index type") == "label+property" or idx.get("index_type") == "label+property") and
-            (idx.get("label") == label) and
-            (idx.get("property") == property_name or property_name in str(idx.get("properties", "")))
+            (idx.get("index type") == "label+property" or idx.get("index_type") == "label+property")
+            and (idx.get("label") == label)
+            and (idx.get("property") == property_name or property_name in str(idx.get("properties", "")))
             for idx in indexes
         )
 
@@ -669,8 +668,7 @@ class MemoryGraph:
         indexes = index_info.get("index_exists", [])
 
         return any(
-            (idx.get("index type") == "label" or idx.get("index_type") == "label") and
-            (idx.get("label") == label)
+            (idx.get("index type") == "label" or idx.get("index_type") == "label") and (idx.get("label") == label)
             for idx in indexes
         )
 

@@ -2,7 +2,7 @@ import logging
 import sqlite3
 import threading
 import uuid
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -166,7 +166,7 @@ class SQLiteManager:
                 logger.error(f"Failed to add history record: {e}")
                 raise
 
-    def get_history(self, memory_id: str) -> List[Dict[str, Any]]:
+    def get_history(self, memory_id: str) -> list[dict[str, Any]]:
         with self._lock:
             cur = self.connection.execute(
                 """

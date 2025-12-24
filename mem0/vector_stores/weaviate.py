@@ -1,6 +1,6 @@
 import logging
 import uuid
-from typing import Dict, List, Mapping, Optional
+from typing import TYPE_CHECKING, Optional
 from urllib.parse import urlparse
 
 from pydantic import BaseModel
@@ -19,13 +19,16 @@ from weaviate.util import get_valid_uuid
 
 from mem0.vector_stores.base import VectorStoreBase
 
+if TYPE_CHECKING:
+    from collections.abc import Mapping
+
 logger = logging.getLogger(__name__)
 
 
 class OutputData(BaseModel):
     id: str
     score: float
-    payload: Dict
+    payload: dict
 
 
 class Weaviate(VectorStoreBase):
@@ -33,9 +36,9 @@ class Weaviate(VectorStoreBase):
         self,
         collection_name: str,
         embedding_model_dims: int,
-        cluster_url: str = None,
-        auth_client_secret: str = None,
-        additional_headers: dict = None,
+        cluster_url: Optional[str] = None,
+        auth_client_secret: Optional[str] = None,
+        additional_headers: Optional[dict] = None,
     ):
         """
         Initialize the Weaviate vector store.
@@ -83,7 +86,7 @@ class Weaviate(VectorStoreBase):
         self.embedding_model_dims = embedding_model_dims
         self.create_col(embedding_model_dims)
 
-    def _parse_output(self, data: Dict) -> List[OutputData]:
+    def _parse_output(self, data: dict) -> list[OutputData]:
         """
         Parse the output data.
 
@@ -179,8 +182,8 @@ class Weaviate(VectorStoreBase):
                 batch.add_object(collection=self.collection_name, properties=data_object, uuid=object_id, vector=vector)
 
     def search(
-        self, query: str, vectors: List[float], limit: int = 5, filters: Optional[Dict] = None
-    ) -> List[OutputData]:
+        self, query: str, vectors: list[float], limit: int = 5, filters: Optional[dict] = None
+    ) -> list[OutputData]:
         """
         Search for similar vectors.
         """
@@ -313,7 +316,7 @@ class Weaviate(VectorStoreBase):
             return schema
         return None
 
-    def list(self, filters=None, limit=100) -> List[OutputData]:
+    def list(self, filters=None, limit=100) -> list[OutputData]:
         """
         List all vectors in a collection.
         """

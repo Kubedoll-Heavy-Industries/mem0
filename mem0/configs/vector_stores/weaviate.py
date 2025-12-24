@@ -1,4 +1,4 @@
-from typing import Any, ClassVar, Dict, Optional
+from typing import Any, ClassVar, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -12,11 +12,11 @@ class WeaviateConfig(BaseModel):
     embedding_model_dims: int = Field(1536, description="Dimensions of the embedding model")
     cluster_url: Optional[str] = Field(None, description="URL for Weaviate server")
     auth_client_secret: Optional[str] = Field(None, description="API key for Weaviate authentication")
-    additional_headers: Optional[Dict[str, str]] = Field(None, description="Additional headers for requests")
+    additional_headers: Optional[dict[str, str]] = Field(None, description="Additional headers for requests")
 
     @model_validator(mode="before")
     @classmethod
-    def check_connection_params(cls, values: Dict[str, Any]) -> Dict[str, Any]:
+    def check_connection_params(cls, values: dict[str, Any]) -> dict[str, Any]:
         cluster_url = values.get("cluster_url")
 
         if not cluster_url:
@@ -26,7 +26,7 @@ class WeaviateConfig(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def validate_extra_fields(cls, values: Dict[str, Any]) -> Dict[str, Any]:
+    def validate_extra_fields(cls, values: dict[str, Any]) -> dict[str, Any]:
         allowed_fields = set(cls.model_fields.keys())
         input_fields = set(values.keys())
         extra_fields = input_fields - allowed_fields

@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, Optional
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 class OutputData(BaseModel):
     id: Optional[str]  # memory id
     score: Optional[float]  # distance
-    payload: Optional[Dict]  # metadata
+    payload: Optional[dict]  # metadata
 
 
 class MilvusDB(VectorStoreBase):
@@ -139,7 +139,7 @@ class MilvusDB(VectorStoreBase):
 
         return memory
 
-    def search(self, query: str, vectors: list, limit: int = 5, filters: dict = None) -> list:
+    def search(self, query: str, vectors: list, limit: int = 5, filters: Optional[dict] = None) -> list:
         """
         Search for similar vectors.
 
@@ -224,7 +224,7 @@ class MilvusDB(VectorStoreBase):
         """
         return self.client.get_collection_stats(collection_name=self.collection_name)
 
-    def list(self, filters: dict = None, limit: int = 100) -> list:
+    def list(self, filters: Optional[dict] = None, limit: int = 100) -> list:
         """
         List all vectors in a collection.
 

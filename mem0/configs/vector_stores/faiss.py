@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -16,7 +16,7 @@ class FAISSConfig(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def validate_distance_strategy(cls, values: Dict[str, Any]) -> Dict[str, Any]:
+    def validate_distance_strategy(cls, values: dict[str, Any]) -> dict[str, Any]:
         distance_strategy = values.get("distance_strategy")
         if distance_strategy and distance_strategy not in ["euclidean", "inner_product", "cosine"]:
             raise ValueError("Invalid distance_strategy. Must be one of: 'euclidean', 'inner_product', 'cosine'")
@@ -24,7 +24,7 @@ class FAISSConfig(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def validate_extra_fields(cls, values: Dict[str, Any]) -> Dict[str, Any]:
+    def validate_extra_fields(cls, values: dict[str, Any]) -> dict[str, Any]:
         allowed_fields = set(cls.model_fields.keys())
         input_fields = set(values.keys())
         extra_fields = input_fields - allowed_fields

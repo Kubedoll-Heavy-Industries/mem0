@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional, Type, Union
+from typing import Any, Optional, Union
 
 from pydantic import BaseModel, Field, model_validator
 
@@ -14,14 +14,14 @@ class OpenSearchConfig(BaseModel):
     verify_certs: bool = Field(False, description="Verify SSL certificates (default False for OpenSearch)")
     use_ssl: bool = Field(False, description="Use SSL for connection (default False for OpenSearch)")
     http_auth: Optional[object] = Field(None, description="HTTP authentication method / AWS SigV4")
-    connection_class: Optional[Union[str, Type]] = Field(
+    connection_class: Optional[Union[str, type]] = Field(
         "RequestsHttpConnection", description="Connection class for OpenSearch"
     )
     pool_maxsize: int = Field(20, description="Maximum number of connections in the pool")
 
     @model_validator(mode="before")
     @classmethod
-    def validate_auth(cls, values: Dict[str, Any]) -> Dict[str, Any]:
+    def validate_auth(cls, values: dict[str, Any]) -> dict[str, Any]:
         # Check if host is provided
         if not values.get("host"):
             raise ValueError("Host must be provided for OpenSearch")
@@ -30,7 +30,7 @@ class OpenSearchConfig(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def validate_extra_fields(cls, values: Dict[str, Any]) -> Dict[str, Any]:
+    def validate_extra_fields(cls, values: dict[str, Any]) -> dict[str, Any]:
         allowed_fields = set(cls.model_fields.keys())
         input_fields = set(values.keys())
         extra_fields = input_fields - allowed_fields

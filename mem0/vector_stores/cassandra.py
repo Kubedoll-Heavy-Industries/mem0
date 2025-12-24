@@ -1,14 +1,14 @@
 import json
 import logging
 import uuid
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 import numpy as np
 from pydantic import BaseModel
 
 try:
-    from cassandra.cluster import Cluster
     from cassandra.auth import PlainTextAuthProvider
+    from cassandra.cluster import Cluster
 except ImportError:
     raise ImportError(
         "Apache Cassandra vector store requires cassandra-driver. "
@@ -29,7 +29,7 @@ class OutputData(BaseModel):
 class CassandraDB(VectorStoreBase):
     def __init__(
         self,
-        contact_points: List[str],
+        contact_points: list[str],
         port: int = 9042,
         username: Optional[str] = None,
         password: Optional[str] = None,
@@ -70,7 +70,7 @@ class CassandraDB(VectorStoreBase):
         self.cluster = None
         self.session = None
         self._setup_connection()
-        
+
         # Create keyspace and table if they don't exist
         self._create_keyspace()
         self._create_table()
@@ -81,31 +81,28 @@ class CassandraDB(VectorStoreBase):
             # Setup authentication
             auth_provider = None
             if self.username and self.password:
-                auth_provider = PlainTextAuthProvider(
-                    username=self.username,
-                    password=self.password
-                )
+                auth_provider = PlainTextAuthProvider(username=self.username, password=self.password)
 
             # Connect to Astra DB using secure connect bundle
             if self.secure_connect_bundle:
                 self.cluster = Cluster(
-                    cloud={'secure_connect_bundle': self.secure_connect_bundle},
+                    cloud={"secure_connect_bundle": self.secure_connect_bundle},
                     auth_provider=auth_provider,
-                    protocol_version=self.protocol_version
+                    protocol_version=self.protocol_version,
                 )
             else:
                 # Connect to standard Cassandra cluster
                 cluster_kwargs = {
-                    'contact_points': self.contact_points,
-                    'port': self.port,
-                    'protocol_version': self.protocol_version
+                    "contact_points": self.contact_points,
+                    "port": self.port,
+                    "protocol_version": self.protocol_version,
                 }
-                
+
                 if auth_provider:
-                    cluster_kwargs['auth_provider'] = auth_provider
-                
+                    cluster_kwargs["auth_provider"] = auth_provider
+
                 if self.load_balancing_policy:
-                    cluster_kwargs['load_balancing_policy'] = self.load_balancing_policy
+                    cluster_kwargs["load_balancing_policy"] = self.load_balancing_policy
 
                 self.cluster = Cluster(**cluster_kwargs)
 
@@ -147,7 +144,7 @@ class CassandraDB(VectorStoreBase):
             logger.error(f"Failed to create table: {e}")
             raise
 
-    def create_col(self, name: str = None, vector_size: int = None, distance: str = "cosine"):
+    def create_col(self, name: Optional[str] = None, vector_size: Optional[int] = None, distance: str = "cosine"):
         """
         Create a new collection (table in Cassandra).
 
@@ -174,10 +171,7 @@ class CassandraDB(VectorStoreBase):
             raise
 
     def insert(
-        self,
-        vectors: List[List[float]],
-        payloads: Optional[List[Dict]] = None,
-        ids: Optional[List[str]] = None
+        self, vectors: list[list[float]], payloads: Optional[list[dict]] = None, ids: Optional[list[str]] = None
     ):
         """
         Insert vectors into the collection.
@@ -202,10 +196,7 @@ class CassandraDB(VectorStoreBase):
             prepared = self.session.prepare(query)
 
             for vector, payload, vec_id in zip(vectors, payloads, ids):
-                self.session.execute(
-                    prepared,
-                    (vec_id, vector, json.dumps(payload))
-                )
+                self.session.execute(prepared, (vec_id, vector, json.dumps(payload)))
         except Exception as e:
             logger.error(f"Failed to insert vectors: {e}")
             raise
@@ -213,10 +204,10 @@ class CassandraDB(VectorStoreBase):
     def search(
         self,
         query: str,
-        vectors: List[float],
+        vectors: list[float],
         limit: int = 5,
-        filters: Optional[Dict] = None,
-    ) -> List[OutputData]:
+        filters: Optional[dict] = None,
+    ) -> list[OutputData]:
         """
         Search for similar vectors using cosine similarity.
 
@@ -246,7 +237,7 @@ class CassandraDB(VectorStoreBase):
                     continue
 
                 vec = np.array(row.vector)
-                
+
                 # Cosine similarity
                 similarity = np.dot(query_vec, vec) / (np.linalg.norm(query_vec) * np.linalg.norm(vec))
                 distance = 1 - similarity
@@ -268,12 +259,7 @@ class CassandraDB(VectorStoreBase):
             scored_results = scored_results[:limit]
 
             return [
-                OutputData(
-                    id=r[0],
-                    score=float(r[1]),
-                    payload=json.loads(r[2]) if r[2] else {}
-                )
-                for r in scored_results
+                OutputData(id=r[0], score=float(r[1]), payload=json.loads(r[2]) if r[2] else {}) for r in scored_results
             ]
         except Exception as e:
             logger.error(f"Search failed: {e}")
@@ -301,8 +287,8 @@ class CassandraDB(VectorStoreBase):
     def update(
         self,
         vector_id: str,
-        vector: Optional[List[float]] = None,
-        payload: Optional[Dict] = None,
+        vector: Optional[list[float]] = None,
+        payload: Optional[dict] = None,
     ):
         """
         Update a vector and its payload.
@@ -358,16 +344,12 @@ class CassandraDB(VectorStoreBase):
             if not row:
                 return None
 
-            return OutputData(
-                id=row.id,
-                score=None,
-                payload=json.loads(row.payload) if row.payload else {}
-            )
+            return OutputData(id=row.id, score=None, payload=json.loads(row.payload) if row.payload else {})
         except Exception as e:
             logger.error(f"Failed to get vector: {e}")
             return None
 
-    def list_cols(self) -> List[str]:
+    def list_cols(self) -> list[str]:
         """
         List all collections (tables in the keyspace).
 
@@ -398,7 +380,7 @@ class CassandraDB(VectorStoreBase):
             logger.error(f"Failed to delete collection: {e}")
             raise
 
-    def col_info(self) -> Dict[str, Any]:
+    def col_info(self) -> dict[str, Any]:
         """
         Get information about the collection.
 
@@ -418,17 +400,13 @@ class CassandraDB(VectorStoreBase):
                 "name": self.collection_name,
                 "keyspace": self.keyspace,
                 "count": count,
-                "vector_dims": self.embedding_model_dims
+                "vector_dims": self.embedding_model_dims,
             }
         except Exception as e:
             logger.error(f"Failed to get collection info: {e}")
             return {}
 
-    def list(
-        self,
-        filters: Optional[Dict] = None,
-        limit: int = 100
-    ) -> List[List[OutputData]]:
+    def list(self, filters: Optional[dict] = None, limit: int = 100) -> list[list[OutputData]]:
         """
         List all vectors in the collection.
 
@@ -460,11 +438,7 @@ class CassandraDB(VectorStoreBase):
                         continue
 
                 results.append(
-                    OutputData(
-                        id=row.id,
-                        score=None,
-                        payload=json.loads(row.payload) if row.payload else {}
-                    )
+                    OutputData(id=row.id, score=None, payload=json.loads(row.payload) if row.payload else {})
                 )
 
             return [results]
@@ -493,4 +467,3 @@ class CassandraDB(VectorStoreBase):
                 logger.info("Cassandra cluster connection closed")
         except Exception:
             pass
-

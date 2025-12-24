@@ -2,6 +2,7 @@ import json
 import logging
 from datetime import datetime
 from functools import reduce
+from typing import Optional
 
 import numpy as np
 import pytz
@@ -39,7 +40,7 @@ excluded_keys = {"user_id", "agent_id", "run_id", "hash", "data", "created_at", 
 
 
 class MemoryResult:
-    def __init__(self, id: str, payload: dict, score: float = None):
+    def __init__(self, id: str, payload: dict, score: Optional[float] = None):
         self.id = id
         self.payload = payload
         self.score = score
@@ -119,7 +120,7 @@ class RedisDB(VectorStoreBase):
 
         return index
 
-    def insert(self, vectors: list, payloads: list = None, ids: list = None):
+    def insert(self, vectors: list, payloads: Optional[list] = None, ids: Optional[list] = None):
         data = []
         for vector, payload, id in zip(vectors, payloads, ids):
             # Start with required fields
@@ -142,7 +143,7 @@ class RedisDB(VectorStoreBase):
             data.append(entry)
         self.index.load(data, id_field="memory_id")
 
-    def search(self, query: str, vectors: list, limit: int = 5, filters: dict = None):
+    def search(self, query: str, vectors: list, limit: int = 5, filters: Optional[dict] = None):
         conditions = [Tag(key) == value for key, value in filters.items() if value is not None]
         filter = reduce(lambda x, y: x & y, conditions)
 
@@ -176,7 +177,7 @@ class RedisDB(VectorStoreBase):
                         else {}
                     ),
                     **{field: result[field] for field in ["agent_id", "run_id", "user_id"] if field in result},
-                    **{k: v for k, v in json.loads(extract_json(result["metadata"])).items()},
+                    **dict(json.loads(extract_json(result["metadata"])).items()),
                 },
             )
             for result in results
@@ -220,7 +221,7 @@ class RedisDB(VectorStoreBase):
                 else {}
             ),
             **{field: result[field] for field in ["agent_id", "run_id", "user_id"] if field in result},
-            **{k: v for k, v in json.loads(extract_json(result["metadata"])).items()},
+            **dict(json.loads(extract_json(result["metadata"])).items()),
         }
 
         return MemoryResult(id=result["memory_id"], payload=payload)
@@ -252,7 +253,7 @@ class RedisDB(VectorStoreBase):
         # Recreate the index with the same parameters
         self.create_col(collection_name, self.embedding_model_dims)
 
-    def list(self, filters: dict = None, limit: int = None) -> list:
+    def list(self, filters: Optional[dict] = None, limit: Optional[int] = None) -> list:
         """
         List all recent created memories from the vector store.
         """
@@ -287,7 +288,7 @@ class RedisDB(VectorStoreBase):
                             for field in ["agent_id", "run_id", "user_id"]
                             if field in result.__dict__
                         },
-                        **{k: v for k, v in json.loads(extract_json(result["metadata"])).items()},
+                        **dict(json.loads(extract_json(result["metadata"])).items()),
                     },
                 )
                 for result in results.docs
