@@ -2,15 +2,29 @@ import datetime
 from uuid import uuid4
 
 from app.config import DEFAULT_APP_ID, USER_ID
-from app.database import Base, SessionLocal, engine
+from app.database import Base, SessionLocal, engine, get_db
 from app.mcp_server import setup_mcp_server
 from app.models import App, User
 from app.routers import apps_router, backup_router, config_router, memories_router, stats_router
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_pagination import add_pagination
+from sqlalchemy.orm import Session
 
 app = FastAPI(title="OpenMemory API")
+
+
+@app.get("/health", tags=["probes"])
+def health() -> dict[str, str]:
+    """Liveness probe."""
+    return {"status": "ok"}
+
+
+@app.get("/ready", tags=["probes"])
+def ready(db: Session = Depends(get_db)) -> dict[str, str]:
+    """Readiness probe - validates session pool connectivity."""
+    return {"status": "ok"}
+
 
 app.add_middleware(
     CORSMiddleware,

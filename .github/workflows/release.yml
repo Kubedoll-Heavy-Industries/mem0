@@ -37,7 +37,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  # Use lowercase for Docker registry (GitHub lowercases automatically, but explicit is safer)
   IMAGE_NAME: kubedoll-heavy-industries/mem0-server
 
 jobs:
@@ -95,7 +94,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
           cache: "pnpm"
           cache-dependency-path: |
             mem0-ts/pnpm-lock.yaml
@@ -224,7 +223,7 @@ jobs:
 
       - name: Generate artifact attestation
         if: github.event_name != 'workflow_dispatch' || !inputs.dry_run
-        uses: actions/attest-build-provenance@v2
+        uses: actions/attest-build-provenance@v3
         with:
           subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           subject-digest: ${{ steps.build.outputs.digest }}
