@@ -23,9 +23,12 @@ def test_load_data(youtube_video_loader):
     ]
 
     mock_transcript = [{"text": "sample text", "start": 0.0, "duration": 5.0}]
+    mock_api_instance = MagicMock()
+    mock_api_instance.list.return_value = [MagicMock(language_code="en")]
+    mock_api_instance.fetch.return_value = mock_transcript
 
     with patch("embedchain.loaders.youtube_video.YoutubeLoader.from_youtube_url", return_value=mock_loader), patch(
-        "embedchain.loaders.youtube_video.YouTubeTranscriptApi.get_transcript", return_value=mock_transcript
+        "embedchain.loaders.youtube_video.YouTubeTranscriptApi", return_value=mock_api_instance
     ):
         result = youtube_video_loader.load_data(video_url)
 
@@ -36,7 +39,11 @@ def test_load_data(youtube_video_loader):
     expected_data = [
         {
             "content": "This is a YouTube video content.",
-            "meta_data": {"url": video_url, "title": "Test Video", "transcript": "Unavailable"},
+            "meta_data": {
+                "url": video_url,
+                "title": "Test Video",
+                "transcript": '[{"text": "sample text", "start": 0.0, "duration": 5.0}]',
+            },
         }
     ]
 

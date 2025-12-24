@@ -225,9 +225,9 @@ class BaseLlmConfig(BaseConfig):
         self.base_url = base_url
         self.endpoint = endpoint
         self.model_kwargs = model_kwargs
-        self.http_client = httpx.Client(proxies=http_client_proxies) if http_client_proxies else None
+        self.http_client = httpx.Client(proxy=http_client_proxies) if http_client_proxies else None
         self.http_async_client = (
-            httpx.AsyncClient(proxies=http_async_client_proxies) if http_async_client_proxies else None
+            httpx.AsyncClient(proxy=http_async_client_proxies) if http_async_client_proxies else None
         )
         self.local = local
         self.default_headers = default_headers

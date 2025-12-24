@@ -33,7 +33,12 @@ class TestFactories:
     @pytest.mark.parametrize(
         "provider_name, config_data, expected_class",
         [
-            ("gpt4all", {}, embedchain.embedder.gpt4all.GPT4AllEmbedder),
+            pytest.param(
+                "gpt4all",
+                {},
+                embedchain.embedder.gpt4all.GPT4AllEmbedder,
+                marks=pytest.mark.skip(reason="gpt4all requires model download"),
+            ),
             (
                 "huggingface",
                 {"model": "sentence-transformers/all-mpnet-base-v2", "vector_dimension": 768},

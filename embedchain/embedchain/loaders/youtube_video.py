@@ -24,11 +24,12 @@ class YoutubeVideoLoader(BaseLoader):
 
         languages = ["en"]
         try:
-            # Fetching transcript data
-            languages = [transcript.language_code for transcript in YouTubeTranscriptApi.list_transcripts(video_id)]
-            transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=languages)
-            # convert transcript to json to avoid unicode symboles
-            transcript = json.dumps(transcript, ensure_ascii=True)
+            api = YouTubeTranscriptApi()
+            available_transcripts = api.list(video_id)
+            languages = [t.language_code for t in available_transcripts]
+            fetched = api.fetch(video_id, languages=languages)
+            # convert transcript to json to avoid unicode symbols
+            transcript = json.dumps(list(fetched), ensure_ascii=True)
         except Exception:
             logging.exception(f"Failed to fetch transcript for video {url}")
             transcript = "Unavailable"
