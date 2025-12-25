@@ -1,4 +1,4 @@
-/// <reference types="jest" />
+import { describe, it, expect } from "vitest";
 import { VectorStoreFactory } from "../src/utils/factory";
 import { AzureAISearch } from "../src/vector_stores/azure_ai_search";
 
