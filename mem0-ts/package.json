@@ -59,26 +59,6 @@
     "format": "npm run clean && prettier --write .",
     "format:check": "npm run clean && prettier --check ."
   },
-  "tsup": {
-    "entry": {
-      "index": "src/index.ts",
-      "oss/index": "src/oss/index.ts",
-      "community/index": "src/community/src/index.ts",
-      "community/integrations/langchain/index": "src/community/src/integrations/langchain/index.ts"
-    },
-    "format": [
-      "cjs",
-      "esm"
-    ],
-    "dts": {
-      "resolve": true
-    },
-    "splitting": false,
-    "sourcemap": true,
-    "clean": true,
-    "treeshake": true,
-    "minify": false
-  },
   "keywords": [
     "mem0",
     "api",
@@ -140,19 +120,10 @@
     "sqlite3": "^5.1.7"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "publishConfig": {
     "access": "public"
   },
-  "packageManager": "pnpm@10.5.2+sha512.da9dc28cd3ff40d0592188235ab25d3202add8a207afbedc682220e4a0029ffbff4562102b9e6e46b4e3f9e8bd53e6d05de48544b0c57d4b0179e22c76d1199b",
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild",
-      "sqlite3"
-    ],
-    "overrides": {
-      "zod": "^4.0.0"
-    }
-  }
+  "packageManager": "pnpm@10.26.2+sha512.0e308ff2005fc7410366f154f625f6631ab2b16b1d2e70238444dd6ae9d630a8482d92a451144debc492416896ed16f7b114a86ec68b8404b2443869e68ffda6"
 }
