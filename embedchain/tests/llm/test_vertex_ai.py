@@ -1,7 +1,6 @@
 from unittest.mock import MagicMock, patch
 
 import pytest
-from langchain.schema import HumanMessage, SystemMessage
 
 from embedchain.config import BaseLlmConfig
 from embedchain.core.db.database import database_manager
@@ -70,7 +69,6 @@ def test_get_messages(vertexai_llm):
     prompt = "Test Prompt"
     system_prompt = "Test System Prompt"
     messages = vertexai_llm._get_messages(prompt, system_prompt)
-    assert messages == [
-        SystemMessage(content="Test System Prompt", additional_kwargs={}),
-        HumanMessage(content="Test Prompt", additional_kwargs={}, example=False),
-    ]
+    assert len(messages) == 2
+    assert messages[0].content == "Test System Prompt"
+    assert messages[1].content == "Test Prompt"

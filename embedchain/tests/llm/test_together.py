@@ -2,6 +2,8 @@ import os
 
 import pytest
 
+pytest.importorskip("langchain_together", reason="langchain_together not installed")
+
 from embedchain.config import BaseLlmConfig
 from embedchain.llm.together import TogetherLlm
 

@@ -3,8 +3,7 @@ from collections.abc import Iterable
 from pathlib import Path
 from typing import Optional
 
-from langchain.callbacks.stdout import StdOutCallbackHandler
-from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
+from langchain_core.callbacks import StdOutCallbackHandler, StreamingStdOutCallbackHandler
 
 from embedchain.config import BaseLlmConfig
 from embedchain.helpers.json_serializable import register_deserializable

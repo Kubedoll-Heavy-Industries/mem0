@@ -2,7 +2,7 @@ import importlib
 import logging
 from typing import Any, Optional
 
-from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
+from langchain_core.callbacks import StreamingStdOutCallbackHandler
 from langchain_google_vertexai import ChatVertexAI
 
 from embedchain.config import BaseLlmConfig

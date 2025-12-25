@@ -172,3 +172,13 @@ fixable = ["ALL"]
 
 [tool.ruff.lint.mccabe]
 max-complexity = 10
+
+[tool.pytest.ini_options]
+markers = [
+    "external_service: tests requiring external API services (Dropbox, Slack, YouTube, GitHub, Gmail, Google Drive, Notion)",
+    "llm_provider: tests requiring specific LLM provider API keys (OpenAI, Anthropic, Cohere, Vertex AI, etc.)",
+    "vectordb: tests requiring vector database setup (Pinecone, Weaviate, Qdrant, Elasticsearch, etc.)",
+    "slow: long-running tests",
+]
+# Skip external service and LLM provider tests by default in CI
+addopts = "-m 'not external_service and not llm_provider'"

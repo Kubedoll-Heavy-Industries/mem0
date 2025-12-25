@@ -4,8 +4,8 @@ import warnings
 from collections.abc import Callable
 from typing import Any, Optional
 
-from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
-from langchain.schema import BaseMessage, HumanMessage, SystemMessage
+from langchain_core.callbacks import StreamingStdOutCallbackHandler
+from langchain_core.messages import BaseMessage, HumanMessage, SystemMessage
 from langchain_core.tools import BaseTool
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel
@@ -110,7 +110,7 @@ class OpenAILlm(BaseLlm):
         tools: Optional[dict[str, Any] | type[BaseModel] | Callable[..., Any] | BaseTool],
         messages: list[BaseMessage],
     ) -> str:
-        from langchain.output_parsers.openai_tools import JsonOutputToolsParser
+        from langchain_core.output_parsers.openai_tools import JsonOutputToolsParser
         from langchain_core.utils.function_calling import convert_to_openai_tool
 
         openai_tools = [convert_to_openai_tool(tools)]

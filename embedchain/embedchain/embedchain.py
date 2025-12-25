@@ -4,7 +4,7 @@ import logging
 from typing import Any, Optional
 
 from dotenv import load_dotenv
-from langchain.docstore.document import Document
+from langchain_core.documents import Document
 
 from embedchain.cache import (
     adapt,

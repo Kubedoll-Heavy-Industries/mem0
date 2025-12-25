@@ -1,8 +1,8 @@
 import queue
 from typing import Any
 
-from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain.schema import LLMResult
+from langchain_core.callbacks import StreamingStdOutCallbackHandler
 
 STOP_ITEM = "[END]"
 """

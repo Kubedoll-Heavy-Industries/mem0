@@ -2,10 +2,8 @@ import logging
 from collections.abc import Iterable
 from typing import Optional
 
-from langchain.callbacks.manager import CallbackManager
-from langchain.callbacks.stdout import StdOutCallbackHandler
-from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain_community.llms.ollama import Ollama
+from langchain_core.callbacks import CallbackManager, StdOutCallbackHandler, StreamingStdOutCallbackHandler
 
 try:
     from ollama import Client

@@ -2,7 +2,7 @@ import logging
 from typing import Any, Optional
 
 from chromadb import Collection, QueryResult
-from langchain.docstore.document import Document
+from langchain_core.documents import Document
 from tqdm import tqdm
 
 from embedchain.config import ChromaDbConfig

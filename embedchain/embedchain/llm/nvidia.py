@@ -2,9 +2,7 @@ import os
 from collections.abc import Iterable
 from typing import Any, Optional
 
-from langchain.callbacks.manager import CallbackManager
-from langchain.callbacks.stdout import StdOutCallbackHandler
-from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
+from langchain_core.callbacks import CallbackManager, StdOutCallbackHandler, StreamingStdOutCallbackHandler
 
 try:
     from langchain_nvidia_ai_endpoints import ChatNVIDIA
