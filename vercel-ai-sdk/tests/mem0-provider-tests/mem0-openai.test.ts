@@ -3,7 +3,7 @@ dotenv.config();
 
 import { createMem0 } from "../../src";
 import { generateText } from "ai";
-import { LanguageModelV2Prompt } from '@ai-sdk/provider';
+import { LanguageModelV3Prompt } from "@ai-sdk/provider";
 import { testConfig } from "../../config/test-config";
 
 describe("OPENAI MEM0 Tests", () => {
@@ -16,13 +16,13 @@ describe("OPENAI MEM0 Tests", () => {
       provider: "openai",
       apiKey: process.env.OPENAI_API_KEY,
       mem0Config: {
-        user_id: userId
-      }
+        user_id: userId,
+      },
     });
   });
 
   it("should retrieve memories and generate text using Mem0 OpenAI provider", async () => {
-    const messages: LanguageModelV2Prompt = [
+    const messages: LanguageModelV3Prompt = [
       {
         role: "user",
         content: [
@@ -34,11 +34,11 @@ describe("OPENAI MEM0 Tests", () => {
 
     const { text } = await generateText({
       model: mem0("gpt-4-turbo"),
-      messages: messages
+      messages: messages,
     });
 
     // Expect text to be a string
-    expect(typeof text).toBe('string');
+    expect(typeof text).toBe("string");
     expect(text.length).toBeGreaterThan(0);
   });
 
@@ -47,10 +47,10 @@ describe("OPENAI MEM0 Tests", () => {
 
     const { text } = await generateText({
       model: mem0("gpt-4-turbo"),
-      prompt: prompt
+      prompt: prompt,
     });
 
-    expect(typeof text).toBe('string');
+    expect(typeof text).toBe("string");
     expect(text.length).toBeGreaterThan(0);
   });
 });

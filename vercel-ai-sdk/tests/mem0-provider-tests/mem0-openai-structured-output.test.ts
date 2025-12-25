@@ -15,7 +15,7 @@ const provider: Provider = {
   name: "openai",
   activeModel: "gpt-4o-mini",
   apiKey: process.env.OPENAI_API_KEY,
-}
+};
 describe("OPENAI Structured Outputs", () => {
   const { userId } = testConfig;
   let mem0: ReturnType<typeof testConfig.createTestClient>;
@@ -44,7 +44,9 @@ describe("OPENAI Structured Outputs", () => {
       expect(object.car).toBeDefined();
       expect(typeof object.car.name).toBe("string");
       expect(Array.isArray(object.car.steps)).toBe(true);
-      expect(object.car.steps.every((step) => typeof step === "string")).toBe(true);
+      expect(object.car.steps.every((step) => typeof step === "string")).toBe(
+        true,
+      );
     });
 
     // Test 2: Generate an array of car objects
@@ -56,7 +58,9 @@ describe("OPENAI Structured Outputs", () => {
         output: "array",
         schema: z.object({
           name: z.string(),
-          class: z.string().describe('Cars should be "SUV", "Sedan", or "Hatchback"'),
+          class: z
+            .string()
+            .describe('Cars should be "SUV", "Sedan", or "Hatchback"'),
           description: z.string(),
         }),
         prompt: "Write name of three cars that I would like.",
@@ -82,7 +86,8 @@ describe("OPENAI Structured Outputs", () => {
         }),
         output: "enum",
         enum: ["action", "comedy", "drama", "horror", "sci-fi"],
-        prompt: 'Classify the genre of this movie plot: "A group of astronauts travel through a wormhole in search of a new habitable planet for humanity."',
+        prompt:
+          'Classify the genre of this movie plot: "A group of astronauts travel through a wormhole in search of a new habitable planet for humanity."',
       });
 
       expect(object).toBeDefined();
@@ -104,7 +109,12 @@ describe("OPENAI Structured Outputs", () => {
       expect(typeof object).toBe("object");
 
       // Check if it has cars property or if it's an array
-      if (object && typeof object === "object" && "cars" in object && Array.isArray((object as any).cars)) {
+      if (
+        object &&
+        typeof object === "object" &&
+        "cars" in object &&
+        Array.isArray((object as any).cars)
+      ) {
         const cars = (object as any).cars;
         expect(cars.length).toBe(3);
         expect(cars.every((car: any) => typeof car === "string")).toBe(true);

@@ -45,10 +45,13 @@ const mem0 = createMem0({
 ```
 
 ### Note
+
 By default, the `openai` provider is used, so specifying it is optional:
+
 ```typescript
 const mem0 = createMem0();
 ```
+
 For better security, consider setting `MEM0_API_KEY` and `OPENAI_API_KEY` as environment variables.
 
 3. Add Memories to Enhance Context:
@@ -81,9 +84,24 @@ you must either set `MEM0_API_KEY` as an environment variable or pass it directl
 Example:
 
 ```typescript
-await addMemories(messages, { user_id: "borat", mem0ApiKey: "m0-xxx", org_id: "org_xx", project_id: "proj_xx" });
-await retrieveMemories(prompt, { user_id: "borat", mem0ApiKey: "m0-xxx", org_id: "org_xx", project_id: "proj_xx" });
-await getMemories(prompt, { user_id: "borat", mem0ApiKey: "m0-xxx", org_id: "org_xx", project_id: "proj_xx" });
+await addMemories(messages, {
+  user_id: "borat",
+  mem0ApiKey: "m0-xxx",
+  org_id: "org_xx",
+  project_id: "proj_xx",
+});
+await retrieveMemories(prompt, {
+  user_id: "borat",
+  mem0ApiKey: "m0-xxx",
+  org_id: "org_xx",
+  project_id: "proj_xx",
+});
+await getMemories(prompt, {
+  user_id: "borat",
+  mem0ApiKey: "m0-xxx",
+  org_id: "org_xx",
+  project_id: "proj_xx",
+});
 ```
 
 ### Note:

@@ -1,111 +1,133 @@
 /* eslint-disable camelcase */
 import {
-  LanguageModelV2CallOptions,
-  LanguageModelV2Message,
-  LanguageModelV2Source
-} from '@ai-sdk/provider';
-
-import { LanguageModelV2 } from '@ai-sdk/provider';
+  LanguageModelV3,
+  LanguageModelV3CallOptions,
+  LanguageModelV3Message,
+  LanguageModelV3Source,
+} from "@ai-sdk/provider";
 // streaming uses provider-native doStream; no middleware needed
 
-import { Mem0ChatConfig, Mem0ChatModelId, Mem0ChatSettings, Mem0ConfigSettings, Mem0StreamResponse } from "./mem0-types";
+import {
+  Mem0ChatConfig,
+  Mem0ChatModelId,
+  Mem0ChatSettings,
+  Mem0ConfigSettings,
+  Mem0StreamResponse,
+} from "./mem0-types";
 import { Mem0ClassSelector } from "./mem0-provider-selector";
 import { Mem0ProviderSettings } from "./mem0-provider";
 import { addMemories, getMemories } from "./mem0-utils";
 
 const generateRandomId = () => {
-  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-}
+  return (
+    Math.random().toString(36).substring(2, 15) +
+    Math.random().toString(36).substring(2, 15)
+  );
+};
 
-export class Mem0GenericLanguageModel implements LanguageModelV2 {
-  readonly specificationVersion = "v2";
+export class Mem0GenericLanguageModel implements LanguageModelV3 {
+  readonly specificationVersion = "v3";
   readonly defaultObjectGenerationMode = "json";
   // We don't support images for now
   readonly supportsImageUrls = false;
   // Allow All Media Types for now
   readonly supportedUrls: Record<string, RegExp[]> = {
-    '*': [/.*/]
+    "*": [/.*/],
   };
 
   constructor(
     public readonly modelId: Mem0ChatModelId,
     public readonly settings: Mem0ChatSettings,
     public readonly config: Mem0ChatConfig,
-    public readonly provider_config?: Mem0ProviderSettings
+    public readonly provider_config?: Mem0ProviderSettings,
   ) {
     this.provider = config.provider ?? "openai";
   }
 
   provider: string;
 
-  private async processMemories(messagesPrompts: LanguageModelV2Message[], mem0Config: Mem0ConfigSettings) {
+  private async processMemories(
+    messagesPrompts: LanguageModelV3Message[],
+    mem0Config: Mem0ConfigSettings,
+  ) {
     try {
-    // Add New Memories
-    addMemories(messagesPrompts, mem0Config).then((res) => {
-      return res;
-    }).catch((e) => {
-      console.error("Error while adding memories");
-      return { memories: [], messagesPrompts: [] };
-    });
+      // Add New Memories
+      addMemories(messagesPrompts, mem0Config)
+        .then((res) => {
+          return res;
+        })
+        .catch((e) => {
+          console.error("Error while adding memories");
+          return { memories: [], messagesPrompts: [] };
+        });
 
-    // Get Memories
-    let memories = await getMemories(messagesPrompts, mem0Config);
+      // Get Memories
+      let memories = await getMemories(messagesPrompts, mem0Config);
 
-    const mySystemPrompt = "These are the memories I have stored. Give more weightage to the question by users and try to answer that first. You have to modify your answer based on the memories I have provided. If the memories are irrelevant you can ignore them. Also don't reply to this section of the prompt, or the memories, they are only for your reference. The System prompt starts after text System Message: \n\n";
+      const mySystemPrompt =
+        "These are the memories I have stored. Give more weightage to the question by users and try to answer that first. You have to modify your answer based on the memories I have provided. If the memories are irrelevant you can ignore them. Also don't reply to this section of the prompt, or the memories, they are only for your reference. The System prompt starts after text System Message: \n\n";
 
-    const isGraphEnabled = mem0Config?.enable_graph;
+      const isGraphEnabled = mem0Config?.enable_graph;
 
-    let memoriesText = "";
-    let memoriesText2 = "";
-    try {
-      // @ts-ignore
-      if (isGraphEnabled) {
-        memoriesText = memories?.results?.map((memory: any) => {
-          return `Memory: ${memory?.memory}\n\n`;
-        }).join("\n\n");
+      let memoriesText = "";
+      let memoriesText2 = "";
+      try {
+        // @ts-ignore
+        if (isGraphEnabled) {
+          memoriesText = memories?.results
+            ?.map((memory: any) => {
+              return `Memory: ${memory?.memory}\n\n`;
+            })
+            .join("\n\n");
 
-        memoriesText2 = memories?.relations?.map((memory: any) => {
-          return `Relation: ${memory?.source} -> ${memory?.relationship} -> ${memory?.target} \n\n`;
-        }).join("\n\n");
-      } else {
-        memoriesText = memories?.map((memory: any) => {
-          return `Memory: ${memory?.memory}\n\n`;
-        }).join("\n\n");
+          memoriesText2 = memories?.relations
+            ?.map((memory: any) => {
+              return `Relation: ${memory?.source} -> ${memory?.relationship} -> ${memory?.target} \n\n`;
+            })
+            .join("\n\n");
+        } else {
+          memoriesText = memories
+            ?.map((memory: any) => {
+              return `Memory: ${memory?.memory}\n\n`;
+            })
+            .join("\n\n");
+        }
+      } catch (e) {
+        console.error("Error while parsing memories");
       }
-    } catch(e) {
-      console.error("Error while parsing memories");
-    }
 
-    let graphPrompt = "";
-    if (isGraphEnabled) {
-      graphPrompt = `HERE ARE THE GRAPHS RELATIONS FOR THE PREFERENCES OF THE USER:\n\n ${memoriesText2}`;
-    }
+      let graphPrompt = "";
+      if (isGraphEnabled) {
+        graphPrompt = `HERE ARE THE GRAPHS RELATIONS FOR THE PREFERENCES OF THE USER:\n\n ${memoriesText2}`;
+      }
 
-    const memoriesPrompt = `System Message: ${mySystemPrompt} ${memoriesText} ${graphPrompt} `;
+      const memoriesPrompt = `System Message: ${mySystemPrompt} ${memoriesText} ${graphPrompt} `;
 
-    // System Prompt - The memories go as a system prompt
-    const systemPrompt: LanguageModelV2Message = {
-      role: "system",
-      content: memoriesPrompt
-    };
+      // System Prompt - The memories go as a system prompt
+      const systemPrompt: LanguageModelV3Message = {
+        role: "system",
+        content: memoriesPrompt,
+      };
 
-    // Add the system prompt to the beginning of the messages if there are memories
-    if (memories?.length > 0) {
-      messagesPrompts.unshift(systemPrompt);
-    }
+      // Add the system prompt to the beginning of the messages if there are memories
+      if (memories?.length > 0) {
+        messagesPrompts.unshift(systemPrompt);
+      }
 
-    if (isGraphEnabled) {
-      memories = memories?.results;
-    }
+      if (isGraphEnabled) {
+        memories = memories?.results;
+      }
 
-    return { memories, messagesPrompts };
-    } catch(e) {
+      return { memories, messagesPrompts };
+    } catch (e) {
       console.error("Error while processing memories");
       return { memories: [], messagesPrompts };
     }
   }
 
-  async doGenerate(options: LanguageModelV2CallOptions): Promise<Awaited<ReturnType<LanguageModelV2['doGenerate']>>> {
+  async doGenerate(
+    options: LanguageModelV3CallOptions,
+  ): Promise<Awaited<ReturnType<LanguageModelV3["doGenerate"]>>> {
     try {
       const provider = this.config.provider;
       const mem0_api_key = this.config.mem0ApiKey;
@@ -114,20 +136,25 @@ export class Mem0GenericLanguageModel implements LanguageModelV2 {
         provider: provider,
         mem0ApiKey: mem0_api_key,
         apiKey: this.config.apiKey,
-      }
+      };
 
       const mem0Config: Mem0ConfigSettings = {
         mem0ApiKey: mem0_api_key,
         ...this.config.mem0Config,
         ...this.settings,
-      }
+      };
 
-      const selector = new Mem0ClassSelector(this.modelId, settings, this.provider_config);
+      const selector = new Mem0ClassSelector(
+        this.modelId,
+        settings,
+        this.provider_config,
+      );
 
       let messagesPrompts = options.prompt;
 
       // Process memories and update prompts
-      const { memories, messagesPrompts: updatedPrompts } = await this.processMemories(messagesPrompts, mem0Config);
+      const { memories, messagesPrompts: updatedPrompts } =
+        await this.processMemories(messagesPrompts, mem0Config);
 
       const model = selector.createProvider();
 
@@ -143,7 +170,7 @@ export class Mem0GenericLanguageModel implements LanguageModelV2 {
 
       try {
         // Create sources array with existing sources
-        const sources: LanguageModelV2Source[] = [
+        const sources: LanguageModelV3Source[] = [
           {
             type: "source",
             title: "Mem0 Memories",
@@ -175,7 +202,9 @@ export class Mem0GenericLanguageModel implements LanguageModelV2 {
     }
   }
 
-  async doStream(options: LanguageModelV2CallOptions): Promise<Awaited<ReturnType<LanguageModelV2['doStream']>>> {
+  async doStream(
+    options: LanguageModelV3CallOptions,
+  ): Promise<Awaited<ReturnType<LanguageModelV3["doStream"]>>> {
     try {
       const provider = this.config.provider;
       const mem0_api_key = this.config.mem0ApiKey;
@@ -185,20 +214,25 @@ export class Mem0GenericLanguageModel implements LanguageModelV2 {
         mem0ApiKey: mem0_api_key,
         apiKey: this.config.apiKey,
         modelType: this.config.modelType,
-      }
+      };
 
       const mem0Config: Mem0ConfigSettings = {
         mem0ApiKey: mem0_api_key,
         ...this.config.mem0Config,
         ...this.settings,
-      }
+      };
 
-      const selector = new Mem0ClassSelector(this.modelId, settings, this.provider_config);
+      const selector = new Mem0ClassSelector(
+        this.modelId,
+        settings,
+        this.provider_config,
+      );
 
       let messagesPrompts = options.prompt;
 
       // Process memories and update prompts
-      const { memories, messagesPrompts: updatedPrompts } = await this.processMemories(messagesPrompts, mem0Config);
+      const { memories, messagesPrompts: updatedPrompts } =
+        await this.processMemories(messagesPrompts, mem0Config);
 
       const baseModel = selector.createProvider();
 

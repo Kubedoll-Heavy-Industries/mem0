@@ -3,7 +3,7 @@ dotenv.config();
 
 import { retrieveMemories } from "../../src";
 import { generateText } from "ai";
-import { LanguageModelV2Prompt } from '@ai-sdk/provider';
+import { LanguageModelV3Prompt } from "@ai-sdk/provider";
 import { testConfig } from "../../config/test-config";
 import { createCohere } from "@ai-sdk/cohere";
 
@@ -19,7 +19,7 @@ describe("COHERE Integration Tests", () => {
   });
 
   it("should retrieve memories and generate text using COHERE provider", async () => {
-    const messages: LanguageModelV2Prompt = [
+    const messages: LanguageModelV3Prompt = [
       {
         role: "user",
         content: [
@@ -40,7 +40,7 @@ describe("COHERE Integration Tests", () => {
     });
 
     // Expect text to be a string
-    expect(typeof text).toBe('string');
+    expect(typeof text).toBe("string");
     expect(text.length).toBeGreaterThan(0);
   });
 
@@ -52,10 +52,10 @@ describe("COHERE Integration Tests", () => {
       // @ts-ignore
       model: cohere("command-r-plus"),
       prompt: prompt,
-      system: memories
+      system: memories,
     });
 
-    expect(typeof text).toBe('string');
+    expect(typeof text).toBe("string");
     expect(text.length).toBeGreaterThan(0);
   });
 });

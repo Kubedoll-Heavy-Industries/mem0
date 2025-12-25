@@ -3,7 +3,7 @@ dotenv.config();
 
 import { createMem0, retrieveMemories } from "../../src";
 import { generateText } from "ai";
-import { LanguageModelV2Prompt } from '@ai-sdk/provider';
+import { LanguageModelV3Prompt } from "@ai-sdk/provider";
 import { testConfig } from "../../config/test-config";
 import { createCohere } from "@ai-sdk/cohere";
 
@@ -17,13 +17,13 @@ describe("COHERE MEM0 Tests", () => {
       provider: "cohere",
       apiKey: process.env.COHERE_API_KEY,
       mem0Config: {
-        user_id: userId
-      }
+        user_id: userId,
+      },
     });
   });
 
   it("should retrieve memories and generate text using COHERE provider", async () => {
-    const messages: LanguageModelV2Prompt = [
+    const messages: LanguageModelV3Prompt = [
       {
         role: "user",
         content: [
@@ -33,15 +33,14 @@ describe("COHERE MEM0 Tests", () => {
       },
     ];
 
-
     const { text } = await generateText({
       // @ts-ignore
       model: mem0("command-r-plus"),
-      messages: messages
+      messages: messages,
     });
 
     // Expect text to be a string
-    expect(typeof text).toBe('string');
+    expect(typeof text).toBe("string");
     expect(text.length).toBeGreaterThan(0);
   });
 
@@ -51,10 +50,10 @@ describe("COHERE MEM0 Tests", () => {
     const { text } = await generateText({
       // @ts-ignore
       model: mem0("command-r-plus"),
-      prompt: prompt
+      prompt: prompt,
     });
 
-    expect(typeof text).toBe('string');
+    expect(typeof text).toBe("string");
     expect(text.length).toBeGreaterThan(0);
   });
 });

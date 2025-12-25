@@ -3,7 +3,7 @@ dotenv.config();
 
 import { retrieveMemories } from "../../src";
 import { generateText } from "ai";
-import { LanguageModelV2Prompt } from '@ai-sdk/provider';
+import { LanguageModelV3Prompt } from "@ai-sdk/provider";
 import { testConfig } from "../../config/test-config";
 import { createAnthropic } from "@ai-sdk/anthropic";
 
@@ -20,7 +20,7 @@ describe("ANTHROPIC Integration Tests", () => {
   });
 
   it("should retrieve memories and generate text using ANTHROPIC provider", async () => {
-    const messages: LanguageModelV2Prompt = [
+    const messages: LanguageModelV3Prompt = [
       {
         role: "user",
         content: [
@@ -37,11 +37,11 @@ describe("ANTHROPIC Integration Tests", () => {
       // @ts-ignore
       model: anthropic("claude-3-haiku-20240307"),
       messages: messages,
-      system: memories.length > 0 ? memories : "No Memories Found"
+      system: memories.length > 0 ? memories : "No Memories Found",
     });
 
     // Expect text to be a string
-    expect(typeof text).toBe('string');
+    expect(typeof text).toBe("string");
     expect(text.length).toBeGreaterThan(0);
   });
 
@@ -53,10 +53,10 @@ describe("ANTHROPIC Integration Tests", () => {
       // @ts-ignore
       model: anthropic("claude-3-haiku-20240307"),
       prompt: prompt,
-      system: memories.length > 0 ? memories : "No Memories Found"
+      system: memories.length > 0 ? memories : "No Memories Found",
     });
 
-    expect(typeof text).toBe('string');
+    expect(typeof text).toBe("string");
     expect(text.length).toBeGreaterThan(0);
   });
 });

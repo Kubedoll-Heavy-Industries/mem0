@@ -1,20 +1,22 @@
-import { ProviderV2 } from '@ai-sdk/provider';
-import { LanguageModelV2 } from '@ai-sdk/provider';
+import { ProviderV3, LanguageModelV3 } from "@ai-sdk/provider";
 import { withoutTrailingSlash } from "@ai-sdk/provider-utils";
 import { Mem0ChatModelId, Mem0ChatSettings, Mem0Config } from "./mem0-types";
 import { Mem0GenericLanguageModel } from "./mem0-generic-language-model";
 import { LLMProviderSettings } from "./mem0-types";
 
-export interface Mem0Provider extends ProviderV2 {
-  (modelId: Mem0ChatModelId, settings?: Mem0ChatSettings): LanguageModelV2;
+export interface Mem0Provider extends ProviderV3 {
+  (modelId: Mem0ChatModelId, settings?: Mem0ChatSettings): LanguageModelV3;
 
-  chat(modelId: Mem0ChatModelId, settings?: Mem0ChatSettings): LanguageModelV2;
-  completion(modelId: Mem0ChatModelId, settings?: Mem0ChatSettings): LanguageModelV2;
+  chat(modelId: Mem0ChatModelId, settings?: Mem0ChatSettings): LanguageModelV3;
+  completion(
+    modelId: Mem0ChatModelId,
+    settings?: Mem0ChatSettings,
+  ): LanguageModelV3;
 
   languageModel(
     modelId: Mem0ChatModelId,
-    settings?: Mem0ChatSettings
-  ): LanguageModelV2;
+    settings?: Mem0ChatSettings,
+  ): LanguageModelV3;
 }
 
 export interface Mem0ProviderSettings {
@@ -42,13 +44,13 @@ export interface Mem0ProviderSettings {
   /**
    * The configuration for the provider.
    */
-  config?: LLMProviderSettings ;
+  config?: LLMProviderSettings;
 }
 
 export function createMem0(
   options: Mem0ProviderSettings = {
     provider: "openai",
-  }
+  },
 ): Mem0Provider {
   const baseURL =
     withoutTrailingSlash(options.baseURL) ?? "http://api.openai.com";
@@ -58,7 +60,7 @@ export function createMem0(
 
   const createGenericModel = (
     modelId: Mem0ChatModelId,
-    settings: Mem0ChatSettings = {}
+    settings: Mem0ChatSettings = {},
   ) =>
     new Mem0GenericLanguageModel(
       modelId,
@@ -73,12 +75,12 @@ export function createMem0(
         apiKey: options.apiKey,
         mem0Config: options.mem0Config,
       },
-      options.config
+      options.config,
     );
 
   const createCompletionModel = (
     modelId: Mem0ChatModelId,
-    settings: Mem0ChatSettings = {}
+    settings: Mem0ChatSettings = {},
   ) =>
     new Mem0GenericLanguageModel(
       modelId,
@@ -94,12 +96,12 @@ export function createMem0(
         mem0Config: options.mem0Config,
         modelType: "completion",
       },
-      options.config
+      options.config,
     );
 
   const createChatModel = (
     modelId: Mem0ChatModelId,
-    settings: Mem0ChatSettings = {}
+    settings: Mem0ChatSettings = {},
   ) =>
     new Mem0GenericLanguageModel(
       modelId,
@@ -115,16 +117,16 @@ export function createMem0(
         mem0Config: options.mem0Config,
         modelType: "completion",
       },
-      options.config
+      options.config,
     );
 
   const provider = function (
     modelId: Mem0ChatModelId,
-    settings: Mem0ChatSettings = {}
+    settings: Mem0ChatSettings = {},
   ) {
     if (new.target) {
       throw new Error(
-        "The Mem0 model function cannot be called with the new keyword."
+        "The Mem0 model function cannot be called with the new keyword.",
       );
     }
 

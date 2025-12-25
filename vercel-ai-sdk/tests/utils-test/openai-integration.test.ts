@@ -3,7 +3,7 @@ dotenv.config();
 
 import { retrieveMemories } from "../../src";
 import { generateText } from "ai";
-import { LanguageModelV2Prompt } from '@ai-sdk/provider';
+import { LanguageModelV3Prompt } from "@ai-sdk/provider";
 import { testConfig } from "../../config/test-config";
 import { createOpenAI } from "@ai-sdk/openai";
 
@@ -19,7 +19,7 @@ describe("OPENAI Integration Tests", () => {
   });
 
   it("should retrieve memories and generate text using OpenAI provider", async () => {
-    const messages: LanguageModelV2Prompt = [
+    const messages: LanguageModelV3Prompt = [
       {
         role: "user",
         content: [
@@ -39,7 +39,7 @@ describe("OPENAI Integration Tests", () => {
     });
 
     // Expect text to be a string
-    expect(typeof text).toBe('string');
+    expect(typeof text).toBe("string");
     expect(text.length).toBeGreaterThan(0);
   });
 
@@ -50,10 +50,10 @@ describe("OPENAI Integration Tests", () => {
     const { text } = await generateText({
       model: openai("gpt-4-turbo"),
       prompt: prompt,
-      system: memories
+      system: memories,
     });
 
-    expect(typeof text).toBe('string');
+    expect(typeof text).toBe("string");
     expect(text.length).toBeGreaterThan(0);
   });
 });
