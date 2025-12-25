@@ -5,27 +5,58 @@ on:
     branches: [main, cagyirey/main]
   pull_request:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  lint:
-    name: Lint & Format
+  lint-python:
+    name: Python / Lint & Format
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up uv
-        uses: astral-sh/setup-uv@v4
+      - uses: astral-sh/setup-uv@v4
         with:
           enable-cache: true
           cache-dependency-glob: "uv.lock"
 
-      - name: Set up Python
-        run: uv python install 3.12
+      - run: uv python install 3.12
 
-      - name: Install dependencies
-        run: uv sync --group dev
+      - run: uv sync --group dev
 
       - name: Check formatting
         run: uv run ruff format --check .
 
       - name: Lint
         run: uv run ruff check .
+
+  check-typescript:
+    name: TypeScript / ${{ matrix.package }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package: [mem0-ts, vercel-ai-sdk]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: pnpm
+          cache-dependency-path: ${{ matrix.package }}/pnpm-lock.yaml
+
+      - name: Install dependencies
+        working-directory: ${{ matrix.package }}
+        run: pnpm install --frozen-lockfile
+
+      - name: Type check
+        working-directory: ${{ matrix.package }}
+        run: pnpm exec tsc --noEmit
+
+      - name: Check formatting
+        working-directory: ${{ matrix.package }}
+        run: pnpm exec prettier --check .

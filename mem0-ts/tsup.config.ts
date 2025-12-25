@@ -10,6 +10,8 @@ const external = [
   "sqlite3",
   "@qdrant/js-client-rest",
   "redis",
+  "@langchain/core",
+  "@langchain/community",
 ];
 
 export default defineConfig([
@@ -23,6 +25,22 @@ export default defineConfig([
   {
     entry: ["src/oss/src/index.ts"],
     outDir: "dist/oss",
+    format: ["cjs", "esm"],
+    dts: true,
+    sourcemap: true,
+    external,
+  },
+  {
+    entry: ["src/community/src/index.ts"],
+    outDir: "dist/community",
+    format: ["cjs", "esm"],
+    dts: true,
+    sourcemap: true,
+    external,
+  },
+  {
+    entry: ["src/community/src/integrations/langchain/index.ts"],
+    outDir: "dist/community/integrations/langchain",
     format: ["cjs", "esm"],
     dts: true,
     sourcemap: true,

@@ -17,46 +17,52 @@ import {
   removeCodeBlocks,
 } from "../../src/oss/src/prompts";
 
-// Small models for fast CI
-const OLLAMA_LLM_MODEL = "smollm:135m"; // 92MB - smallest viable model
-const OLLAMA_EMBED_MODEL = "all-minilm:22m";
-const EMBEDDING_DIMS = 384;
+// Configurable via env vars for CI caching
+const OLLAMA_LLM_MODEL = process.env.OLLAMA_LLM_MODEL || "smollm:135m";
+const OLLAMA_EMBED_MODEL = process.env.OLLAMA_EMBED_MODEL || "all-minilm:22m";
+const EMBEDDING_DIMS = parseInt(process.env.EMBEDDING_DIMS || "384", 10);
+const OLLAMA_HOST = process.env.OLLAMA_HOST; // If set, use host Ollama
 
 describe("Ollama Memory Integration", () => {
   let ollamaContainer: Awaited<
     ReturnType<typeof GenericContainer.prototype.start>
-  >;
+  > | null = null;
   let ollamaUrl: string;
   let llm: OllamaLLM;
   let embedder: OllamaEmbedder;
   let vectorStore: MemoryVectorStore;
 
   beforeAll(async () => {
-    console.log("Starting Ollama container...");
-    ollamaContainer = await new GenericContainer("ollama/ollama:latest")
-      .withExposedPorts(11434)
-      .withWaitStrategy(Wait.forHttp("/api/tags", 11434).forStatusCode(200))
-      .start();
+    if (OLLAMA_HOST) {
+      console.log(`Using host Ollama at ${OLLAMA_HOST}`);
+      ollamaUrl = OLLAMA_HOST;
+    } else {
+      console.log("Starting Ollama container...");
+      ollamaContainer = await new GenericContainer("ollama/ollama:latest")
+        .withExposedPorts(11434)
+        .withWaitStrategy(Wait.forHttp("/api/tags", 11434).forStatusCode(200))
+        .start();
 
-    ollamaUrl = `http://${ollamaContainer.getHost()}:${ollamaContainer.getMappedPort(11434)}`;
-    console.log(`Ollama running at ${ollamaUrl}`);
+      ollamaUrl = `http://${ollamaContainer.getHost()}:${ollamaContainer.getMappedPort(11434)}`;
+      console.log(`Ollama running at ${ollamaUrl}`);
 
-    // Pull models
-    console.log(`Pulling ${OLLAMA_LLM_MODEL}...`);
-    const pullLlm = await ollamaContainer.exec([
-      "ollama",
-      "pull",
-      OLLAMA_LLM_MODEL,
-    ]);
-    console.log(`Pull LLM exit code: ${pullLlm.exitCode}`);
+      // Pull models
+      console.log(`Pulling ${OLLAMA_LLM_MODEL}...`);
+      const pullLlm = await ollamaContainer.exec([
+        "ollama",
+        "pull",
+        OLLAMA_LLM_MODEL,
+      ]);
+      console.log(`Pull LLM exit code: ${pullLlm.exitCode}`);
 
-    console.log(`Pulling ${OLLAMA_EMBED_MODEL}...`);
-    const pullEmbed = await ollamaContainer.exec([
-      "ollama",
-      "pull",
-      OLLAMA_EMBED_MODEL,
-    ]);
-    console.log(`Pull embeddings exit code: ${pullEmbed.exitCode}`);
+      console.log(`Pulling ${OLLAMA_EMBED_MODEL}...`);
+      const pullEmbed = await ollamaContainer.exec([
+        "ollama",
+        "pull",
+        OLLAMA_EMBED_MODEL,
+      ]);
+      console.log(`Pull embeddings exit code: ${pullEmbed.exitCode}`);
+    }
 
     // Initialize components
     // OllamaLLM expects config.config.url (nested structure)

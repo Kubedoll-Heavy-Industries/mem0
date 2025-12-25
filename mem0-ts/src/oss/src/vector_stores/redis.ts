@@ -422,11 +422,11 @@ export class RedisDB implements VectorStore {
 
   async get(vectorId: string): Promise<VectorStoreResult | null> {
     try {
-      // Check if the memory exists first
+      // Check if the memory exists first (redis v5 returns number: 0 or 1)
       const exists = await this.client.exists(
         `${this.indexPrefix}:${vectorId}`,
       );
-      if (!exists) {
+      if (exists === 0) {
         console.warn(`Memory with ID ${vectorId} does not exist`);
         return null;
       }
@@ -565,7 +565,7 @@ export class RedisDB implements VectorStore {
       const key = `${this.indexPrefix}:${vectorId}`;
       const exists = await this.client.exists(key);
 
-      if (!exists) {
+      if (exists === 0) {
         console.warn(`Memory with ID ${vectorId} does not exist`);
         return;
       }

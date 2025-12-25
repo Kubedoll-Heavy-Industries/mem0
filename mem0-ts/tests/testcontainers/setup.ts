@@ -4,7 +4,13 @@
  * Provides a complete e2e environment with:
  * - Memgraph (graph store - Neo4j Bolt compatible)
  * - PostgreSQL + pgvector (vector store)
- * - Ollama (LLM + embeddings)
+ * - Ollama (LLM + embeddings) - can use host Ollama via OLLAMA_HOST env var
+ *
+ * Environment variables:
+ * - OLLAMA_HOST: If set, use host Ollama instead of container (e.g., "http://localhost:11434")
+ * - OLLAMA_LLM_MODEL: LLM model to use (default: "smollm:360m")
+ * - OLLAMA_EMBED_MODEL: Embedding model to use (default: "all-minilm:22m")
+ * - EMBEDDING_DIMS: Embedding dimensions (default: 384, must match model)
  */
 
 import {
@@ -19,7 +25,7 @@ export interface TestEnvironment {
   network: StartedNetwork;
   memgraph: StartedTestContainer;
   postgres: StartedTestContainer;
-  ollama: StartedTestContainer;
+  ollama: StartedTestContainer | null; // null when using host Ollama
   config: MemoryTestConfig;
   cleanup: () => Promise<void>;
 }
@@ -65,10 +71,11 @@ export interface MemoryTestConfig {
   disableHistory: boolean;
 }
 
-// Small models for fast CI
-const OLLAMA_LLM_MODEL = "smollm:360m";
-const OLLAMA_EMBED_MODEL = "all-minilm:22m";
-const EMBEDDING_DIMS = 384;
+// Configurable via env vars for CI caching
+const OLLAMA_LLM_MODEL = process.env.OLLAMA_LLM_MODEL || "smollm:360m";
+const OLLAMA_EMBED_MODEL = process.env.OLLAMA_EMBED_MODEL || "all-minilm:22m";
+const EMBEDDING_DIMS = parseInt(process.env.EMBEDDING_DIMS || "384", 10);
+const OLLAMA_HOST = process.env.OLLAMA_HOST; // If set, use host Ollama instead of container
 
 /**
  * Start the complete test environment.
@@ -77,10 +84,10 @@ export async function startTestEnvironment(): Promise<TestEnvironment> {
   console.log("Creating test network...");
   const network = await new Network().start();
 
-  // Start all containers in parallel
-  console.log("Starting containers in parallel...");
+  // Start database containers in parallel
+  console.log("Starting database containers...");
 
-  const [memgraph, postgres, ollama] = await Promise.all([
+  const [memgraph, postgres] = await Promise.all([
     // Memgraph (Neo4j Bolt compatible)
     new GenericContainer("memgraph/memgraph:latest")
       .withNetwork(network)
@@ -111,39 +118,44 @@ export async function startTestEnvironment(): Promise<TestEnvironment> {
         console.log("PostgreSQL + pgvector started");
         return container;
       }),
+  ]);
 
-    // Ollama
-    new GenericContainer("ollama/ollama:latest")
+  // Ollama: use host if OLLAMA_HOST is set, otherwise start container
+  let ollamaUrl: string;
+  let ollama: StartedTestContainer | null = null;
+
+  if (OLLAMA_HOST) {
+    console.log(`Using host Ollama at ${OLLAMA_HOST}`);
+    ollamaUrl = OLLAMA_HOST;
+  } else {
+    console.log("Starting Ollama container...");
+    ollama = await new GenericContainer("ollama/ollama:latest")
       .withNetwork(network)
       .withNetworkAliases("ollama")
       .withExposedPorts(11434)
       .withWaitStrategy(Wait.forHttp("/api/tags", 11434).forStatusCode(200))
-      .start()
-      .then((container) => {
-        console.log("Ollama started");
-        return container;
-      }),
-  ]);
+      .start();
+    console.log("Ollama started");
 
-  // Pull models sequentially (Ollama can't handle parallel pulls well)
-  console.log(`Pulling ${OLLAMA_LLM_MODEL}...`);
-  const pullLlm = await ollama.exec(["ollama", "pull", OLLAMA_LLM_MODEL]);
-  if (pullLlm.exitCode !== 0) {
-    console.error(`Failed to pull ${OLLAMA_LLM_MODEL}:`, pullLlm.output);
-    throw new Error(`Failed to pull ${OLLAMA_LLM_MODEL}`);
+    ollamaUrl = `http://${ollama.getHost()}:${ollama.getMappedPort(11434)}`;
+
+    // Pull models sequentially (Ollama can't handle parallel pulls well)
+    console.log(`Pulling ${OLLAMA_LLM_MODEL}...`);
+    const pullLlm = await ollama.exec(["ollama", "pull", OLLAMA_LLM_MODEL]);
+    if (pullLlm.exitCode !== 0) {
+      console.error(`Failed to pull ${OLLAMA_LLM_MODEL}:`, pullLlm.output);
+      throw new Error(`Failed to pull ${OLLAMA_LLM_MODEL}`);
+    }
+    console.log(`${OLLAMA_LLM_MODEL} pulled successfully`);
+
+    console.log(`Pulling ${OLLAMA_EMBED_MODEL}...`);
+    const pullEmbed = await ollama.exec(["ollama", "pull", OLLAMA_EMBED_MODEL]);
+    if (pullEmbed.exitCode !== 0) {
+      console.error(`Failed to pull ${OLLAMA_EMBED_MODEL}:`, pullEmbed.output);
+      throw new Error(`Failed to pull ${OLLAMA_EMBED_MODEL}`);
+    }
+    console.log(`${OLLAMA_EMBED_MODEL} pulled successfully`);
   }
-  console.log(`${OLLAMA_LLM_MODEL} pulled successfully`);
-
-  console.log(`Pulling ${OLLAMA_EMBED_MODEL}...`);
-  const pullEmbed = await ollama.exec(["ollama", "pull", OLLAMA_EMBED_MODEL]);
-  if (pullEmbed.exitCode !== 0) {
-    console.error(`Failed to pull ${OLLAMA_EMBED_MODEL}:`, pullEmbed.output);
-    throw new Error(`Failed to pull ${OLLAMA_EMBED_MODEL}`);
-  }
-  console.log(`${OLLAMA_EMBED_MODEL} pulled successfully`);
-
-  // Build configuration for Memory class
-  const ollamaUrl = `http://${ollama.getHost()}:${ollama.getMappedPort(11434)}`;
   const postgresHost = postgres.getHost();
   const postgresPort = postgres.getMappedPort(5432);
   const memgraphHost = memgraph.getHost();
@@ -197,7 +209,11 @@ export async function startTestEnvironment(): Promise<TestEnvironment> {
 
   const cleanup = async () => {
     console.log("Cleaning up test environment...");
-    await Promise.all([ollama.stop(), postgres.stop(), memgraph.stop()]);
+    const stopPromises = [postgres.stop(), memgraph.stop()];
+    if (ollama) {
+      stopPromises.push(ollama.stop());
+    }
+    await Promise.all(stopPromises);
     await network.stop();
   };
 
@@ -216,7 +232,7 @@ export async function startTestEnvironment(): Promise<TestEnvironment> {
  * Useful for faster tests that don't need persistence or graphs.
  */
 export async function startMinimalEnvironment(): Promise<{
-  ollama: StartedTestContainer;
+  ollama: StartedTestContainer | null;
   config: Omit<MemoryTestConfig, "graphStore" | "vectorStore"> & {
     vectorStore: { provider: "memory"; config: { collectionName: string } };
   };
@@ -224,20 +240,28 @@ export async function startMinimalEnvironment(): Promise<{
 }> {
   console.log("Starting minimal test environment...");
 
-  const ollama = await new GenericContainer("ollama/ollama:latest")
-    .withExposedPorts(11434)
-    .withWaitStrategy(Wait.forHttp("/api/tags", 11434).forStatusCode(200))
-    .start();
+  let ollamaUrl: string;
+  let ollama: StartedTestContainer | null = null;
 
-  console.log("Ollama started");
+  if (OLLAMA_HOST) {
+    console.log(`Using host Ollama at ${OLLAMA_HOST}`);
+    ollamaUrl = OLLAMA_HOST;
+  } else {
+    ollama = await new GenericContainer("ollama/ollama:latest")
+      .withExposedPorts(11434)
+      .withWaitStrategy(Wait.forHttp("/api/tags", 11434).forStatusCode(200))
+      .start();
 
-  // Pull models
-  console.log(`Pulling ${OLLAMA_LLM_MODEL}...`);
-  await ollama.exec(["ollama", "pull", OLLAMA_LLM_MODEL]);
-  console.log(`Pulling ${OLLAMA_EMBED_MODEL}...`);
-  await ollama.exec(["ollama", "pull", OLLAMA_EMBED_MODEL]);
+    console.log("Ollama started");
 
-  const ollamaUrl = `http://${ollama.getHost()}:${ollama.getMappedPort(11434)}`;
+    ollamaUrl = `http://${ollama.getHost()}:${ollama.getMappedPort(11434)}`;
+
+    // Pull models
+    console.log(`Pulling ${OLLAMA_LLM_MODEL}...`);
+    await ollama.exec(["ollama", "pull", OLLAMA_LLM_MODEL]);
+    console.log(`Pulling ${OLLAMA_EMBED_MODEL}...`);
+    await ollama.exec(["ollama", "pull", OLLAMA_EMBED_MODEL]);
+  }
 
   const config = {
     llm: {
@@ -273,7 +297,9 @@ export async function startMinimalEnvironment(): Promise<{
     config,
     cleanup: async () => {
       console.log("Cleaning up...");
-      await ollama.stop();
+      if (ollama) {
+        await ollama.stop();
+      }
     },
   };
 }

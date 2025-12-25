@@ -5,6 +5,10 @@ on:
     branches: [main, cagyirey/main]
   pull_request:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test-mem0:
     name: mem0 / Python ${{ matrix.python-version }}
@@ -79,3 +83,27 @@ jobs:
           files: coverage.xml
           flags: embedchain
           token: ${{ secrets.CODECOV_TOKEN }}
+
+  test-mem0-ts:
+    name: mem0-ts / unit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: pnpm
+          cache-dependency-path: mem0-ts/pnpm-lock.yaml
+
+      - name: Install dependencies
+        working-directory: mem0-ts
+        run: pnpm install --frozen-lockfile
+
+      # Only factory.test.ts is a true unit test (no external deps)
+      # Other tests in src/ require OpenAI API keys
+      - name: Run unit tests
+        working-directory: mem0-ts
+        run: pnpm exec vitest run src/oss/tests/factory.test.ts
