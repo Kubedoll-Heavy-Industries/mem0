@@ -1,7 +1,8 @@
 import { Ollama } from "ollama";
-import { LLM, LLMResponse } from "./base";
+import { LLM, LLMResponse, ResponseFormat } from "./base";
 import { LLMConfig, Message } from "../types";
 import { logger } from "../utils/logger";
+import { z } from "zod";
 
 export class OllamaLLM implements LLM {
   private ollama: Ollama;
@@ -21,13 +22,23 @@ export class OllamaLLM implements LLM {
 
   async generateResponse(
     messages: Message[],
-    responseFormat?: { type: string },
+    responseFormat?: ResponseFormat,
     tools?: any[],
   ): Promise<string | LLMResponse> {
     try {
       await this.ensureModelExists();
     } catch (err) {
       logger.error(`Error ensuring model exists: ${err}`);
+    }
+
+    // Determine format: use JSON schema if provided, otherwise "json" for json_object type
+    let format: string | object | undefined;
+    if (responseFormat?.schema) {
+      // Use Zod v4's native JSON Schema conversion for constrained generation
+      format = z.toJSONSchema(responseFormat.schema);
+      logger.info("Using JSON schema for constrained generation");
+    } else if (responseFormat?.type === "json_object") {
+      format = "json";
     }
 
     const completion = await this.ollama.chat({
@@ -42,7 +53,7 @@ export class OllamaLLM implements LLM {
               : JSON.stringify(msg.content),
         };
       }),
-      ...(responseFormat?.type === "json_object" && { format: "json" }),
+      ...(format && { format }),
       ...(tools && { tools, tool_choice: "auto" }),
     });
 
