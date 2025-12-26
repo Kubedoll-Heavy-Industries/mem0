@@ -1196,7 +1196,7 @@ wheels = [
 
 [[package]]
 name = "embedchain"
-version = "0.1.128"
+version = "0.2.0"
 source = { editable = "embedchain" }
 dependencies = [
     { name = "alembic" },
@@ -3556,11 +3556,17 @@ dependencies = [
 ]
 
 [package.optional-dependencies]
+extras = [
+    { name = "mem0ai", extra = ["extras"] },
+]
 full = [
-    { name = "mem0ai", extra = ["graph", "llms", "vector-stores"] },
+    { name = "mem0ai", extra = ["extras", "graph", "llms", "vector-stores"] },
 ]
 graph = [
     { name = "mem0ai", extra = ["graph"] },
+]
+llms = [
+    { name = "mem0ai", extra = ["llms"] },
 ]
 vector-stores = [
     { name = "mem0ai", extra = ["vector-stores"] },
@@ -3576,15 +3582,17 @@ dev = [
 requires-dist = [
     { name = "fastapi", specifier = ">=0.127.0,<1.0.0" },
     { name = "mem0ai", editable = "." },
+    { name = "mem0ai", extras = ["extras"], marker = "extra == 'extras'", editable = "." },
     { name = "mem0ai", extras = ["graph"], marker = "extra == 'graph'", editable = "." },
-    { name = "mem0ai", extras = ["graph", "vector-stores", "llms"], marker = "extra == 'full'", editable = "." },
+    { name = "mem0ai", extras = ["graph", "vector-stores", "llms", "extras"], marker = "extra == 'full'", editable = "." },
+    { name = "mem0ai", extras = ["llms"], marker = "extra == 'llms'", editable = "." },
     { name = "mem0ai", extras = ["vector-stores"], marker = "extra == 'vector-stores'", editable = "." },
     { name = "psycopg", extras = ["binary", "pool"], specifier = ">=3.3.0,<4.0.0" },
     { name = "pydantic", specifier = ">=2.12.0,<3.0.0" },
     { name = "python-dotenv", specifier = ">=1.2.0,<2.0.0" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.40.0,<1.0.0" },
 ]
-provides-extras = ["graph", "vector-stores", "full"]
+provides-extras = ["graph", "vector-stores", "llms", "extras", "full"]
 
 [package.metadata.requires-dev]
 dev = [
@@ -3594,7 +3602,7 @@ dev = [
 
 [[package]]
 name = "mem0ai"
-version = "1.0.0"
+version = "1.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "openai" },

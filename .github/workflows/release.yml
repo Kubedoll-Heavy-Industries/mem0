@@ -3,7 +3,6 @@ name: Release
 on:
   push:
     tags:
-      - "v*"                        # Legacy: v1.0.0
       - "mem0ai-v*"                 # release-please: mem0ai-v1.0.2
       - "embedchain-v*"             # release-please: embedchain-v0.1.129
       - "mem0-ts-v*"                # release-please: mem0-ts-v2.1.39
@@ -38,7 +37,7 @@ jobs:
     name: Build mem0ai
     runs-on: ubuntu-latest
     if: |
-      (github.event_name == 'push' && (startsWith(github.ref, 'refs/tags/v') || startsWith(github.ref, 'refs/tags/mem0ai-v'))) ||
+      (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/mem0ai-v')) ||
       (github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'mem0ai'))
     steps:
       - uses: actions/checkout@v4
@@ -200,7 +199,7 @@ jobs:
     name: Docker
     runs-on: ubuntu-latest
     if: |
-      (github.event_name == 'push' && (startsWith(github.ref, 'refs/tags/v') || startsWith(github.ref, 'refs/tags/mem0ai-v'))) ||
+      (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/mem0ai-v')) ||
       (github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'mem0ai' || inputs.target == 'docker'))
     permissions:
       contents: read

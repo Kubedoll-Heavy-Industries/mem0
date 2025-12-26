@@ -35,7 +35,7 @@ COPY mem0/ ./mem0/
 
 # Sync server package (installs mem0ai from local workspace)
 ENV UV_COMPILE_BYTECODE=1
-RUN uv sync --frozen --no-dev --package mem0-server --no-editable
+RUN uv sync --frozen --no-dev --package mem0-server --extra full --no-editable
 
 # -----------------------------------------------------------------------------
 # Stage 2: Runtime image

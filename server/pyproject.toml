@@ -15,7 +15,9 @@ dependencies = [
 [project.optional-dependencies]
 graph = ["mem0ai[graph]>=1.0.0,<2.0.0"]
 vector-stores = ["mem0ai[vector_stores]>=1.0.0,<2.0.0"]
-full = ["mem0ai[graph,vector_stores,llms]>=1.0.0,<2.0.0"]
+llms = ["mem0ai[llms]>=1.0.0,<2.0.0"]
+extras = ["mem0ai[extras]>=1.0.0,<2.0.0"]
+full = ["mem0ai[graph,vector_stores,llms,extras]>=1.0.0,<2.0.0"]
 
 [dependency-groups]
 dev = [
