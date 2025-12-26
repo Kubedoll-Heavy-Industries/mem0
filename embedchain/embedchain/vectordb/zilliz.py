@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Optional, Union
+from typing import Any, Optional
 
 from embedchain.config import ZillizDBConfig
 from embedchain.helpers.json_serializable import register_deserializable
@@ -150,7 +150,7 @@ class ZillizVectorDB(BaseVectorDB):
         where: dict[str, Any],
         citations: bool = False,
         **kwargs: Optional[dict[str, Any]],
-    ) -> Union[list[tuple[str, dict]], list[str]]:
+    ) -> list[tuple[str, dict]] | list[str]:
         """
         Query contents from vector database based on vector similarity
 

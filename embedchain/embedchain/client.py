@@ -44,7 +44,7 @@ class Client:
         os.makedirs(CONFIG_DIR, exist_ok=True)
 
         if os.path.exists(CONFIG_FILE):
-            with open(CONFIG_FILE, "r") as f:
+            with open(CONFIG_FILE) as f:
                 data = json.load(f)
                 if "user_id" in data:
                     return data["user_id"]
@@ -58,7 +58,7 @@ class Client:
         if not os.path.exists(CONFIG_FILE):
             cls.setup()
 
-        with open(CONFIG_FILE, "r") as config_file:
+        with open(CONFIG_FILE) as config_file:
             return json.load(config_file)
 
     def save(self):

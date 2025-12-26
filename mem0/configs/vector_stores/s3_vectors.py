@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -11,7 +11,7 @@ class S3VectorsConfig(BaseModel):
         "cosine",
         description="Distance metric for similarity search. Options: 'cosine', 'euclidean'",
     )
-    region_name: Optional[str] = Field(None, description="AWS region for the S3 Vectors client")
+    region_name: str | None = Field(None, description="AWS region for the S3 Vectors client")
 
     @model_validator(mode="before")
     @classmethod

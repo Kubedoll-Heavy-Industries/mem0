@@ -1,4 +1,4 @@
-from typing import Literal, Optional
+from typing import Literal
 
 from mem0.configs.embeddings.base import BaseEmbedderConfig
 from mem0.embeddings.base import EmbeddingBase
@@ -10,13 +10,13 @@ except ImportError:
 
 
 class FastEmbedEmbedding(EmbeddingBase):
-    def __init__(self, config: Optional[BaseEmbedderConfig] = None):
+    def __init__(self, config: BaseEmbedderConfig | None = None):
         super().__init__(config)
 
         self.config.model = self.config.model or "thenlper/gte-large"
         self.dense_model = TextEmbedding(model_name=self.config.model)
 
-    def embed(self, text, memory_action: Optional[Literal["add", "search", "update"]] = None):
+    def embed(self, text, memory_action: Literal["add", "search", "update"] | None = None):
         """
         Convert the text to embeddings using FastEmbed running in the Onnx runtime
         Args:

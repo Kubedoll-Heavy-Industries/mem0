@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import Optional, Union
 
 from mem0.configs.llms.base import BaseLlmConfig
 
@@ -10,7 +9,7 @@ class LLMBase(ABC):
     Handles common functionality and delegates provider-specific logic to subclasses.
     """
 
-    def __init__(self, config: Optional[Union[BaseLlmConfig, dict]] = None):
+    def __init__(self, config: BaseLlmConfig | dict | None = None):
         """Initialize a base LLM class
 
         :param config: LLM configuration option class or dict, defaults to None
@@ -99,7 +98,7 @@ class LLMBase(ABC):
 
     @abstractmethod
     def generate_response(
-        self, messages: list[dict[str, str]], tools: Optional[list[dict]] = None, tool_choice: str = "auto", **kwargs
+        self, messages: list[dict[str, str]], tools: list[dict] | None = None, tool_choice: str = "auto", **kwargs
     ):
         """
         Generate a response based on the given messages.

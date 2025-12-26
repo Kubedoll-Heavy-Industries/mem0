@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field, model_validator
 
@@ -10,16 +10,14 @@ class CassandraConfig(BaseModel):
         ..., description="List of contact point addresses (e.g., ['127.0.0.1', '127.0.0.2'])"
     )
     port: int = Field(9042, description="Cassandra port")
-    username: Optional[str] = Field(None, description="Database username")
-    password: Optional[str] = Field(None, description="Database password")
+    username: str | None = Field(None, description="Database username")
+    password: str | None = Field(None, description="Database password")
     keyspace: str = Field("mem0", description="Keyspace name")
     collection_name: str = Field("memories", description="Table name")
     embedding_model_dims: int = Field(1536, description="Dimensions of the embedding model")
-    secure_connect_bundle: Optional[str] = Field(
-        None, description="Path to secure connect bundle for DataStax Astra DB"
-    )
+    secure_connect_bundle: str | None = Field(None, description="Path to secure connect bundle for DataStax Astra DB")
     protocol_version: int = Field(4, description="CQL protocol version")
-    load_balancing_policy: Optional[Any] = Field(None, description="Custom load balancing policy object")
+    load_balancing_policy: Any | None = Field(None, description="Custom load balancing policy object")
 
     @model_validator(mode="before")
     @classmethod

@@ -50,16 +50,16 @@ Reranking trades extra latency for better precision. Start once you have baselin
 
 ## Picking the Right Reranker
 
-- **API-first** when you need top quality and can absorb request costs (Cohere, Zero Entropy).  
-- **Self-hosted** for privacy-sensitive deployments that must stay on your hardware (Sentence Transformer, Hugging Face).  
-- **LLM-driven** when you need bespoke scoring logic or complex prompts.  
+- **API-first** when you need top quality and can absorb request costs (Cohere, Zero Entropy).
+- **Self-hosted** for privacy-sensitive deployments that must stay on your hardware (Sentence Transformer, Hugging Face).
+- **LLM-driven** when you need bespoke scoring logic or complex prompts.
 - **Hybrid** by enabling reranking only on premium journeys to control spend.
 
 ## Implementation Checklist
 
-1. Confirm baseline search KPIs so you can measure uplift.  
-2. Select a provider and add the `reranker` block to your config.  
-3. Test latency impact with production-like query batches.  
+1. Confirm baseline search KPIs so you can measure uplift.
+2. Select a provider and add the `reranker` block to your config.
+3. Test latency impact with production-like query batches.
 4. Decide whether to enable reranking globally or per-search via the `rerank` flag.
 
 <CardGroup cols={2}>

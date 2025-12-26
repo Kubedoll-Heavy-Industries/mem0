@@ -1,6 +1,5 @@
 import builtins
 import logging
-from typing import Optional
 
 from pydantic import BaseModel
 
@@ -16,18 +15,18 @@ logger = logging.getLogger(__name__)
 
 
 class OutputData(BaseModel):
-    id: Optional[str]  # memory id
-    score: Optional[float]  # is None for `get` method
-    payload: Optional[dict]  # metadata
+    id: str | None  # memory id
+    score: float | None  # is None for `get` method
+    payload: dict | None  # metadata
 
 
 class UpstashVector(VectorStoreBase):
     def __init__(
         self,
         collection_name: str,
-        url: Optional[str] = None,
-        token: Optional[str] = None,
-        client: Optional[Index] = None,
+        url: str | None = None,
+        token: str | None = None,
+        client: Index | None = None,
         enable_embeddings: bool = False,
     ):
         """
@@ -53,8 +52,8 @@ class UpstashVector(VectorStoreBase):
     def insert(
         self,
         vectors: list[list],
-        payloads: Optional[list[dict]] = None,
-        ids: Optional[list[str]] = None,
+        payloads: list[dict] | None = None,
+        ids: list[str] | None = None,
     ):
         """
         Insert vectors
@@ -100,7 +99,7 @@ class UpstashVector(VectorStoreBase):
         query: str,
         vectors: list[list],
         limit: int = 5,
-        filters: Optional[dict] = None,
+        filters: dict | None = None,
     ) -> list[OutputData]:
         """
         Search for similar vectors.
@@ -165,8 +164,8 @@ class UpstashVector(VectorStoreBase):
     def update(
         self,
         vector_id: int,
-        vector: Optional[list] = None,
-        payload: Optional[dict] = None,
+        vector: list | None = None,
+        payload: dict | None = None,
     ):
         """
         Update a vector and its payload.
@@ -184,7 +183,7 @@ class UpstashVector(VectorStoreBase):
             namespace=self.collection_name,
         )
 
-    def get(self, vector_id: int) -> Optional[OutputData]:
+    def get(self, vector_id: int) -> OutputData | None:
         """
         Retrieve a vector by ID.
 
@@ -206,7 +205,7 @@ class UpstashVector(VectorStoreBase):
             return None
         return OutputData(id=vector.id, score=None, payload=vector.metadata)
 
-    def list(self, filters: Optional[dict] = None, limit: int = 100) -> list[list[OutputData]]:
+    def list(self, filters: dict | None = None, limit: int = 100) -> list[list[OutputData]]:
         """
         List all memories.
         Args:

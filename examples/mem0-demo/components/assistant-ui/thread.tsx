@@ -161,7 +161,7 @@ export const Thread: FC<ThreadProps> = ({
                     >
                       {isDarkMode ? (
                         <div className="flex items-center gap-2">
-                          <Sun className="w-6 h-6" /> 
+                          <Sun className="w-6 h-6" />
                           <span>Toggle Light Mode</span>
                         </div>
                       ) : (

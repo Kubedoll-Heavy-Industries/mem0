@@ -150,7 +150,7 @@ Example output:
 ```
 Mean Scores Per Category:
          bleu_score  f1_score  llm_score  count
-category                                       
+category
 1           0.xxxx    0.xxxx     0.xxxx     xx
 2           0.xxxx    0.xxxx     0.xxxx     xx
 3           0.xxxx    0.xxxx     0.xxxx     xx
@@ -195,4 +195,3 @@ If you use this code or dataset in your research, please cite our paper:
 - [Saket Aryan](https://github.com/whysosaket)
 - [Taranjeet Singh](https://github.com/taranjeet)
 - [Deshraj Yadav](https://github.com/deshraj)
-

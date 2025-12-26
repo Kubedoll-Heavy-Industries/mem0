@@ -13,10 +13,10 @@ from tqdm import tqdm
 load_dotenv()
 
 PROMPT = """
-# Question: 
+# Question:
 {{QUESTION}}
 
-# Context: 
+# Context:
 {{CONTEXT}}
 
 # Short answer:

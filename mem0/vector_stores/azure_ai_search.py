@@ -1,7 +1,6 @@
 import json
 import logging
 import re
-from typing import Optional
 
 from pydantic import BaseModel
 
@@ -35,9 +34,9 @@ logger = logging.getLogger(__name__)
 
 
 class OutputData(BaseModel):
-    id: Optional[str]
-    score: Optional[float]
-    payload: Optional[dict]
+    id: str | None
+    score: float | None
+    payload: dict | None
 
 
 class AzureAISearch(VectorStoreBase):
@@ -47,10 +46,10 @@ class AzureAISearch(VectorStoreBase):
         collection_name,
         api_key,
         embedding_model_dims,
-        compression_type: Optional[str] = None,
+        compression_type: str | None = None,
         use_float16: bool = False,
         hybrid_search: bool = False,
-        vector_filter_mode: Optional[str] = None,
+        vector_filter_mode: str | None = None,
     ):
         """
         Initialize the Azure AI Search vector store.

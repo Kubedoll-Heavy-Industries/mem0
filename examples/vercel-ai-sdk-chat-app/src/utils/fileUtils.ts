@@ -13,4 +13,4 @@ export const getFileBuffer = async (file: File): Promise<Buffer> => {
   const response = await fetch(URL.createObjectURL(file));
   const arrayBuffer = await response.arrayBuffer();
   return Buffer.from(arrayBuffer);
-}; 
+};

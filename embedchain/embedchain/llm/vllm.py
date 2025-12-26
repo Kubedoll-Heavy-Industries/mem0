@@ -1,9 +1,8 @@
-from typing import Iterable, Optional, Union
+from collections.abc import Iterable
+from typing import Optional
 
-from langchain.callbacks.manager import CallbackManager
-from langchain.callbacks.stdout import StdOutCallbackHandler
-from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain_community.llms import VLLM as BaseVLLM
+from langchain_core.callbacks import CallbackManager, StdOutCallbackHandler, StreamingStdOutCallbackHandler
 
 from embedchain.config import BaseLlmConfig
 from embedchain.helpers.json_serializable import register_deserializable
@@ -21,7 +20,7 @@ class VLLM(BaseLlm):
         return self._get_answer(prompt=prompt, config=self.config)
 
     @staticmethod
-    def _get_answer(prompt: str, config: BaseLlmConfig) -> Union[str, Iterable]:
+    def _get_answer(prompt: str, config: BaseLlmConfig) -> str | Iterable:
         callback_manager = [StreamingStdOutCallbackHandler()] if config.stream else [StdOutCallbackHandler()]
 
         # Prepare the arguments for BaseVLLM

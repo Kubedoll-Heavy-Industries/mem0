@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field, model_validator
 
@@ -20,9 +20,9 @@ class IndexMeasure(str, Enum):
 class SupabaseConfig(BaseModel):
     connection_string: str = Field(..., description="PostgreSQL connection string")
     collection_name: str = Field("mem0", description="Name for the vector collection")
-    embedding_model_dims: Optional[int] = Field(1536, description="Dimensions of the embedding model")
-    index_method: Optional[IndexMethod] = Field(IndexMethod.AUTO, description="Index method to use")
-    index_measure: Optional[IndexMeasure] = Field(IndexMeasure.COSINE, description="Distance measure to use")
+    embedding_model_dims: int | None = Field(1536, description="Dimensions of the embedding model")
+    index_method: IndexMethod | None = Field(IndexMethod.AUTO, description="Index method to use")
+    index_measure: IndexMeasure | None = Field(IndexMeasure.COSINE, description="Distance measure to use")
 
     @model_validator(mode="before")
     def check_connection_string(cls, values):

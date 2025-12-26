@@ -74,7 +74,7 @@ def test_compute_score(mock_context_relevance_metric, mock_data, monkeypatch):
             (object,),
             {
                 "choices": [
-                    type("obj", (object,), {"message": type("obj", (object,), {"content": "This is a test reponse."})})
+                    type("obj", (object,), {"message": type("obj", (object,), {"content": "This is a test response."})})
                 ]
             },
         )(),
@@ -92,7 +92,7 @@ def test_evaluate(mock_context_relevance_metric, mock_data, monkeypatch):
             (object,),
             {
                 "choices": [
-                    type("obj", (object,), {"message": type("obj", (object,), {"content": "This is a test reponse."})})
+                    type("obj", (object,), {"message": type("obj", (object,), {"content": "This is a test response."})})
                 ]
             },
         )(),

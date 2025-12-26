@@ -81,27 +81,27 @@ create_compose_file() {
   local vector_store=$1
   local compose_file="compose/${vector_store}.yml"
   local volume_name="${vector_store}_data"  # Vector-store-specific volume name
-  
+
   # Check if the compose file exists
   if [ ! -f "$compose_file" ]; then
     echo "❌ Compose file not found: $compose_file"
     echo "Available vector stores: $(ls compose/*.yml | sed 's/compose\///g' | sed 's/\.yml//g' | tr '\n' ' ')"
     exit 1
   fi
-  
+
   echo "📝 Creating docker-compose.yml using $compose_file..."
   echo "💾 Using volume: $volume_name"
-  
+
   # Start the compose file with services section
   echo "services:" > docker-compose.yml
-  
+
   # Extract services from the compose file and replace volume name
   # First get everything except the last volumes section
   tail -n +2 "$compose_file" | sed '/^volumes:/,$d' | sed "s/mem0_storage/${volume_name}/g" >> docker-compose.yml
-  
+
   # Add a newline to ensure proper YAML formatting
   echo "" >> docker-compose.yml
-  
+
   # Add the openmemory-mcp service
   cat >> docker-compose.yml <<EOF
   openmemory-mcp:
@@ -217,7 +217,7 @@ fi
 install_vector_store_packages() {
   local vector_store=$1
   echo "📦 Installing packages for vector store: $vector_store..."
-  
+
   case "$vector_store" in
     qdrant)
       docker exec openmemory-openmemory-mcp-1 pip install "qdrant-client>=1.9.1" || echo "⚠️ Failed to install qdrant packages"

@@ -43,12 +43,12 @@ Before running the project, you need to configure environment variables for both
 
 You can do this in one of the following ways:
 
-- **Manually**:  
+- **Manually**:
   Create a `.env` file in each of the following directories:
   - `/api/.env`
   - `/ui/.env`
 
-- **Using `.env.example` files**:  
+- **Using `.env.example` files**:
   Copy and rename the example files:
 
   ```bash
@@ -56,9 +56,9 @@ You can do this in one of the following ways:
   cp ui/.env.example ui/.env
   ```
 
- - **Using Makefile** (if supported):  
+ - **Using Makefile** (if supported):
     Run:
-  
+
    ```bash
    make env
    ```
@@ -66,7 +66,7 @@ You can do this in one of the following ways:
 
 ```env
 OPENAI_API_KEY=sk-xxx
-USER=<user-id> # The User Id you want to associate the memories with 
+USER=<user-id> # The User Id you want to associate the memories with
 ```
 - #### Example `/ui/.env`
 

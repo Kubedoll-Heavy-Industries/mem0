@@ -111,4 +111,4 @@ export const {
   updateMem0Config,
 } = configSlice.actions;
 
-export default configSlice.reducer; 
+export default configSlice.reducer;

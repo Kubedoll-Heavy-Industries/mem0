@@ -53,7 +53,7 @@ async def on_message(message: cl.Message):
     msg = cl.Message(content="")
     for chunk in await cl.make_async(app.chat)(message.content):
         await msg.stream_token(chunk)
-    
+
     await msg.send()
 ```
 

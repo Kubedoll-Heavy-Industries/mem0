@@ -2,7 +2,6 @@ import json
 import logging
 from datetime import datetime
 from functools import reduce
-from typing import Optional
 
 import numpy as np
 import pytz
@@ -40,7 +39,7 @@ excluded_keys = {"user_id", "agent_id", "run_id", "hash", "data", "created_at", 
 
 
 class MemoryResult:
-    def __init__(self, id: str, payload: dict, score: Optional[float] = None):
+    def __init__(self, id: str, payload: dict, score: float | None = None):
         self.id = id
         self.payload = payload
         self.score = score
@@ -120,7 +119,7 @@ class RedisDB(VectorStoreBase):
 
         return index
 
-    def insert(self, vectors: list, payloads: Optional[list] = None, ids: Optional[list] = None):
+    def insert(self, vectors: list, payloads: list | None = None, ids: list | None = None):
         data = []
         for vector, payload, id in zip(vectors, payloads, ids):
             # Start with required fields
@@ -143,7 +142,7 @@ class RedisDB(VectorStoreBase):
             data.append(entry)
         self.index.load(data, id_field="memory_id")
 
-    def search(self, query: str, vectors: list, limit: int = 5, filters: Optional[dict] = None):
+    def search(self, query: str, vectors: list, limit: int = 5, filters: dict | None = None):
         conditions = [Tag(key) == value for key, value in filters.items() if value is not None]
         filter = reduce(lambda x, y: x & y, conditions)
 
@@ -253,7 +252,7 @@ class RedisDB(VectorStoreBase):
         # Recreate the index with the same parameters
         self.create_col(collection_name, self.embedding_model_dims)
 
-    def list(self, filters: Optional[dict] = None, limit: Optional[int] = None) -> list:
+    def list(self, filters: dict | None = None, limit: int | None = None) -> list:
         """
         List all recent created memories from the vector store.
         """

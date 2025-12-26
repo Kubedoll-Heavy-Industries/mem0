@@ -30,7 +30,7 @@ export default function ApiSettingsPopup(props: { isOpen: boolean, setIsOpen: Di
       setProvider(selectedProvider);
     }
   }, [selectedOpenAIKey, selectedMem0Key, selectedProvider]);
-  
+
 
 
   return (

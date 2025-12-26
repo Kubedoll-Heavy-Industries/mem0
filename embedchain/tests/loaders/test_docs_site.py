@@ -69,7 +69,7 @@ def test_get_all_urls(mock_requests_get, docs_site_loader):
 def test_load_data_from_url(mock_requests_get, docs_site_loader):
     mock_response = Mock()
     mock_response.status_code = 200
-    mock_response.content = """
+    mock_response.content = b"""
         <html>
             <nav>
                 <h1>Navigation</h1>
@@ -78,7 +78,7 @@ def test_load_data_from_url(mock_requests_get, docs_site_loader):
                 <p>Article Content</p>
             </article>
         </html>
-    """.encode()
+    """
     mock_requests_get.return_value = mock_response
 
     data = docs_site_loader._load_data_from_url("https://example.com/page1")
@@ -102,11 +102,11 @@ def test_load_data_from_url_status_not_200(mock_requests_get, docs_site_loader):
 def test_load_data(mock_requests_get, docs_site_loader):
     mock_response = Response()
     mock_response.status_code = 200
-    mock_response._content = """
+    mock_response._content = b"""
         <html>
             <a href="/page1">Page 1</a>
             <a href="/page2">Page 2</a>
-        """.encode()
+        """
     mock_requests_get.return_value = mock_response
 
     url = "https://example.com"

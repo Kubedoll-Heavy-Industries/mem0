@@ -1,8 +1,8 @@
 import os
 from typing import Optional
 
-from langchain.schema import HumanMessage, SystemMessage
 from langchain_community.chat_models import JinaChat
+from langchain_core.messages import HumanMessage, SystemMessage
 
 from embedchain.config import BaseLlmConfig
 from embedchain.helpers.json_serializable import register_deserializable
@@ -35,7 +35,7 @@ class JinaLlm(BaseLlm):
         if config.top_p:
             kwargs["model_kwargs"]["top_p"] = config.top_p
         if config.stream:
-            from langchain.callbacks.streaming_stdout import (
+            from langchain_core.callbacks import (
                 StreamingStdOutCallbackHandler,
             )
 

@@ -76,4 +76,4 @@ export const useFiltersApi = (): UseFiltersApiReturn => {
     updateCategories,
     updateSort
   };
-}; 
+};

@@ -1,4 +1,4 @@
-from typing import Any, Optional, Union
+from typing import Any
 
 import numpy as np
 
@@ -17,7 +17,7 @@ except ImportError:
 class SentenceTransformerReranker(BaseReranker):
     """Sentence Transformer based reranker implementation."""
 
-    def __init__(self, config: Union[BaseRerankerConfig, SentenceTransformerRerankerConfig, dict]):
+    def __init__(self, config: BaseRerankerConfig | SentenceTransformerRerankerConfig | dict):
         """
         Initialize Sentence Transformer reranker.
 
@@ -47,7 +47,7 @@ class SentenceTransformerReranker(BaseReranker):
         self.config = config
         self.model = SentenceTransformer(self.config.model, device=self.config.device)
 
-    def rerank(self, query: str, documents: list[dict[str, Any]], top_k: Optional[int] = None) -> list[dict[str, Any]]:
+    def rerank(self, query: str, documents: list[dict[str, Any]], top_k: int | None = None) -> list[dict[str, Any]]:
         """
         Rerank documents using sentence transformer cross-encoder.
 

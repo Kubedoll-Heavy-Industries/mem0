@@ -90,4 +90,4 @@ export const {
   setSortingState
 } = filtersSlice.actions;
 
-export default filtersSlice.reducer; 
+export default filtersSlice.reducer;

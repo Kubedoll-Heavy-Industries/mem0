@@ -1,5 +1,4 @@
 import os
-from typing import Optional
 
 try:
     from google import genai
@@ -12,7 +11,7 @@ from mem0.llms.base import LLMBase
 
 
 class GeminiLLM(LLMBase):
-    def __init__(self, config: Optional[BaseLlmConfig] = None):
+    def __init__(self, config: BaseLlmConfig | None = None):
         super().__init__(config)
 
         if not self.config.model:
@@ -90,7 +89,7 @@ class GeminiLLM(LLMBase):
 
         return system_instruction, contents
 
-    def _reformat_tools(self, tools: Optional[list[dict]]):
+    def _reformat_tools(self, tools: list[dict] | None):
         """
         Reformat tools for Gemini.
 
@@ -135,7 +134,7 @@ class GeminiLLM(LLMBase):
         self,
         messages: list[dict[str, str]],
         response_format=None,
-        tools: Optional[list[dict]] = None,
+        tools: list[dict] | None = None,
         tool_choice: str = "auto",
     ):
         """

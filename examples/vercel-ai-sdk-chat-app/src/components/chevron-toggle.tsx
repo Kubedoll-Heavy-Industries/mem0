@@ -9,7 +9,7 @@ const ChevronToggle = (props: {
   const { isMemoriesExpanded, setIsMemoriesExpanded } = props;
   return (
     <>
-      <div className="relaive">
+      <div className="relative">
         <div className="flex items-center absolute top-1/2 z-10">
           <Button
             variant="ghost"

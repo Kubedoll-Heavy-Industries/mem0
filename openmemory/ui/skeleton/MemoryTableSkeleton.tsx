@@ -78,4 +78,4 @@ export function MemoryTableSkeleton() {
       </Table>
     </div>
   )
-} 
+}

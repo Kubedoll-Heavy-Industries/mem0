@@ -65,7 +65,7 @@ def parse_content(content, type):
     cleaned_size = len(content)
     if original_size != 0:
         logger.info(
-            f"Cleaned page size: {cleaned_size} characters, down from {original_size} (shrunk: {original_size-cleaned_size} chars, {round((1-(cleaned_size/original_size)) * 100, 2)}%)"  # noqa:E501
+            f"Cleaned page size: {cleaned_size} characters, down from {original_size} (shrunk: {original_size - cleaned_size} chars, {round((1 - (cleaned_size / original_size)) * 100, 2)}%)"
         )
 
     return content
@@ -301,7 +301,7 @@ def detect_datatype(source: Any) -> DataType:
         # Raise an error if it isn't a string and also not a valid non-string type (one of the previous).
         # We could stringify it, but it is better to raise an error and let the user decide how they want to do that.
         raise TypeError(
-            "Source is not a string and a valid non-string type could not be detected. If you want to embed it, please stringify it, for instance by using `str(source)` or `(', ').join(source)`."  # noqa: E501
+            "Source is not a string and a valid non-string type could not be detected. If you want to embed it, please stringify it, for instance by using `str(source)` or `(', ').join(source)`."
         )
 
     elif os.path.isfile(source):
@@ -333,7 +333,7 @@ def detect_datatype(source: Any) -> DataType:
             return DataType.PDF_FILE
 
         if source.endswith(".yaml"):
-            with open(source, "r") as file:
+            with open(source) as file:
                 yaml_content = yaml.safe_load(file)
                 if is_openapi_yaml(yaml_content):
                     logger.debug(f"Source of `{formatted_source}` detected as `openapi`.")
@@ -359,7 +359,7 @@ def detect_datatype(source: Any) -> DataType:
         # If the source is a valid file, that's not detectable as a type, an error is raised.
         # It does not fall back to text.
         raise ValueError(
-            "Source points to a valid file, but based on the filename, no `data_type` can be detected. Please be aware, that not all data_types allow conventional file references, some require the use of the `file URI scheme`. Please refer to the embedchain documentation (https://docs.embedchain.ai/advanced/data_types#remote-data-types)."  # noqa: E501
+            "Source points to a valid file, but based on the filename, no `data_type` can be detected. Please be aware, that not all data_types allow conventional file references, some require the use of the `file URI scheme`. Please refer to the embedchain documentation (https://docs.embedchain.ai/advanced/data_types#remote-data-types)."
         )
 
     else:

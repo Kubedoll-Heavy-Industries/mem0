@@ -4,4 +4,4 @@ from .config import router as config_router
 from .memories import router as memories_router
 from .stats import router as stats_router
 
-__all__ = ["memories_router", "apps_router", "stats_router", "config_router", "backup_router"]
+__all__ = ["apps_router", "backup_router", "config_router", "memories_router", "stats_router"]

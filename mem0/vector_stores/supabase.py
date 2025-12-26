@@ -1,6 +1,5 @@
 import logging
 import uuid
-from typing import Optional
 
 from pydantic import BaseModel
 
@@ -16,9 +15,9 @@ logger = logging.getLogger(__name__)
 
 
 class OutputData(BaseModel):
-    id: Optional[str]
-    score: Optional[float]
-    payload: Optional[dict]
+    id: str | None
+    score: float | None
+    payload: dict | None
 
 
 class Supabase(VectorStoreBase):
@@ -50,7 +49,7 @@ class Supabase(VectorStoreBase):
         if collection_name not in collections:
             self.create_col(embedding_model_dims)
 
-    def _preprocess_filters(self, filters: Optional[dict] = None) -> Optional[dict]:
+    def _preprocess_filters(self, filters: dict | None = None) -> dict | None:
         """
         Preprocess filters to be compatible with vecs.
 
@@ -69,7 +68,7 @@ class Supabase(VectorStoreBase):
         # For multiple filters, use $and clause
         return {"$and": [{key: {"$eq": value}} for key, value in filters.items()]}
 
-    def create_col(self, embedding_model_dims: Optional[int] = None) -> None:
+    def create_col(self, embedding_model_dims: int | None = None) -> None:
         """
         Create a new collection with vector support.
         Will also initialize vector search index.
@@ -93,9 +92,7 @@ class Supabase(VectorStoreBase):
             logger.error(f"Failed to create collection: {e!s}")
             raise
 
-    def insert(
-        self, vectors: list[list[float]], payloads: Optional[list[dict]] = None, ids: Optional[list[str]] = None
-    ):
+    def insert(self, vectors: list[list[float]], payloads: list[dict] | None = None, ids: list[str] | None = None):
         """
         Insert vectors into the collection.
 
@@ -115,9 +112,7 @@ class Supabase(VectorStoreBase):
 
         self.collection.upsert(records)
 
-    def search(
-        self, query: str, vectors: list[float], limit: int = 5, filters: Optional[dict] = None
-    ) -> list[OutputData]:
+    def search(self, query: str, vectors: list[float], limit: int = 5, filters: dict | None = None) -> list[OutputData]:
         """
         Search for similar vectors.
 
@@ -146,7 +141,7 @@ class Supabase(VectorStoreBase):
         """
         self.collection.delete([(vector_id,)])
 
-    def update(self, vector_id: str, vector: Optional[list[float]] = None, payload: Optional[dict] = None):
+    def update(self, vector_id: str, vector: list[float] | None = None, payload: dict | None = None):
         """
         Update a vector and/or its payload.
 
@@ -164,7 +159,7 @@ class Supabase(VectorStoreBase):
         if vector:
             self.collection.upsert([(vector_id, vector, payload or {})])
 
-    def get(self, vector_id: str) -> Optional[OutputData]:
+    def get(self, vector_id: str) -> OutputData | None:
         """
         Retrieve a vector by ID.
 
@@ -209,7 +204,7 @@ class Supabase(VectorStoreBase):
             "index": {"method": info.index_method, "metric": info.distance_metric},
         }
 
-    def list(self, filters: Optional[dict] = None, limit: int = 100) -> list[OutputData]:
+    def list(self, filters: dict | None = None, limit: int = 100) -> list[OutputData]:
         """
         List vectors in the collection.
 

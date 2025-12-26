@@ -87,7 +87,7 @@ async def create_app_using_default_config(app_id: str, config: UploadFile = None
         return DefaultResponse(response=f"App created successfully. App ID: {app_id}")
     except Exception as e:
         logger.warning(str(e))
-        raise HTTPException(detail=f"Error creating app: {str(e)}", status_code=400)
+        raise HTTPException(detail=f"Error creating app: {e!s}", status_code=400)
 
 
 @app.get(
@@ -123,7 +123,7 @@ async def get_datasources_associated_with_app_id(app_id: str, db: Session = Depe
         )
     except Exception as e:
         logger.warning(str(e))
-        raise HTTPException(detail=f"Error occurred: {str(e)}", status_code=400)
+        raise HTTPException(detail=f"Error occurred: {e!s}", status_code=400)
 
 
 @app.post(
@@ -162,7 +162,7 @@ async def add_datasource_to_an_app(body: SourceApp, app_id: str, db: Session = D
         )
     except Exception as e:
         logger.warning(str(e))
-        raise HTTPException(detail=f"Error occurred: {str(e)}", status_code=400)
+        raise HTTPException(detail=f"Error occurred: {e!s}", status_code=400)
 
 
 @app.post(
@@ -200,7 +200,7 @@ async def query_an_app(body: QueryApp, app_id: str, db: Session = Depends(get_db
         )
     except Exception as e:
         logger.warning(str(e))
-        raise HTTPException(detail=f"Error occurred: {str(e)}", status_code=400)
+        raise HTTPException(detail=f"Error occurred: {e!s}", status_code=400)
 
 
 # FIXME: The chat implementation of Embedchain needs to be modified to work with the REST API.
@@ -283,7 +283,7 @@ async def deploy_app(body: DeployAppRequest, app_id: str, db: Session = Depends(
         )
     except Exception as e:
         logger.warning(str(e))
-        raise HTTPException(detail=f"Error occurred: {str(e)}", status_code=400)
+        raise HTTPException(detail=f"Error occurred: {e!s}", status_code=400)
 
 
 @app.delete(
@@ -316,7 +316,7 @@ async def delete_app(app_id: str, db: Session = Depends(get_db)):
         remove_app(db, app_id)
         return DefaultResponse(response=f"App with id {app_id} deleted successfully.")
     except Exception as e:
-        raise HTTPException(detail=f"Error occurred: {str(e)}", status_code=400)
+        raise HTTPException(detail=f"Error occurred: {e!s}", status_code=400)
 
 
 if __name__ == "__main__":

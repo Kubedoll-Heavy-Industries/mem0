@@ -18,8 +18,7 @@ export const testConfig = {
       name: "openai",
       activeModel: "gpt-4-turbo",
       apiKey: process.env.OPENAI_API_KEY,
-    }
-    , 
+    },
     {
       name: "anthropic",
       activeModel: "claude-3-5-sonnet-20240620",
@@ -34,13 +33,13 @@ export const testConfig = {
       name: "cohere",
       activeModel: "command-r-plus",
       apiKey: process.env.COHERE_API_KEY,
-    }
+    },
   ],
   models: {
     openai: "gpt-4-turbo",
     anthropic: "claude-3-haiku-20240307",
     groq: "gemma2-9b-it",
-    cohere: "command-r-plus"
+    cohere: "command-r-plus",
   },
   apiKeys: {
     openai: process.env.OPENAI_API_KEY,
@@ -58,16 +57,18 @@ export const testConfig = {
   },
   fetchDeleteId: async function () {
     const options = {
-      method: 'GET',
+      method: "GET",
       headers: {
         Authorization: `Token ${this.apiKey}`,
       },
     };
 
     try {
-      const response = await fetch('https://api.mem0.ai/v1/entities/', options);
+      const response = await fetch("https://api.mem0.ai/v1/entities/", options);
       const data = await response.json();
-      const entity = data.results.find((item: any) => item.name === this.userId);
+      const entity = data.results.find(
+        (item: any) => item.name === this.userId,
+      );
       if (entity) {
         this.deleteId = entity.id;
       } else {
@@ -80,19 +81,24 @@ export const testConfig = {
   },
   deleteUser: async function () {
     if (!this.deleteId) {
-      console.error("deleteId is not set. Ensure fetchDeleteId is called first.");
+      console.error(
+        "deleteId is not set. Ensure fetchDeleteId is called first.",
+      );
       return;
     }
 
     const options = {
-      method: 'DELETE',
+      method: "DELETE",
       headers: {
         Authorization: `Token ${this.apiKey}`,
       },
     };
 
     try {
-      const response = await fetch(`https://api.mem0.ai/v1/entities/user/${this.deleteId}/`, options);
+      const response = await fetch(
+        `https://api.mem0.ai/v1/entities/user/${this.deleteId}/`,
+        options,
+      );
       if (!response.ok) {
         throw new Error(`Failed to delete user: ${response.statusText}`);
       }

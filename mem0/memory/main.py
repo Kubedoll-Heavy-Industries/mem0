@@ -9,7 +9,7 @@ import uuid
 import warnings
 from copy import deepcopy
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
 import pytz
 from pydantic import ValidationError
@@ -84,12 +84,12 @@ def _safe_deepcopy_config(config):
 
 def _build_filters_and_metadata(
     *,  # Enforce keyword-only arguments
-    user_id: Optional[str] = None,
-    agent_id: Optional[str] = None,
-    run_id: Optional[str] = None,
-    actor_id: Optional[str] = None,  # For query-time filtering
-    input_metadata: Optional[dict[str, Any]] = None,
-    input_filters: Optional[dict[str, Any]] = None,
+    user_id: str | None = None,
+    agent_id: str | None = None,
+    run_id: str | None = None,
+    actor_id: str | None = None,  # For query-time filtering
+    input_metadata: dict[str, Any] | None = None,
+    input_filters: dict[str, Any] | None = None,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     """
     Constructs metadata for storage and filters for querying based on session and actor identifiers.
@@ -274,13 +274,13 @@ class Memory(MemoryBase):
         self,
         messages,
         *,
-        user_id: Optional[str] = None,
-        agent_id: Optional[str] = None,
-        run_id: Optional[str] = None,
-        metadata: Optional[dict[str, Any]] = None,
+        user_id: str | None = None,
+        agent_id: str | None = None,
+        run_id: str | None = None,
+        metadata: dict[str, Any] | None = None,
         infer: bool = True,
-        memory_type: Optional[str] = None,
-        prompt: Optional[str] = None,
+        memory_type: str | None = None,
+        prompt: str | None = None,
     ):
         """
         Create a new memory.
@@ -645,10 +645,10 @@ class Memory(MemoryBase):
     def get_all(
         self,
         *,
-        user_id: Optional[str] = None,
-        agent_id: Optional[str] = None,
-        run_id: Optional[str] = None,
-        filters: Optional[dict[str, Any]] = None,
+        user_id: str | None = None,
+        agent_id: str | None = None,
+        run_id: str | None = None,
+        filters: dict[str, Any] | None = None,
         limit: int = 100,
     ):
         """
@@ -751,12 +751,12 @@ class Memory(MemoryBase):
         self,
         query: str,
         *,
-        user_id: Optional[str] = None,
-        agent_id: Optional[str] = None,
-        run_id: Optional[str] = None,
+        user_id: str | None = None,
+        agent_id: str | None = None,
+        run_id: str | None = None,
         limit: int = 100,
-        filters: Optional[dict[str, Any]] = None,
-        threshold: Optional[float] = None,
+        filters: dict[str, Any] | None = None,
+        threshold: float | None = None,
         rerank: bool = True,
     ):
         """
@@ -950,7 +950,7 @@ class Memory(MemoryBase):
                 return True
         return False
 
-    def _search_vector_store(self, query, filters, limit, threshold: Optional[float] = None):
+    def _search_vector_store(self, query, filters, limit, threshold: float | None = None):
         embeddings = self.embedding_model.embed(query, "search")
         memories = self.vector_store.search(query=query, vectors=embeddings, limit=limit, filters=filters)
 
@@ -1021,7 +1021,7 @@ class Memory(MemoryBase):
         self._delete_memory(memory_id)
         return {"message": "Memory deleted successfully!"}
 
-    def delete_all(self, user_id: Optional[str] = None, agent_id: Optional[str] = None, run_id: Optional[str] = None):
+    def delete_all(self, user_id: str | None = None, agent_id: str | None = None, run_id: str | None = None):
         """
         Delete all memories.
 
@@ -1327,13 +1327,13 @@ class AsyncMemory(MemoryBase):
         self,
         messages,
         *,
-        user_id: Optional[str] = None,
-        agent_id: Optional[str] = None,
-        run_id: Optional[str] = None,
-        metadata: Optional[dict[str, Any]] = None,
+        user_id: str | None = None,
+        agent_id: str | None = None,
+        run_id: str | None = None,
+        metadata: dict[str, Any] | None = None,
         infer: bool = True,
-        memory_type: Optional[str] = None,
-        prompt: Optional[str] = None,
+        memory_type: str | None = None,
+        prompt: str | None = None,
         llm=None,
     ):
         """
@@ -1692,10 +1692,10 @@ class AsyncMemory(MemoryBase):
     async def get_all(
         self,
         *,
-        user_id: Optional[str] = None,
-        agent_id: Optional[str] = None,
-        run_id: Optional[str] = None,
-        filters: Optional[dict[str, Any]] = None,
+        user_id: str | None = None,
+        agent_id: str | None = None,
+        run_id: str | None = None,
+        filters: dict[str, Any] | None = None,
         limit: int = 100,
     ):
         """
@@ -1803,13 +1803,13 @@ class AsyncMemory(MemoryBase):
         self,
         query: str,
         *,
-        user_id: Optional[str] = None,
-        agent_id: Optional[str] = None,
-        run_id: Optional[str] = None,
+        user_id: str | None = None,
+        agent_id: str | None = None,
+        run_id: str | None = None,
         limit: int = 100,
-        filters: Optional[dict[str, Any]] = None,
-        threshold: Optional[float] = None,
-        metadata_filters: Optional[dict[str, Any]] = None,
+        filters: dict[str, Any] | None = None,
+        threshold: float | None = None,
+        metadata_filters: dict[str, Any] | None = None,
         rerank: bool = True,
     ):
         """
@@ -2007,7 +2007,7 @@ class AsyncMemory(MemoryBase):
                 return True
         return False
 
-    async def _search_vector_store(self, query, filters, limit, threshold: Optional[float] = None):
+    async def _search_vector_store(self, query, filters, limit, threshold: float | None = None):
         embeddings = await asyncio.to_thread(self.embedding_model.embed, query, "search")
         memories = await asyncio.to_thread(
             self.vector_store.search, query=query, vectors=embeddings, limit=limit, filters=filters

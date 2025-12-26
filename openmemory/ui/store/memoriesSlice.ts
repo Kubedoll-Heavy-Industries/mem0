@@ -83,9 +83,9 @@ const memoriesSlice = createSlice({
   // extraReducers section is removed as API calls are handled by the hook
 });
 
-export const { 
-  setMemoriesLoading, 
-  setMemoriesSuccess, 
+export const {
+  setMemoriesLoading,
+  setMemoriesSuccess,
   setMemoriesError,
   resetMemoriesState,
   selectMemory,
@@ -97,4 +97,4 @@ export const {
   setRelatedMemories
 } = memoriesSlice.actions;
 
-export default memoriesSlice.reducer; 
+export default memoriesSlice.reducer;

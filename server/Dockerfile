@@ -4,6 +4,10 @@
 # Usage: docker build -f server/Dockerfile -t mem0-server .
 # =============================================================================
 
+# Base image configuration
+ARG PYTHON_VERSION=3.12
+ARG VARIANT=slim
+
 # Build-time arguments for versioning and labels
 ARG VERSION=dev
 ARG COMMIT=unknown
@@ -18,17 +22,16 @@ ARG OCI_AUTHORS=""
 # -----------------------------------------------------------------------------
 # Stage 1: Build dependencies with uv
 # -----------------------------------------------------------------------------
-FROM python:3.12-slim AS builder
+FROM python:${PYTHON_VERSION}-${VARIANT} AS builder
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
 WORKDIR /app
 
-# Copy all files needed for workspace resolution
-COPY pyproject.toml uv.lock ./
+# Copy workspace files (structure must match uv workspace layout)
+COPY pyproject.toml uv.lock README.md LICENSE ./
 COPY server/pyproject.toml ./server/
 COPY mem0/ ./mem0/
-COPY README.md LICENSE ./
 
 # Sync server package (installs mem0ai from local workspace)
 ENV UV_COMPILE_BYTECODE=1
@@ -37,9 +40,11 @@ RUN uv sync --frozen --no-dev --package mem0-server --no-editable
 # -----------------------------------------------------------------------------
 # Stage 2: Runtime image
 # -----------------------------------------------------------------------------
-FROM python:3.12-slim AS runtime
+FROM python:${PYTHON_VERSION}-${VARIANT} AS runtime
 
 # Re-declare ARGs for use in this stage
+ARG PYTHON_VERSION
+ARG VARIANT
 ARG VERSION
 ARG COMMIT
 ARG BUILD_DATE
@@ -61,25 +66,21 @@ LABEL org.opencontainers.image.title="mem0-server" \
       org.opencontainers.image.vendor="${OCI_VENDOR}" \
       org.opencontainers.image.authors="${OCI_AUTHORS}" \
       org.opencontainers.image.licenses="Apache-2.0" \
-      org.opencontainers.image.base.name="python:3.12-slim"
+      org.opencontainers.image.base.name="python:${PYTHON_VERSION}-${VARIANT}"
 
-# Security: Create non-root user with high UID (distroless convention)
-# Create home directory for mem0 config/telemetry storage
-RUN groupadd --gid 65532 nonroot && \
+# Install curl for healthcheck, create non-root user
+RUN apt-get update && apt-get install -y --no-install-recommends curl && \
+    rm -rf /var/lib/apt/lists/* && \
+    groupadd --gid 65532 nonroot && \
     useradd --uid 65532 --gid nonroot --shell /bin/false --create-home nonroot
 
 WORKDIR /app
 
-# Copy virtual environment from builder
 COPY --from=builder /app/.venv /app/.venv
-
-# Copy server application code
 COPY --chown=nonroot:nonroot server/ .
 
-# Create data directories with correct ownership
 RUN mkdir -p /app/history && chown -R nonroot:nonroot /app
 
-# Environment configuration
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PATH="/app/.venv/bin:$PATH" \
@@ -91,6 +92,6 @@ USER nonroot
 EXPOSE 8000
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')" || exit 1
+    CMD curl -fsS http://localhost:8000/health
 
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

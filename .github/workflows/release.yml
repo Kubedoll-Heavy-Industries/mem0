@@ -37,8 +37,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  # Use lowercase for Docker registry (GitHub lowercases automatically, but explicit is safer)
-  IMAGE_NAME: kubedoll-heavy-industries/mem0-server
 
 jobs:
   # ===========================================================================
@@ -95,7 +93,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
           cache: "pnpm"
           cache-dependency-path: |
             mem0-ts/pnpm-lock.yaml
@@ -190,42 +188,34 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata (tags, labels)
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=raw,value=latest,enable={{is_default_branch}}
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=sha,prefix=
+      - name: Extract version from tag
+        id: version
+        run: |
+          # Extract version from tag (e.g., v1.0.0 -> 1.0.0, mem0ai-v1.0.0 -> 1.0.0)
+          VERSION="${GITHUB_REF_NAME#*-v}"
+          VERSION="${VERSION#v}"
+          echo "version=${VERSION:-dev}" >> "$GITHUB_OUTPUT"
 
-      - name: Build and push Docker image
-        id: build
-        uses: docker/build-push-action@v6
+      - name: Build and push Docker images
+        uses: docker/bake-action@v6
         with:
-          context: .
-          file: ./server/Dockerfile
-          platforms: linux/amd64,linux/arm64
+          targets: all
           push: ${{ github.event_name != 'workflow_dispatch' || !inputs.dry_run }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          build-args: |
-            VERSION=${{ github.ref_name }}
-            COMMIT=${{ github.sha }}
-            BUILD_DATE=${{ github.event.head_commit.timestamp || github.event.release.created_at || '' }}
-            OCI_SOURCE=https://github.com/${{ github.repository }}
-            OCI_URL=https://github.com/${{ github.repository }}
-            OCI_VENDOR=Kubedoll Heavy Industries
-            OCI_AUTHORS=Cadence Agyirey <8145742+cagyirey@users.noreply.github.com>
+          set: |
+            *.cache-from=type=gha
+            *.cache-to=type=gha,mode=max
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          COMMIT: ${{ github.sha }}
+          BUILD_DATE: ${{ github.event.head_commit.timestamp || github.event.release.created_at || '' }}
+          REGISTRY: ${{ env.REGISTRY }}
+          REGISTRY_NAMESPACE: ${{ github.repository_owner }}
+          OCI_SOURCE: https://github.com/${{ github.repository }}
+          OCI_URL: https://github.com/${{ github.repository }}
+          OCI_VENDOR: Kubedoll Heavy Industries
+          OCI_AUTHORS: Cadence Agyirey <8145742+cagyirey@users.noreply.github.com>
 
-      - name: Generate artifact attestation
-        if: github.event_name != 'workflow_dispatch' || !inputs.dry_run
-        uses: actions/attest-build-provenance@v2
-        with:
-          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          subject-digest: ${{ steps.build.outputs.digest }}
-          push-to-registry: true
+      # TODO: Attestation for multi-image bake builds requires iterating over outputs
+      # See: https://docs.docker.com/build/bake/reference/#output
+      # - name: Generate artifact attestation
+      #   uses: actions/attest-build-provenance@v3

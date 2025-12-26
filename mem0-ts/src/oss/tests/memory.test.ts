@@ -1,11 +1,6 @@
-/// <reference types="jest" />
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { Memory } from "../src";
 import { MemoryItem, SearchResult } from "../src/types";
-import dotenv from "dotenv";
-
-dotenv.config();
-
-jest.setTimeout(30000); // Increase timeout to 30 seconds
 
 describe("Memory Class", () => {
   let memory: Memory;

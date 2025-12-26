@@ -28,9 +28,9 @@ Custom fact extraction prompts let you decide exactly which facts Mem0 records f
 
 <AccordionGroup>
   <Accordion title="Prompt blueprint">
-    1. State the allowed fact types.  
-    2. Include short examples that mirror production messages.  
-    3. Show both empty (`[]`) and populated outputs.  
+    1. State the allowed fact types.
+    2. Include short examples that mirror production messages.
+    3. Show both empty (`[]`) and populated outputs.
     4. Remind the model to return JSON with a `facts` key only.
   </Accordion>
 </AccordionGroup>
@@ -44,7 +44,7 @@ Custom fact extraction prompts let you decide exactly which facts Mem0 records f
 <CodeGroup>
 ```python Python
 custom_fact_extraction_prompt = """
-Please only extract entities containing customer support information, order details, and user information. 
+Please only extract entities containing customer support information, order details, and user information.
 Here are some few shot examples:
 
 Input: Hi.
@@ -68,7 +68,7 @@ Return the facts and customer information in a json format as shown above.
 
 ```ts TypeScript
 const customPrompt = `
-Please only extract entities containing customer support information, order details, and user information. 
+Please only extract entities containing customer support information, order details, and user information.
 Here are some few shot examples:
 
 Input: Hi.

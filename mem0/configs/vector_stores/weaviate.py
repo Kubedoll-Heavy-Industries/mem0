@@ -1,4 +1,4 @@
-from typing import Any, ClassVar, Optional
+from typing import Any, ClassVar
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -10,9 +10,9 @@ class WeaviateConfig(BaseModel):
 
     collection_name: str = Field("mem0", description="Name of the collection")
     embedding_model_dims: int = Field(1536, description="Dimensions of the embedding model")
-    cluster_url: Optional[str] = Field(None, description="URL for Weaviate server")
-    auth_client_secret: Optional[str] = Field(None, description="API key for Weaviate authentication")
-    additional_headers: Optional[dict[str, str]] = Field(None, description="Additional headers for requests")
+    cluster_url: str | None = Field(None, description="URL for Weaviate server")
+    auth_client_secret: str | None = Field(None, description="API key for Weaviate authentication")
+    additional_headers: dict[str, str] | None = Field(None, description="Additional headers for requests")
 
     @model_validator(mode="before")
     @classmethod

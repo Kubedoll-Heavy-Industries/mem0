@@ -68,9 +68,9 @@ Let's see the available parameters for the `elasticsearch` config:
 
 ### Custom Search Query
 
-The `custom_search_query` parameter allows you to customize the search query when `Memory.search` is called.  
-  
-__Example__  
+The `custom_search_query` parameter allows you to customize the search query when `Memory.search` is called.
+
+__Example__
 ```python
 import os
 from typing import List, Optional, Dict
@@ -79,9 +79,9 @@ from mem0 import Memory
 def custom_search_query(query: List[float], limit: int, filters: Optional[Dict]) -> Dict:
     return {
         "knn": {
-            "field": "vector", 
-            "query_vector": query, 
-            "k": limit, 
+            "field": "vector",
+            "query_vector": query,
+            "k": limit,
             "num_candidates": limit * 2
         }
     }
@@ -104,6 +104,6 @@ config = {
 It should be a function that takes the following parameters:
 - `query`: a query vector used in `Memory.search`
 - `limit`: a number of results used in `Memory.search`
-- `filters`: a dictionary of key-value pairs used in `Memory.search`. You can add custom pairs for the custom search query.  
-  
+- `filters`: a dictionary of key-value pairs used in `Memory.search`. You can add custom pairs for the custom search query.
+
 The function should return a query body for the Elasticsearch search API.

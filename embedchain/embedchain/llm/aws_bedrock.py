@@ -5,7 +5,7 @@ try:
     from langchain_aws import BedrockLLM
 except ModuleNotFoundError:
     raise ModuleNotFoundError(
-        "The required dependencies for AWSBedrock are not installed." "Please install with `pip install langchain_aws`"
+        "The required dependencies for AWSBedrock are not installed.Please install with `pip install langchain_aws`"
     ) from None
 
 from embedchain.config import BaseLlmConfig
@@ -45,7 +45,7 @@ class AWSBedrockLlm(BaseLlm):
         }
 
         if config.stream:
-            from langchain.callbacks.streaming_stdout import (
+            from langchain_core.callbacks import (
                 StreamingStdOutCallbackHandler,
             )
 

@@ -23,7 +23,7 @@ class GithubLoader(BaseLoader):
         super().__init__()
         if not config:
             raise ValueError(
-                "GithubLoader requires a personal access token to use github api. Check - `https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic`"  # noqa: E501
+                "GithubLoader requires a personal access token to use github api. Check - `https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic`"
             )
 
         try:
@@ -38,7 +38,7 @@ class GithubLoader(BaseLoader):
         token = config.get("token")
         if not token:
             raise ValueError(
-                "GithubLoader requires a personal access token to use github api. Check - `https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic`"  # noqa: E501
+                "GithubLoader requires a personal access token to use github api. Check - `https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic`"
             )
 
         try:
@@ -236,9 +236,7 @@ class GithubLoader(BaseLoader):
             data = self._github_search_code(query)
         elif search_type == "repo":
             data = self._github_search_repo(query)
-        elif search_type == "issue":
-            data = self._github_search_issues_and_pr(query, search_type)
-        elif search_type == "pr":
+        elif search_type == "issue" or search_type == "pr":
             data = self._github_search_issues_and_pr(query, search_type)
         elif search_type == "branch":
             data = self._get_github_repo_branch(query, search_type)
@@ -258,7 +256,7 @@ class GithubLoader(BaseLoader):
         # query must provide repo to load data from
         if len(query_terms) < 1 or "repo:" not in query:
             raise ValueError(
-                "GithubLoader requires a search query with `repo:` term. Refer docs - `https://docs.embedchain.ai/data-sources/github`"  # noqa: E501
+                "GithubLoader requires a search query with `repo:` term. Refer docs - `https://docs.embedchain.ai/data-sources/github`"
             )
 
         github_query = []
@@ -275,7 +273,7 @@ class GithubLoader(BaseLoader):
         # query must provide search type
         if len(types) == 0:
             raise ValueError(
-                "GithubLoader requires a search query with `type:` term. Refer docs - `https://docs.embedchain.ai/data-sources/github`"  # noqa: E501
+                "GithubLoader requires a search query with `type:` term. Refer docs - `https://docs.embedchain.ai/data-sources/github`"
             )
 
         for search_type in search_types:
@@ -293,7 +291,7 @@ class GithubLoader(BaseLoader):
 
         if not self.client:
             raise ValueError(
-                "GithubLoader client is not initialized, data will not be loaded. Refer docs - `https://docs.embedchain.ai/data-sources/github`"  # noqa: E501
+                "GithubLoader client is not initialized, data will not be loaded. Refer docs - `https://docs.embedchain.ai/data-sources/github`"
             )
 
         search_types, query = self._get_valid_github_query(search_query)

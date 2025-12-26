@@ -3,7 +3,6 @@ import json
 import logging
 import uuid
 from datetime import date, datetime
-from typing import Optional
 
 from databricks.sdk import WorkspaceClient
 from databricks.sdk.service.catalog import (
@@ -30,9 +29,9 @@ logger = logging.getLogger(__name__)
 
 
 class MemoryResult(BaseModel):
-    id: Optional[str] = None
-    score: Optional[float] = None
-    payload: Optional[dict] = None
+    id: str | None = None
+    score: float | None = None
+    payload: dict | None = None
 
 
 excluded_keys = {"user_id", "agent_id", "run_id", "hash", "data", "created_at", "updated_at"}
@@ -42,22 +41,22 @@ class Databricks(VectorStoreBase):
     def __init__(
         self,
         workspace_url: str,
-        access_token: Optional[str] = None,
-        client_id: Optional[str] = None,
-        client_secret: Optional[str] = None,
-        azure_client_id: Optional[str] = None,
-        azure_client_secret: Optional[str] = None,
-        endpoint_name: Optional[str] = None,
-        catalog: Optional[str] = None,
-        schema: Optional[str] = None,
-        table_name: Optional[str] = None,
+        access_token: str | None = None,
+        client_id: str | None = None,
+        client_secret: str | None = None,
+        azure_client_id: str | None = None,
+        azure_client_secret: str | None = None,
+        endpoint_name: str | None = None,
+        catalog: str | None = None,
+        schema: str | None = None,
+        table_name: str | None = None,
         collection_name: str = "mem0",
         index_type: str = "DELTA_SYNC",
-        embedding_model_endpoint_name: Optional[str] = None,
+        embedding_model_endpoint_name: str | None = None,
         embedding_dimension: int = 1536,
         endpoint_type: str = "STANDARD",
         pipeline_type: str = "TRIGGERED",
-        warehouse_name: Optional[str] = None,
+        warehouse_name: str | None = None,
         query_type: str = "ANN",
     ):
         """
@@ -385,7 +384,7 @@ class Databricks(VectorStoreBase):
         s = str(v).replace("'", "''")
         return f"'{s}'"
 
-    def insert(self, vectors: list, payloads: Optional[list] = None, ids: Optional[list] = None):
+    def insert(self, vectors: list, payloads: list | None = None, ids: list | None = None):
         """
         Insert vectors into the index.
 
@@ -432,7 +431,7 @@ class Databricks(VectorStoreBase):
             logger.error(f"Insert operation failed: {e}")
             raise
 
-    def search(self, query: str, vectors: list, limit: int = 5, filters: Optional[dict] = None) -> list[MemoryResult]:
+    def search(self, query: str, vectors: list, limit: int = 5, filters: dict | None = None) -> list[MemoryResult]:
         """
         Search for similar vectors or text using the Databricks Vector Search index.
 
@@ -682,7 +681,7 @@ class Databricks(VectorStoreBase):
             logger.error(f"Failed to get info for index '{name or self.index_name}': {e}")
             raise
 
-    def list(self, filters: Optional[dict] = None, limit: Optional[int] = None) -> list[MemoryResult]:
+    def list(self, filters: dict | None = None, limit: int | None = None) -> list[MemoryResult]:
         """
         List all recent created memories from the vector store.
 

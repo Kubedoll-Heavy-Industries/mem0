@@ -2,7 +2,6 @@ from unittest.mock import MagicMock, Mock, patch
 
 import httpx
 import pytest
-from langchain.schema import HumanMessage, SystemMessage
 
 from embedchain.config import BaseLlmConfig
 from embedchain.llm.azure_openai import AzureOpenAILlm
@@ -53,10 +52,9 @@ def test_get_messages(azure_openai_llm):
     prompt = "Test Prompt"
     system_prompt = "Test System Prompt"
     messages = azure_openai_llm._get_messages(prompt, system_prompt)
-    assert messages == [
-        SystemMessage(content="Test System Prompt", additional_kwargs={}),
-        HumanMessage(content="Test Prompt", additional_kwargs={}, example=False),
-    ]
+    assert len(messages) == 2
+    assert messages[0].content == "Test System Prompt"
+    assert messages[1].content == "Test Prompt"
 
 
 def test_when_no_deployment_name_provided():
@@ -97,8 +95,9 @@ def test_get_llm_model_answer_with_http_client_proxies():
     mock_http_client_instance = Mock(spec=httpx.Client)
     mock_http_client.return_value = mock_http_client_instance
 
-    with patch("langchain_openai.AzureChatOpenAI") as mock_chat, patch(
-        "embedchain.config.llm.base.httpx.Client", mock_http_client
+    with (
+        patch("langchain_openai.AzureChatOpenAI") as mock_chat,
+        patch("embedchain.config.llm.base.httpx.Client", mock_http_client),
     ):
         mock_chat.return_value.invoke.return_value.content = "Mocked response"
 
@@ -133,8 +132,9 @@ def test_get_llm_model_answer_with_http_async_client_proxies():
     mock_http_async_client_instance = Mock(spec=httpx.AsyncClient)
     mock_http_async_client.return_value = mock_http_async_client_instance
 
-    with patch("langchain_openai.AzureChatOpenAI") as mock_chat, patch(
-        "embedchain.config.llm.base.httpx.AsyncClient", mock_http_async_client
+    with (
+        patch("langchain_openai.AzureChatOpenAI") as mock_chat,
+        patch("embedchain.config.llm.base.httpx.AsyncClient", mock_http_async_client),
     ):
         mock_chat.return_value.invoke.return_value.content = "Mocked response"
 

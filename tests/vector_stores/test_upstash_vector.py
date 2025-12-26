@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Optional
 from unittest.mock import MagicMock, call, patch
 
 import pytest
@@ -10,10 +9,10 @@ from mem0.vector_stores.upstash_vector import UpstashVector
 @dataclass
 class QueryResult:
     id: str
-    score: Optional[float]
-    vector: Optional[list[float]] = None
-    metadata: Optional[dict] = None
-    data: Optional[str] = None
+    score: float | None
+    vector: list[float] | None = None
+    metadata: dict | None = None
+    data: str | None = None
 
 
 @pytest.fixture

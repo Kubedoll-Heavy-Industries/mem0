@@ -11,10 +11,15 @@ describe("Tool Calls Tests", () => {
   jest.setTimeout(30000);
 
   beforeEach(async () => {
-    await addMemories([{
-      role: "user",
-      content: [{ type: "text", text: "I live in Mumbai" }],
-    }], { user_id: userId });
+    await addMemories(
+      [
+        {
+          role: "user",
+          content: [{ type: "text", text: "I live in Mumbai" }],
+        },
+      ],
+      { user_id: userId },
+    );
   });
 
   it("should Execute a Tool Call Using OpenAI", async () => {
@@ -32,7 +37,9 @@ describe("Tool Calls Tests", () => {
         weather: tool({
           description: "Get the weather in a location",
           inputSchema: z.object({
-            location: z.string().describe("The location to get the weather for"),
+            location: z
+              .string()
+              .describe("The location to get the weather for"),
           }),
           execute: async ({ location }) => ({
             location,
@@ -44,9 +51,9 @@ describe("Tool Calls Tests", () => {
     });
 
     // Check if the response is valid
-    expect(result).toHaveProperty('text');
+    expect(result).toHaveProperty("text");
     expect(typeof result.text).toBe("string");
-    
+
     // For tool calls, we should have either text response or tool call results
     if (result.text && result.text.length > 0) {
       expect(result.text.length).toBeGreaterThan(0);
@@ -54,7 +61,7 @@ describe("Tool Calls Tests", () => {
       expect(result.text.toLowerCase()).toMatch(/(weather|temperature|mumbai)/);
     } else {
       // If text is empty, check if there are tool call results
-      expect(result).toHaveProperty('toolResults');
+      expect(result).toHaveProperty("toolResults");
       expect(Array.isArray(result.toolResults)).toBe(true);
       expect(result.toolResults.length).toBeGreaterThan(0);
     }
@@ -75,7 +82,9 @@ describe("Tool Calls Tests", () => {
         weather: tool({
           description: "Get the weather in a location",
           inputSchema: z.object({
-            location: z.string().describe("The location to get the weather for"),
+            location: z
+              .string()
+              .describe("The location to get the weather for"),
           }),
           execute: async ({ location }) => ({
             location,
@@ -87,16 +96,16 @@ describe("Tool Calls Tests", () => {
     });
 
     // Check if the response is valid
-    expect(result).toHaveProperty('text');
+    expect(result).toHaveProperty("text");
     expect(typeof result.text).toBe("string");
-    
+
     if (result.text && result.text.length > 0) {
       expect(result.text.length).toBeGreaterThan(0);
       // Check if the response mentions weather or temperature
       expect(result.text.toLowerCase()).toMatch(/(weather|temperature|mumbai)/);
     } else {
       // If text is empty, check if there are tool call results
-      expect(result).toHaveProperty('toolResults');
+      expect(result).toHaveProperty("toolResults");
       expect(Array.isArray(result.toolResults)).toBe(true);
       expect(result.toolResults.length).toBeGreaterThan(0);
     }

@@ -1,5 +1,5 @@
 import logging
-from typing import Literal, Optional
+from typing import Literal
 
 from openai import OpenAI
 from sentence_transformers import SentenceTransformer
@@ -13,7 +13,7 @@ logging.getLogger("huggingface_hub").setLevel(logging.WARNING)
 
 
 class HuggingFaceEmbedding(EmbeddingBase):
-    def __init__(self, config: Optional[BaseEmbedderConfig] = None):
+    def __init__(self, config: BaseEmbedderConfig | None = None):
         super().__init__(config)
 
         if config.huggingface_base_url:
@@ -26,7 +26,7 @@ class HuggingFaceEmbedding(EmbeddingBase):
 
             self.config.embedding_dims = self.config.embedding_dims or self.model.get_sentence_embedding_dimension()
 
-    def embed(self, text, memory_action: Optional[Literal["add", "search", "update"]] = None):
+    def embed(self, text, memory_action: Literal["add", "search", "update"] | None = None):
         """
         Get the embedding for the given text using Hugging Face.
 

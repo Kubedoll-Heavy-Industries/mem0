@@ -3,7 +3,7 @@ dotenv.config();
 
 import { createMem0, retrieveMemories } from "../../src";
 import { generateText } from "ai";
-import { LanguageModelV2Prompt } from '@ai-sdk/provider';
+import { LanguageModelV3Prompt } from "@ai-sdk/provider";
 import { testConfig } from "../../config/test-config";
 import { createAnthropic } from "@ai-sdk/anthropic";
 
@@ -18,13 +18,13 @@ describe("ANTHROPIC MEM0 Tests", () => {
       provider: "anthropic",
       apiKey: process.env.ANTHROPIC_API_KEY,
       mem0Config: {
-        user_id: userId
-      }
+        user_id: userId,
+      },
     });
   });
 
   it("should retrieve memories and generate text using ANTHROPIC provider", async () => {
-    const messages: LanguageModelV2Prompt = [
+    const messages: LanguageModelV3Prompt = [
       {
         role: "user",
         content: [
@@ -33,7 +33,7 @@ describe("ANTHROPIC MEM0 Tests", () => {
         ],
       },
     ];
-    
+
     const { text } = await generateText({
       // @ts-ignore
       model: mem0("claude-3-haiku-20240307"),
@@ -41,7 +41,7 @@ describe("ANTHROPIC MEM0 Tests", () => {
     });
 
     // Expect text to be a string
-    expect(typeof text).toBe('string');
+    expect(typeof text).toBe("string");
     expect(text.length).toBeGreaterThan(0);
   });
 
@@ -54,7 +54,7 @@ describe("ANTHROPIC MEM0 Tests", () => {
       prompt: prompt,
     });
 
-    expect(typeof text).toBe('string');
+    expect(typeof text).toBe("string");
     expect(text.length).toBeGreaterThan(0);
   });
 });

@@ -70,4 +70,4 @@ export const useAuth = (): UseAuthReturn => {
     clearAuth,
     clearUser,
   };
-}; 
+};

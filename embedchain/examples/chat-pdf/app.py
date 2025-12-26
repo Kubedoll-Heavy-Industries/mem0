@@ -55,7 +55,7 @@ def get_ec_app(api_key):
 with st.sidebar:
     openai_access_token = st.text_input("OpenAI API Key", key="api_key", type="password")
     "WE DO NOT STORE YOUR OPENAI KEY."
-    "Just paste your OpenAI API key here and we'll use it to power the chatbot. [Get your OpenAI API key](https://platform.openai.com/api-keys)"  # noqa: E501
+    "Just paste your OpenAI API key here and we'll use it to power the chatbot. [Get your OpenAI API key](https://platform.openai.com/api-keys)"
 
     if st.session_state.api_key:
         app = get_ec_app(st.session_state.api_key)
@@ -87,7 +87,7 @@ with st.sidebar:
     st.session_state["add_pdf_files"] = add_pdf_files
 
 st.title("📄 Embedchain - Chat with PDF")
-styled_caption = '<p style="font-size: 17px; color: #aaa;">🚀 An <a href="https://github.com/embedchain/embedchain">Embedchain</a> app powered by OpenAI!</p>'  # noqa: E501
+styled_caption = '<p style="font-size: 17px; color: #aaa;">🚀 An <a href="https://github.com/embedchain/embedchain">Embedchain</a> app powered by OpenAI!</p>'
 st.markdown(styled_caption, unsafe_allow_html=True)
 
 if "messages" not in st.session_state:
@@ -96,7 +96,7 @@ if "messages" not in st.session_state:
             "role": "assistant",
             "content": """
                 Hi! I'm chatbot powered by Embedchain, which can answer questions about your pdf documents.\n
-                Upload your pdf documents here and I'll answer your questions about them! 
+                Upload your pdf documents here and I'll answer your questions about them!
             """,
         }
     ]

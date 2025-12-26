@@ -43,11 +43,11 @@ class EmailProcessor:
     def __init__(self):
         """Initialize the Email Processor with Mem0 memory client"""
         self.client = client
-        
+
     def process_email(self, email_content, user_id):
         """
         Process an email and store it in Mem0 memory
-        
+
         Args:
             email_content (str): Raw email content
             user_id (str): User identifier for memory association
@@ -55,20 +55,20 @@ class EmailProcessor:
         # Parse email
         parser = Parser()
         email = parser.parsestr(email_content)
-        
+
         # Extract email details
         sender = email['from']
         recipient = email['to']
         subject = email['subject']
         date = email['date']
         body = self._get_email_body(email)
-        
+
         # Create message object for Mem0
         message = {
             "role": "user",
             "content": f"Email from {sender}: {subject}\n\n{body}"
         }
-        
+
         # Create metadata for better retrieval
         metadata = {
             "email_type": "incoming",
@@ -77,7 +77,7 @@ class EmailProcessor:
             "subject": subject,
             "date": date
         }
-        
+
         # Store in Mem0 with appropriate categories
         response = self.client.add(
             messages=[message],
@@ -86,9 +86,9 @@ class EmailProcessor:
             categories=["email", "correspondence"],
             version="v2"
         )
-        
+
         return response
-    
+
     def _get_email_body(self, email):
         """Extract the body content from an email"""
         # Simplified extraction - in real-world, handle multipart emails
@@ -98,11 +98,11 @@ class EmailProcessor:
                     return part.get_payload(decode=True).decode()
         else:
             return email.get_payload(decode=True).decode()
-    
+
     def search_emails(self, query, user_id):
         """
         Search through stored emails
-        
+
         Args:
             query (str): Search query
             user_id (str): User identifier
@@ -115,13 +115,13 @@ class EmailProcessor:
             output_format="v1.1",
             version="v2"
         )
-        
+
         return results
-        
+
     def get_email_thread(self, subject, user_id):
         """
         Retrieve all emails in a thread based on subject
-        
+
         Args:
             subject (str): Email subject to match
             user_id (str): User identifier
@@ -133,13 +133,13 @@ class EmailProcessor:
                 {"metadata": {"subject": {"contains": subject}}}
             ]
         }
-        
+
         thread = self.client.get_all(
             version="v2",
             filters=filters,
             output_format="v1.1"
         )
-        
+
         return thread
 
 # Initialize the processor
@@ -183,4 +183,3 @@ print(f"Found {len(meeting_emails['results'])} relevant emails")
 ## Conclusion
 
 By combining Mem0's memory capabilities with email processing, you can create intelligent email management systems that help users organize, prioritize, and act on their inbox effectively. The advanced capabilities like automatic categorization, action item extraction, and priority management can significantly reduce the time spent on email management, allowing users to focus on more important tasks.
-

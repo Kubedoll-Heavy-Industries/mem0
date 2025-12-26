@@ -1,4 +1,4 @@
-from typing import Literal, Optional
+from typing import Literal
 
 from mem0.configs.embeddings.base import BaseEmbedderConfig
 from mem0.embeddings.base import EmbeddingBase
@@ -10,7 +10,7 @@ except ImportError:
 
 
 class LangchainEmbedding(EmbeddingBase):
-    def __init__(self, config: Optional[BaseEmbedderConfig] = None):
+    def __init__(self, config: BaseEmbedderConfig | None = None):
         super().__init__(config)
 
         if self.config.model is None:
@@ -21,7 +21,7 @@ class LangchainEmbedding(EmbeddingBase):
 
         self.langchain_model = self.config.model
 
-    def embed(self, text, memory_action: Optional[Literal["add", "search", "update"]] = None):
+    def embed(self, text, memory_action: Literal["add", "search", "update"] | None = None):
         """
         Get the embedding for the given text using Langchain.
 

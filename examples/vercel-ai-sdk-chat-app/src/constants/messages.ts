@@ -28,4 +28,4 @@ export const AI_MODELS = {
   groq: "gemma2-9b-it",
 } as const;
 
-export type Provider = keyof typeof AI_MODELS; 
+export type Provider = keyof typeof AI_MODELS;

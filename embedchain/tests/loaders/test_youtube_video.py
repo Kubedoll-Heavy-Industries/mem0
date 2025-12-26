@@ -27,8 +27,9 @@ def test_load_data(youtube_video_loader):
     mock_api_instance.list.return_value = [MagicMock(language_code="en")]
     mock_api_instance.fetch.return_value = mock_transcript
 
-    with patch("embedchain.loaders.youtube_video.YoutubeLoader.from_youtube_url", return_value=mock_loader), patch(
-        "embedchain.loaders.youtube_video.YouTubeTranscriptApi", return_value=mock_api_instance
+    with (
+        patch("embedchain.loaders.youtube_video.YoutubeLoader.from_youtube_url", return_value=mock_loader),
+        patch("embedchain.loaders.youtube_video.YouTubeTranscriptApi", return_value=mock_api_instance),
     ):
         result = youtube_video_loader.load_data(video_url)
 

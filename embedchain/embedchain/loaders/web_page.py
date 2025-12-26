@@ -30,7 +30,7 @@ class WebPageLoader(BaseLoader):
             if key == "all_references":
                 all_references = kwargs["all_references"]
         headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36",  # noqa:E501
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36",
         }
         response = self._session.get(url, headers=headers, timeout=30)
         response.raise_for_status()
@@ -106,7 +106,7 @@ class WebPageLoader(BaseLoader):
         cleaned_size = len(content)
         if original_size != 0:
             logger.info(
-                f"[{url}] Cleaned page size: {cleaned_size} characters, down from {original_size} (shrunk: {original_size-cleaned_size} chars, {round((1-(cleaned_size/original_size)) * 100, 2)}%)"  # noqa:E501
+                f"[{url}] Cleaned page size: {cleaned_size} characters, down from {original_size} (shrunk: {original_size - cleaned_size} chars, {round((1 - (cleaned_size / original_size)) * 100, 2)}%)"
             )
 
         return content

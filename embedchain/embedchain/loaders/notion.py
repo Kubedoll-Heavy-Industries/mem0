@@ -36,7 +36,7 @@ class NotionPageLoader:
             integration_token = os.getenv("NOTION_INTEGRATION_TOKEN")
             if integration_token is None:
                 raise ValueError(
-                    "Must specify `integration_token` or set environment " "variable `NOTION_INTEGRATION_TOKEN`."
+                    "Must specify `integration_token` or set environment variable `NOTION_INTEGRATION_TOKEN`."
                 )
         self.token = integration_token
         self.headers = {

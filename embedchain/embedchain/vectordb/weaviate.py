@@ -1,6 +1,6 @@
 import copy
 import os
-from typing import Optional, Union
+from typing import Optional
 
 try:
     import weaviate
@@ -121,7 +121,7 @@ class WeaviateDB(BaseVectorDB):
     def get(self, ids: Optional[list[str]] = None, where: Optional[dict[str, any]] = None, limit: Optional[int] = None):
         """
         Get existing doc ids present in vector database
-        :param ids: _list of doc ids to check for existance
+        :param ids: _list of doc ids to check for existence
         :type ids: list[str]
         :param where: to filter data
         :type where: dict[str, any]
@@ -219,7 +219,7 @@ class WeaviateDB(BaseVectorDB):
 
     def query(
         self, input_query: str, n_results: int, where: dict[str, any], citations: bool = False
-    ) -> Union[list[tuple[str, dict]], list[str]]:
+    ) -> list[tuple[str, dict]] | list[str]:
         """
         query contents from vector database based on vector similarity
         :param input_query: query string

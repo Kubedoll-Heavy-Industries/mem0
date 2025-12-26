@@ -98,7 +98,7 @@ if prompt := st.chat_input("Ask me anything!"):
             full_response += "\n\n**Sources**:\n"
             sources = list(set(map(lambda x: x[1], citations)))
             for i, source in enumerate(sources):
-                full_response += f"{i+1}. {source}\n"
+                full_response += f"{i + 1}. {source}\n"
 
         msg_placeholder.markdown(full_response)
         st.session_state.messages.append({"role": "assistant", "content": full_response})

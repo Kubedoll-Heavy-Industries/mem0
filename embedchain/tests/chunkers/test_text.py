@@ -1,5 +1,3 @@
-# ruff: noqa: E501
-
 from embedchain.chunkers.text import TextChunker
 from embedchain.config import ChunkerConfig
 from embedchain.models.data_type import DataType

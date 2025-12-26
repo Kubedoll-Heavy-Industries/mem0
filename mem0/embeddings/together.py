@@ -1,5 +1,5 @@
 import os
-from typing import Literal, Optional
+from typing import Literal
 
 from together import Together
 
@@ -8,7 +8,7 @@ from mem0.embeddings.base import EmbeddingBase
 
 
 class TogetherEmbedding(EmbeddingBase):
-    def __init__(self, config: Optional[BaseEmbedderConfig] = None):
+    def __init__(self, config: BaseEmbedderConfig | None = None):
         super().__init__(config)
 
         self.config.model = self.config.model or "togethercomputer/m2-bert-80M-8k-retrieval"
@@ -17,7 +17,7 @@ class TogetherEmbedding(EmbeddingBase):
         self.config.embedding_dims = self.config.embedding_dims or 768
         self.client = Together(api_key=api_key)
 
-    def embed(self, text, memory_action: Optional[Literal["add", "search", "update"]] = None):
+    def embed(self, text, memory_action: Literal["add", "search", "update"] | None = None):
         """
         Get the embedding for the given text using OpenAI.
 

@@ -42,6 +42,6 @@ class PineconeDBConfig(BaseVectorDbConfig):
         if self.hybrid_search and self.metric != "dotproduct":
             raise ValueError(
                 "Hybrid search is only supported with dotproduct metric in Pinecone. See full docs here: https://docs.pinecone.io/docs/hybrid-search#limitations"
-            )  # noqa:E501
+            )
 
         super().__init__(collection_name=self.index_name, dir=None)

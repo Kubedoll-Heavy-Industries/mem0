@@ -3,13 +3,13 @@ dotenv.config();
 
 import { createMem0 } from "../../src";
 import { generateText } from "ai";
-import { LanguageModelV2Prompt } from '@ai-sdk/provider';
+import { LanguageModelV3Prompt } from "@ai-sdk/provider";
 import { testConfig } from "../../config/test-config";
 
 describe("GOOGLE MEM0 Tests", () => {
   const { userId } = testConfig;
   jest.setTimeout(50000);
-  
+
   let mem0: any;
 
   beforeEach(() => {
@@ -17,13 +17,13 @@ describe("GOOGLE MEM0 Tests", () => {
       provider: "google",
       apiKey: process.env.GOOGLE_API_KEY,
       mem0Config: {
-        user_id: userId
-      }
+        user_id: userId,
+      },
     });
   });
 
   it("should retrieve memories and generate text using Google provider", async () => {
-    const messages: LanguageModelV2Prompt = [
+    const messages: LanguageModelV3Prompt = [
       {
         role: "user",
         content: [
@@ -36,11 +36,11 @@ describe("GOOGLE MEM0 Tests", () => {
     const { text } = await generateText({
       // @ts-ignore
       model: mem0("gemini-1.5-flash"),
-      messages: messages
+      messages: messages,
     });
 
     // Expect text to be a string
-    expect(typeof text).toBe('string');
+    expect(typeof text).toBe("string");
     expect(text.length).toBeGreaterThan(0);
   });
 
@@ -50,10 +50,10 @@ describe("GOOGLE MEM0 Tests", () => {
     const { text } = await generateText({
       // @ts-ignore
       model: mem0("gemini-1.5-flash"),
-      prompt: prompt
+      prompt: prompt,
     });
 
-    expect(typeof text).toBe('string');
+    expect(typeof text).toBe("string");
     expect(text.length).toBeGreaterThan(0);
   });
-}); 
+});

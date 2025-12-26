@@ -34,7 +34,7 @@ class SitemapLoader(BaseLoader):
         output = []
         web_page_loader = WebPageLoader()
         headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36",  # noqa:E501
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36",
         }
 
         if urlparse(sitemap_source).scheme in ("http", "https"):
@@ -46,7 +46,7 @@ class SitemapLoader(BaseLoader):
                 logger.error(f"Error fetching sitemap from URL: {e}")
                 return
         elif os.path.isfile(sitemap_source):
-            with open(sitemap_source, "r") as file:
+            with open(sitemap_source) as file:
                 soup = BeautifulSoup(file, "xml")
         else:
             raise ValueError("Invalid sitemap source. Please provide a valid URL or local file path.")

@@ -15,7 +15,7 @@ try:
     from langchain_community.document_loaders import UnstructuredFileIOLoader
 except ImportError:
     raise ImportError(
-        'Unstructured file requires extra dependencies. Install with `pip install "unstructured[local-inference, all-docs]"`'  # noqa: E501
+        'Unstructured file requires extra dependencies. Install with `pip install "unstructured[local-inference, all-docs]"`'
     ) from None
 
 from embedchain.helpers.json_serializable import register_deserializable

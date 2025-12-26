@@ -1,6 +1,5 @@
 import json
 import os
-from typing import Optional, Union
 
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 from openai import AzureOpenAI
@@ -14,7 +13,7 @@ SCOPE = "https://cognitiveservices.azure.com/.default"
 
 
 class AzureOpenAILLM(LLMBase):
-    def __init__(self, config: Optional[Union[BaseLlmConfig, AzureOpenAIConfig, dict]] = None):
+    def __init__(self, config: BaseLlmConfig | AzureOpenAIConfig | dict | None = None):
         # Convert to AzureOpenAIConfig if needed
         if config is None:
             config = AzureOpenAIConfig()
@@ -101,7 +100,7 @@ class AzureOpenAILLM(LLMBase):
         self,
         messages: list[dict[str, str]],
         response_format=None,
-        tools: Optional[list[dict]] = None,
+        tools: list[dict] | None = None,
         tool_choice: str = "auto",
         **kwargs,
     ):

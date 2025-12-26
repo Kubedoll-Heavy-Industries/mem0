@@ -3,7 +3,7 @@ import os
 from collections.abc import Generator
 from typing import Any, Optional
 
-from langchain.schema import BaseMessage as LCBaseMessage
+from langchain_core.messages import BaseMessage as LCBaseMessage
 
 from embedchain.config import BaseLlmConfig
 from embedchain.config.llm.base import (
@@ -109,7 +109,7 @@ class BaseLlm(JSONSerializable):
         """
         context_string = " | ".join(contexts)
         web_search_result = kwargs.get("web_search_result", "")
-        memories = kwargs.get("memories", None)
+        memories = kwargs.get("memories")
         if web_search_result:
             context_string = self._append_search_and_context(context_string, web_search_result)
 
@@ -341,7 +341,7 @@ class BaseLlm(JSONSerializable):
         :return: List of messages
         :rtype: list[BaseMessage]
         """
-        from langchain.schema import HumanMessage, SystemMessage
+        from langchain_core.messages import HumanMessage, SystemMessage
 
         messages = []
         if system_prompt:

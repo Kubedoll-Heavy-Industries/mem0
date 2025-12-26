@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Optional
+from typing import Any
 
 try:
     from elasticsearch import Elasticsearch
@@ -94,7 +94,7 @@ class ElasticsearchDB(VectorStoreBase):
             logger.info(f"Created index {name}")
 
     def insert(
-        self, vectors: list[list[float]], payloads: Optional[list[dict]] = None, ids: Optional[list[str]] = None
+        self, vectors: list[list[float]], payloads: list[dict] | None = None, ids: list[str] | None = None
     ) -> list[OutputData]:
         """Insert vectors into the index."""
         if not ids:
@@ -128,9 +128,7 @@ class ElasticsearchDB(VectorStoreBase):
             )
         return results
 
-    def search(
-        self, query: str, vectors: list[float], limit: int = 5, filters: Optional[dict] = None
-    ) -> list[OutputData]:
+    def search(self, query: str, vectors: list[float], limit: int = 5, filters: dict | None = None) -> list[OutputData]:
         """
         Search with two options:
         1. Use custom search query if provided
@@ -162,7 +160,7 @@ class ElasticsearchDB(VectorStoreBase):
         """Delete a vector by ID."""
         self.client.delete(index=self.collection_name, id=vector_id)
 
-    def update(self, vector_id: str, vector: Optional[list[float]] = None, payload: Optional[dict] = None) -> None:
+    def update(self, vector_id: str, vector: list[float] | None = None, payload: dict | None = None) -> None:
         """Update a vector and its payload."""
         doc = {}
         if vector is not None:
@@ -172,7 +170,7 @@ class ElasticsearchDB(VectorStoreBase):
 
         self.client.update(index=self.collection_name, id=vector_id, body={"doc": doc})
 
-    def get(self, vector_id: str) -> Optional[OutputData]:
+    def get(self, vector_id: str) -> OutputData | None:
         """Retrieve a vector by ID."""
         try:
             response = self.client.get(index=self.collection_name, id=vector_id)
@@ -203,7 +201,7 @@ class ElasticsearchDB(VectorStoreBase):
         """Get information about a collection (index)."""
         return self.client.indices.get(index=name)
 
-    def list(self, filters: Optional[dict] = None, limit: Optional[int] = None) -> list[list[OutputData]]:
+    def list(self, filters: dict | None = None, limit: int | None = None) -> list[list[OutputData]]:
         """List all memories."""
         query: dict[str, Any] = {"query": {"match_all": {}}}
 

@@ -9,7 +9,7 @@ Please only provide one question per line without numbers or bullets to distingu
 You must only provide the questions and no other text.
 
 $answer
-"""  # noqa:E501
+"""
 
 
 CONTEXT_RELEVANCY_PROMPT = """
@@ -20,11 +20,11 @@ You must only provide sentences from the given context and nothing else.
 
 Context: $context
 Question: $question
-"""  # noqa:E501
+"""
 
 GROUNDEDNESS_ANSWER_CLAIMS_PROMPT = """
 Please provide one or more statements from each sentence of the provided answer.
-You must provide the symantically equivalent statements for each sentence of the answer.
+You must provide the semantically equivalent statements for each sentence of the answer.
 You must provide the complete statement, if are not able to provide the complete statement, return empty string ("").
 Please only provide one statement per line WITHOUT numbers or bullets.
 If the question provided is not being answered in the provided answer, return empty string ("").
@@ -32,7 +32,7 @@ You must only provide the statements and no other text.
 
 $question
 $answer
-"""  # noqa:E501
+"""
 
 GROUNDEDNESS_CLAIMS_INFERENCE_PROMPT = """
 Given the context and the provided claim statements, please provide a verdict for each claim statement whether it can be completely inferred from the given context or not.
@@ -40,12 +40,12 @@ Use only "1" (yes), "0" (no) and "-1" (null) for "yes", "no" or "null" respectiv
 You must provide one verdict per line, ONLY WITH "1", "0" or "-1" as per your verdict to the given statement and nothing else.
 You must provide the verdicts in the same order as the claim statements.
 
-Contexts: 
+Contexts:
 $context
 
-Claim statements: 
+Claim statements:
 $claim_statements
-"""  # noqa:E501
+"""
 
 
 class GroundednessConfig(BaseConfig):

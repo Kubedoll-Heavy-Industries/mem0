@@ -44,9 +44,9 @@ Store user preferences, past interactions, or any relevant information:
 ```javascript JavaScript
 async function addUserPreferences() {
     const mem0Client = new MemoryClient(mem0Config);
-    
+
     const userPreferences = "I Love BMW, Audi and Porsche. I Hate Mercedes. I love Red cars and Maroon cars. I have a budget of 120K to 150K USD. I like Audi the most.";
-    
+
     await mem0Client.add([{
         role: "user",
         content: userPreferences,
@@ -114,9 +114,9 @@ const Cars = z.object({
 });
 
 // Create a function tool based on the schema
-const carRecommendationTool = zodResponsesFunction({ 
-    name: "carRecommendations", 
-    parameters: Cars 
+const carRecommendationTool = zodResponsesFunction({
+    name: "carRecommendations",
+    parameters: Cars
 });
 
 // Use the tool in your OpenAI request
@@ -216,7 +216,7 @@ async function addSampleMemories() {
   const mem0Client = new MemoryClient(mem0Config);
 
   const myInterests = "I Love BMW, Audi and Porsche. I Hate Mercedes. I love Red cars and Maroon cars. I have a budget of 120K to 150K USD. I like Audi the most.";
-  
+
   await mem0Client.add([{
     role: "user",
     content: myInterests,
@@ -276,7 +276,7 @@ run().catch(console.error);
       ]
     }
     ```
-  
+
     ```json With Memories
     {
       "cars": [

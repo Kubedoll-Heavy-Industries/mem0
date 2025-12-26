@@ -8,4 +8,4 @@ export function AppFiltersSkeleton() {
       <div className="h-9 w-[150px] bg-zinc-800 rounded animate-pulse" />
     </div>
   );
-} 
+}

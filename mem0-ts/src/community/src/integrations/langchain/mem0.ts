@@ -1,5 +1,5 @@
-import { MemoryClient } from "mem0ai";
-import type { Memory, MemoryOptions, SearchOptions } from "mem0ai";
+import { MemoryClient } from "@/client";
+import type { Memory, MemoryOptions, SearchOptions } from "@/client";
 
 import {
   InputValues,
@@ -276,11 +276,11 @@ export class Mem0Memory extends BaseChatMemory implements Mem0MemoryInput {
     try {
       const messages = [
         {
-          role: "user",
+          role: "user" as const,
           content: `${input}`,
         },
         {
-          role: "assistant",
+          role: "assistant" as const,
           content: `${output}`,
         },
       ];

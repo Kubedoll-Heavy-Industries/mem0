@@ -29,7 +29,7 @@ CONFIG_YAMLS = [
 def test_all_config_yamls():
     """Test that all config yamls are valid."""
     for config_yaml in CONFIG_YAMLS:
-        with open(config_yaml, "r") as f:
+        with open(config_yaml) as f:
             config = yaml.safe_load(f)
         assert config is not None
 

@@ -1,7 +1,7 @@
 import json
 import logging
 from contextlib import contextmanager
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -27,9 +27,9 @@ logger = logging.getLogger(__name__)
 
 
 class OutputData(BaseModel):
-    id: Optional[str]
-    score: Optional[float]
-    payload: Optional[dict]
+    id: str | None
+    score: float | None
+    payload: dict | None
 
 
 class AzureMySQL(VectorStoreBase):
@@ -38,16 +38,16 @@ class AzureMySQL(VectorStoreBase):
         host: str,
         port: int,
         user: str,
-        password: Optional[str],
+        password: str | None,
         database: str,
         collection_name: str,
         embedding_model_dims: int,
         use_azure_credential: bool = False,
-        ssl_ca: Optional[str] = None,
+        ssl_ca: str | None = None,
         ssl_disabled: bool = False,
         minconn: int = 1,
         maxconn: int = 5,
-        connection_pool: Optional[Any] = None,
+        connection_pool: Any | None = None,
     ):
         """
         Initialize the Azure MySQL vector store.
@@ -164,7 +164,7 @@ class AzureMySQL(VectorStoreBase):
             cur.close()
             conn.close()
 
-    def create_col(self, name: Optional[str] = None, vector_size: Optional[int] = None, distance: str = "cosine"):
+    def create_col(self, name: str | None = None, vector_size: int | None = None, distance: str = "cosine"):
         """
         Create a new collection (table in MySQL).
         Enables vector extension and creates appropriate indexes.
@@ -189,9 +189,7 @@ class AzureMySQL(VectorStoreBase):
             """)
             logger.info(f"Created collection '{table_name}' with vector dimension {dims}")
 
-    def insert(
-        self, vectors: list[list[float]], payloads: Optional[list[dict]] = None, ids: Optional[list[str]] = None
-    ):
+    def insert(self, vectors: list[list[float]], payloads: list[dict] | None = None, ids: list[str] | None = None):
         """
         Insert vectors into the collection.
 
@@ -247,7 +245,7 @@ class AzureMySQL(VectorStoreBase):
         query: str,
         vectors: list[float],
         limit: int = 5,
-        filters: Optional[dict] = None,
+        filters: dict | None = None,
     ) -> list[OutputData]:
         """
         Search for similar vectors using cosine similarity.
@@ -317,8 +315,8 @@ class AzureMySQL(VectorStoreBase):
     def update(
         self,
         vector_id: str,
-        vector: Optional[list[float]] = None,
-        payload: Optional[dict] = None,
+        vector: list[float] | None = None,
+        payload: dict | None = None,
     ):
         """
         Update a vector and its payload.
@@ -340,7 +338,7 @@ class AzureMySQL(VectorStoreBase):
                     (json.dumps(payload), vector_id),
                 )
 
-    def get(self, vector_id: str) -> Optional[OutputData]:
+    def get(self, vector_id: str) -> OutputData | None:
         """
         Retrieve a vector by ID.
 
@@ -406,7 +404,7 @@ class AzureMySQL(VectorStoreBase):
             return {"name": result["name"], "count": result["count"], "size": f"{result['size_mb']} MB"}
         return {}
 
-    def list(self, filters: Optional[dict] = None, limit: int = 100) -> list[list[OutputData]]:
+    def list(self, filters: dict | None = None, limit: int = 100) -> list[list[OutputData]]:
         """
         List all vectors in the collection.
 

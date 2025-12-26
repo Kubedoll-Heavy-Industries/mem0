@@ -1,5 +1,4 @@
 import logging
-from typing import Optional
 
 from pydantic import BaseModel
 
@@ -16,9 +15,9 @@ logger = logging.getLogger(__name__)
 
 
 class OutputData(BaseModel):
-    id: Optional[str]  # memory id
-    score: Optional[float]  # distance
-    payload: Optional[dict]  # metadata
+    id: str | None  # memory id
+    score: float | None  # distance
+    payload: dict | None  # metadata
 
 
 class Langchain(VectorStoreBase):
@@ -76,9 +75,7 @@ class Langchain(VectorStoreBase):
         self.collection_name = name
         return self.client
 
-    def insert(
-        self, vectors: list[list[float]], payloads: Optional[list[dict]] = None, ids: Optional[list[str]] = None
-    ):
+    def insert(self, vectors: list[list[float]], payloads: list[dict] | None = None, ids: list[str] | None = None):
         """
         Insert vectors into the LangChain vectorstore.
         """
@@ -91,7 +88,7 @@ class Langchain(VectorStoreBase):
             texts = [payload.get("data", "") for payload in payloads] if payloads else [""] * len(vectors)
             self.client.add_texts(texts=texts, metadatas=payloads, ids=ids)
 
-    def search(self, query: str, vectors: list[list[float]], limit: int = 5, filters: Optional[dict] = None):
+    def search(self, query: str, vectors: list[list[float]], limit: int = 5, filters: dict | None = None):
         """
         Search for similar vectors in LangChain.
         """

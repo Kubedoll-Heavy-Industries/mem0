@@ -56,7 +56,7 @@ class SlackBot(BaseBot):
                         self.chat_bot.add(url_or_text, data_type)
                         self.send_slack_message(message["channel"], f"Added {data_type} : {url_or_text}")
                     except ValueError as e:
-                        self.send_slack_message(message["channel"], f"Error: {str(e)}")
+                        self.send_slack_message(message["channel"], f"Error: {e!s}")
                         logger.error("Error occurred during 'add' command:", e)
                     except Exception as e:
                         self.send_slack_message(message["channel"], f"Failed to add {data_type} : {url_or_text}")

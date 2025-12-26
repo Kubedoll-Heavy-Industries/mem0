@@ -140,6 +140,8 @@ export const MemoryConfigSchema = z.object({
       model: z.union([z.string(), z.any()]).optional(),
       modelProperties: z.record(z.string(), z.any()).optional(),
       baseURL: z.string().optional(),
+      // Nested config for providers like Ollama that need extra configuration (e.g., url)
+      config: z.record(z.string(), z.any()).optional(),
     }),
   }),
   historyDbPath: z.string().optional(),

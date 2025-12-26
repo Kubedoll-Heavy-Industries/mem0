@@ -33,32 +33,33 @@
   ],
   "license": "Apache-2.0",
   "dependencies": {
-    "@ai-sdk/anthropic": "2.0.0",
-    "@ai-sdk/cohere": "2.0.0",
-    "@ai-sdk/google": "2.0.1",
-    "@ai-sdk/groq": "2.0.1",
-    "@ai-sdk/openai": "2.0.2",
-    "@ai-sdk/provider": "2.0.0",
-    "@ai-sdk/provider-utils": "3.0.0",
-    "ai": "5.0.2",
-    "dotenv": "^16.4.5",
-    "mem0ai": "^2.1.12",
-    "partial-json": "0.1.7",
-    "zod": "^3.25.0"
+    "@ai-sdk/anthropic": "^3.0.0",
+    "@ai-sdk/cohere": "^3.0.0",
+    "@ai-sdk/google": "^3.0.0",
+    "@ai-sdk/groq": "^3.0.0",
+    "@ai-sdk/openai": "^3.0.0",
+    "@ai-sdk/provider": "^3.0.0",
+    "@ai-sdk/provider-utils": "^4.0.0",
+    "ai": "^6.0.0",
+    "dotenv": "^17.0.0",
+    "mem0ai": "^2.1.38",
+    "partial-json": "^0.1.7",
+    "zod": "^4.0.0"
   },
   "devDependencies": {
-    "@edge-runtime/vm": "^3.2.0",
-    "@types/jest": "^29.5.14",
-    "@types/node": "^18.19.46",
-    "jest": "^29.7.0",
-    "nodemon": "^3.1.7",
-    "ts-jest": "^29.2.5",
+    "@edge-runtime/vm": "^5.0.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^25.0.0",
+    "jest": "^30.0.0",
+    "nodemon": "^3.1.11",
+    "prettier": "^3.7.4",
+    "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
-    "tsup": "^8.3.0",
-    "typescript": "^5.5.4"
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.0"
   },
   "peerDependencies": {
-    "zod": "^3.0.0"
+    "zod": "^4.0.0"
   },
   "peerDependenciesMeta": {
     "zod": {

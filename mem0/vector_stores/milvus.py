@@ -1,5 +1,4 @@
 import logging
-from typing import Optional
 
 from pydantic import BaseModel
 
@@ -17,9 +16,9 @@ logger = logging.getLogger(__name__)
 
 
 class OutputData(BaseModel):
-    id: Optional[str]  # memory id
-    score: Optional[float]  # distance
-    payload: Optional[dict]  # metadata
+    id: str | None  # memory id
+    score: float | None  # distance
+    payload: dict | None  # metadata
 
 
 class MilvusDB(VectorStoreBase):
@@ -82,7 +81,7 @@ class MilvusDB(VectorStoreBase):
             )
             self.client.create_collection(collection_name=collection_name, schema=schema, index_params=index)
 
-    def insert(self, ids, vectors, payloads, **kwargs: Optional[dict[str, any]]):
+    def insert(self, ids, vectors, payloads, **kwargs: dict[str, any] | None):
         """Insert vectors into a collection.
 
         Args:
@@ -104,7 +103,7 @@ class MilvusDB(VectorStoreBase):
             filters (dict): filters [user_id, agent_id, run_id]
 
         Returns:
-            str: formated filter.
+            str: formatted filter.
         """
         operands = []
         for key, value in filters.items():
@@ -139,7 +138,7 @@ class MilvusDB(VectorStoreBase):
 
         return memory
 
-    def search(self, query: str, vectors: list, limit: int = 5, filters: Optional[dict] = None) -> list:
+    def search(self, query: str, vectors: list, limit: int = 5, filters: dict | None = None) -> list:
         """
         Search for similar vectors.
 
@@ -224,7 +223,7 @@ class MilvusDB(VectorStoreBase):
         """
         return self.client.get_collection_stats(collection_name=self.collection_name)
 
-    def list(self, filters: Optional[dict] = None, limit: int = 100) -> list:
+    def list(self, filters: dict | None = None, limit: int = 100) -> list:
         """
         List all vectors in a collection.
 

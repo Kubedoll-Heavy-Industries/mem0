@@ -30,30 +30,30 @@ const memory = new Memory();
 
 async function chatWithMemories(message, userId = "default_user") {
   const relevantMemories = await memory.search(message, { userId: userId });
-  
+
   const memoriesStr = relevantMemories.results
     .map(entry => `- ${entry.memory}`)
     .join('\n');
-  
+
   const systemPrompt = `You are a helpful AI. Answer the question based on query and memories.
 User Memories:
 ${memoriesStr}`;
-  
+
   const messages = [
     { role: "system", content: systemPrompt },
     { role: "user", content: message }
   ];
-  
+
   const response = await openaiClient.chat.completions.create({
     model: "gpt-4.1-nano-2025-04-14",
     messages: messages
   });
-  
+
   const assistantResponse = response.choices[0].message.content || "";
-  
+
   messages.push({ role: "assistant", content: assistantResponse });
   await memory.add(messages, { userId: userId });
-  
+
   return assistantResponse;
 }
 
@@ -62,9 +62,9 @@ async function main() {
     input: process.stdin,
     output: process.stdout
   });
-  
+
   console.log("Chat with AI (type 'exit' to quit)");
-  
+
   const askQuestion = () => {
     return new Promise((resolve) => {
       rl.question("You: ", (input) => {
@@ -72,17 +72,17 @@ async function main() {
       });
     });
   };
-  
+
   try {
     while (true) {
       const userInput = await askQuestion();
-      
+
       if (userInput.toLowerCase() === 'exit') {
         console.log("Goodbye!");
         rl.close();
         break;
       }
-      
+
       const response = await chatWithMemories(userInput, "sample_user");
       console.log(`AI: ${response}`);
     }

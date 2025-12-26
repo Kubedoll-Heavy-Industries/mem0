@@ -12,7 +12,7 @@ First, lets start by install all the required packages and dependencies.
 
 - We will use [Fly.io](https://fly.io/) to deploy our embedchain app, discord and slack bot. Follow the step one to install [Fly.io CLI](https://docs.embedchain.ai/deployment/fly_io#step-1-install-flyctl-command-line)
 
-# Developement
+# Development
 
 ## Embedchain App
 
@@ -22,7 +22,7 @@ First, we need an Embedchain app powered with the knowledge of NextJS. We have a
 Navigate to `ec_app` folder and create `.env` file in this folder and set your OpenAI API key as shown in `.env.example` file. If you want to use other open-source models, feel free to use the app config in `app.py`. More details for using custom configuration for Embedchain app is [available here](https://docs.embedchain.ai/api-reference/advanced/configuration).
 </Note>
 
-Before running the ec commands to develope the app, open `fly.toml` file and update the `name` variable to something unique. This is important as `fly.io` requires users to provide a globally unique deployment app names.
+Before running the ec commands to develop the app, open `fly.toml` file and update the `name` variable to something unique. This is important as `fly.io` requires users to provide a globally unique deployment app names.
 
 Now, we need to launch this application with fly.io. You can see your app on [fly.io dashboard](https://fly.io/dashboard). Run the following command to launch your app on fly.io:
 ```bash

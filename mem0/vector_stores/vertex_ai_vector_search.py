@@ -1,7 +1,7 @@
 import logging
 import traceback
 import uuid
-from typing import Any, Optional
+from typing import Any
 
 import google.api_core.exceptions
 from google.cloud import aiplatform, aiplatform_v1
@@ -27,9 +27,9 @@ logger = logging.getLogger(__name__)
 
 
 class OutputData(BaseModel):
-    id: Optional[str]  # memory id
-    score: Optional[float]  # distance
-    payload: Optional[dict]  # metadata
+    id: str | None  # memory id
+    score: float | None  # distance
+    payload: dict | None  # metadata
 
 
 class GoogleMatchingEngine(VectorStoreBase):
@@ -137,7 +137,7 @@ class GoogleMatchingEngine(VectorStoreBase):
         return aiplatform_v1.types.index.IndexDatapoint.Restriction(namespace=key, allow_list=[str_value])
 
     def _create_datapoint(
-        self, vector_id: str, vector: list[float], payload: Optional[dict] = None
+        self, vector_id: str, vector: list[float], payload: dict | None = None
     ) -> aiplatform_v1.types.index.IndexDatapoint:
         """Create a datapoint object for the Matching Engine index.
 
@@ -160,8 +160,8 @@ class GoogleMatchingEngine(VectorStoreBase):
     def insert(
         self,
         vectors: list[list],
-        payloads: Optional[list[dict]] = None,
-        ids: Optional[list[str]] = None,
+        payloads: list[dict] | None = None,
+        ids: list[str] | None = None,
     ) -> None:
         """Insert vectors into the Matching Engine index.
 
@@ -207,9 +207,7 @@ class GoogleMatchingEngine(VectorStoreBase):
             logger.error("Stack trace: %s", traceback.format_exc())
             raise
 
-    def search(
-        self, query: str, vectors: list[float], limit: int = 5, filters: Optional[dict] = None
-    ) -> list[OutputData]:
+    def search(self, query: str, vectors: list[float], limit: int = 5, filters: dict | None = None) -> list[OutputData]:
         """
         Search for similar vectors.
         Args:
@@ -276,7 +274,7 @@ class GoogleMatchingEngine(VectorStoreBase):
             logger.error("Stack trace: %s", traceback.format_exc())
             raise
 
-    def delete(self, vector_id: Optional[str] = None, ids: Optional[list[str]] = None) -> bool:
+    def delete(self, vector_id: str | None = None, ids: list[str] | None = None) -> bool:
         """
         Delete vectors from the Matching Engine index.
         Args:
@@ -320,8 +318,8 @@ class GoogleMatchingEngine(VectorStoreBase):
     def update(
         self,
         vector_id: str,
-        vector: Optional[list[float]] = None,
-        payload: Optional[dict] = None,
+        vector: list[float] | None = None,
+        payload: dict | None = None,
     ) -> bool:
         """Update a vector and its payload.
 
@@ -366,7 +364,7 @@ class GoogleMatchingEngine(VectorStoreBase):
             logger.error("Stack trace: %s", traceback.format_exc())
             raise
 
-    def get(self, vector_id: str) -> Optional[OutputData]:
+    def get(self, vector_id: str) -> OutputData | None:
         """
         Retrieve a vector by ID.
         Args:
@@ -455,7 +453,7 @@ class GoogleMatchingEngine(VectorStoreBase):
             "region": self.region,
         }
 
-    def list(self, filters: Optional[dict] = None, limit: Optional[int] = None) -> list[list[OutputData]]:
+    def list(self, filters: dict | None = None, limit: int | None = None) -> list[list[OutputData]]:
         """List vectors matching the given filters.
 
         Args:
@@ -503,7 +501,7 @@ class GoogleMatchingEngine(VectorStoreBase):
         # This method is included only to satisfy the abstract base class
         pass
 
-    def add(self, text: str, metadata: Optional[dict] = None, user_id: Optional[str] = None) -> str:
+    def add(self, text: str, metadata: dict | None = None, user_id: str | None = None) -> str:
         logger.debug("Starting add operation")
         logger.debug("Text: %s", text)
         logger.debug("Metadata: %s", metadata)
@@ -535,8 +533,8 @@ class GoogleMatchingEngine(VectorStoreBase):
     def add_texts(
         self,
         texts: builtins.list[str],
-        metadatas: Optional[builtins.list[dict]] = None,
-        ids: Optional[builtins.list[str]] = None,
+        metadatas: builtins.list[dict] | None = None,
+        ids: builtins.list[str] | None = None,
     ) -> builtins.list[str]:
         """Add texts to the vector store.
 
@@ -588,8 +586,8 @@ class GoogleMatchingEngine(VectorStoreBase):
         cls,
         texts: builtins.list[str],
         embedding: Any,
-        metadatas: Optional[builtins.list[dict]] = None,
-        ids: Optional[builtins.list[str]] = None,
+        metadatas: builtins.list[dict] | None = None,
+        ids: builtins.list[str] | None = None,
         **kwargs: Any,
     ) -> "GoogleMatchingEngine":
         """Create an instance from texts."""
@@ -602,7 +600,7 @@ class GoogleMatchingEngine(VectorStoreBase):
         self,
         query: str,
         k: int = 5,
-        filter: Optional[dict] = None,
+        filter: dict | None = None,
     ) -> builtins.list[tuple[Document, float]]:
         """Return documents most similar to query with scores."""
         logger.debug("Starting similarity search with score")
@@ -624,7 +622,7 @@ class GoogleMatchingEngine(VectorStoreBase):
         self,
         query: str,
         k: int = 5,
-        filter: Optional[dict] = None,
+        filter: dict | None = None,
     ) -> builtins.list[Document]:
         """Return documents most similar to query."""
         logger.debug("Starting similarity search")

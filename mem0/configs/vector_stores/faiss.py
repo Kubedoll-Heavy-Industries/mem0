@@ -1,11 +1,11 @@
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 class FAISSConfig(BaseModel):
     collection_name: str = Field("mem0", description="Default name for the collection")
-    path: Optional[str] = Field(None, description="Path to store FAISS index and metadata")
+    path: str | None = Field(None, description="Path to store FAISS index and metadata")
     distance_strategy: str = Field(
         "euclidean", description="Distance strategy to use. Options: 'euclidean', 'inner_product', 'cosine'"
     )

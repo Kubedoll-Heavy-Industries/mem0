@@ -1,4 +1,4 @@
-from typing import Any, Optional, Union
+from typing import Any
 
 import numpy as np
 
@@ -18,7 +18,7 @@ except ImportError:
 class HuggingFaceReranker(BaseReranker):
     """HuggingFace Transformers based reranker implementation."""
 
-    def __init__(self, config: Union[BaseRerankerConfig, HuggingFaceRerankerConfig, dict]):
+    def __init__(self, config: BaseRerankerConfig | HuggingFaceRerankerConfig | dict):
         """
         Initialize HuggingFace reranker.
 
@@ -60,7 +60,7 @@ class HuggingFaceReranker(BaseReranker):
         self.model.to(self.device)
         self.model.eval()
 
-    def rerank(self, query: str, documents: list[dict[str, Any]], top_k: Optional[int] = None) -> list[dict[str, Any]]:
+    def rerank(self, query: str, documents: list[dict[str, Any]], top_k: int | None = None) -> list[dict[str, Any]]:
         """
         Rerank documents using HuggingFace cross-encoder model.
 

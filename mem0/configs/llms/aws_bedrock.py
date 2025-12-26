@@ -1,5 +1,5 @@
 import os
-from typing import Any, Optional
+from typing import Any
 
 from mem0.configs.llms.base import BaseLlmConfig
 
@@ -13,17 +13,17 @@ class AWSBedrockConfig(BaseLlmConfig):
 
     def __init__(
         self,
-        model: Optional[str] = None,
+        model: str | None = None,
         temperature: float = 0.1,
         max_tokens: int = 2000,
         top_p: float = 0.9,
         top_k: int = 1,
-        aws_access_key_id: Optional[str] = None,
-        aws_secret_access_key: Optional[str] = None,
+        aws_access_key_id: str | None = None,
+        aws_secret_access_key: str | None = None,
         aws_region: str = "",
-        aws_session_token: Optional[str] = None,
-        aws_profile: Optional[str] = None,
-        model_kwargs: Optional[dict[str, Any]] = None,
+        aws_session_token: str | None = None,
+        aws_profile: str | None = None,
+        model_kwargs: dict[str, Any] | None = None,
         **kwargs,
     ):
         """

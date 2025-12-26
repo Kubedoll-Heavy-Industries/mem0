@@ -1,15 +1,11 @@
-from typing import Optional
 from uuid import UUID
 
-from app.models import App, Memory, MemoryState
 from sqlalchemy.orm import Session
 
+from app.models import App, Memory, MemoryState
 
-def check_memory_access_permissions(
-    db: Session,
-    memory: Memory,
-    app_id: Optional[UUID] = None
-) -> bool:
+
+def check_memory_access_permissions(db: Session, memory: Memory, app_id: UUID | None = None) -> bool:
     """
     Check if the given app has permission to access a memory based on:
     1. Memory state (must be active)
@@ -43,6 +39,7 @@ def check_memory_access_permissions(
 
     # Check app-specific access controls
     from app.routers.memories import get_accessible_memory_ids
+
     accessible_memory_ids = get_accessible_memory_ids(db, app_id)
 
     # If accessible_memory_ids is None, all memories are accessible

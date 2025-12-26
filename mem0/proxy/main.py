@@ -1,6 +1,5 @@
 import logging
 import threading
-from typing import Optional, Union
 
 import httpx
 
@@ -21,9 +20,9 @@ logger = logging.getLogger(__name__)
 class Mem0:
     def __init__(
         self,
-        config: Optional[dict] = None,
-        api_key: Optional[str] = None,
-        host: Optional[str] = None,
+        config: dict | None = None,
+        api_key: str | None = None,
+        host: str | None = None,
     ):
         if api_key:
             self.mem0_client = MemoryClient(api_key, host)
@@ -45,45 +44,45 @@ class Completions:
     def create(
         self,
         model: str,
-        messages: Optional[list] = None,
+        messages: list | None = None,
         # Mem0 arguments
-        user_id: Optional[str] = None,
-        agent_id: Optional[str] = None,
-        run_id: Optional[str] = None,
-        metadata: Optional[dict] = None,
-        filters: Optional[dict] = None,
-        limit: Optional[int] = 10,
+        user_id: str | None = None,
+        agent_id: str | None = None,
+        run_id: str | None = None,
+        metadata: dict | None = None,
+        filters: dict | None = None,
+        limit: int | None = 10,
         # LLM arguments
-        timeout: Optional[Union[float, str, httpx.Timeout]] = None,
-        temperature: Optional[float] = None,
-        top_p: Optional[float] = None,
-        n: Optional[int] = None,
-        stream: Optional[bool] = None,
-        stream_options: Optional[dict] = None,
+        timeout: float | str | httpx.Timeout | None = None,
+        temperature: float | None = None,
+        top_p: float | None = None,
+        n: int | None = None,
+        stream: bool | None = None,
+        stream_options: dict | None = None,
         stop=None,
-        max_tokens: Optional[int] = None,
-        presence_penalty: Optional[float] = None,
-        frequency_penalty: Optional[float] = None,
-        logit_bias: Optional[dict] = None,
-        user: Optional[str] = None,
+        max_tokens: int | None = None,
+        presence_penalty: float | None = None,
+        frequency_penalty: float | None = None,
+        logit_bias: dict | None = None,
+        user: str | None = None,
         # openai v1.0+ new params
-        response_format: Optional[dict] = None,
-        seed: Optional[int] = None,
-        tools: Optional[list] = None,
-        tool_choice: Optional[Union[str, dict]] = None,
-        logprobs: Optional[bool] = None,
-        top_logprobs: Optional[int] = None,
-        parallel_tool_calls: Optional[bool] = None,
+        response_format: dict | None = None,
+        seed: int | None = None,
+        tools: list | None = None,
+        tool_choice: str | dict | None = None,
+        logprobs: bool | None = None,
+        top_logprobs: int | None = None,
+        parallel_tool_calls: bool | None = None,
         deployment_id=None,
-        extra_headers: Optional[dict] = None,
+        extra_headers: dict | None = None,
         # soon to be deprecated params by OpenAI
-        functions: Optional[list] = None,
-        function_call: Optional[str] = None,
+        functions: list | None = None,
+        function_call: str | None = None,
         # set api_base, api_version, api_key
-        base_url: Optional[str] = None,
-        api_version: Optional[str] = None,
-        api_key: Optional[str] = None,
-        model_list: Optional[list] = None,  # pass in a list of api_base,keys, etc.
+        base_url: str | None = None,
+        api_version: str | None = None,
+        api_key: str | None = None,
+        model_list: list | None = None,  # pass in a list of api_base,keys, etc.
     ):
         if litellm is None:
             raise ImportError("litellm is required for the proxy module. Install it with: pip install litellm")

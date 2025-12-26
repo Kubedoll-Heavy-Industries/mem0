@@ -1,10 +1,11 @@
 import json
 import os
 import warnings
-from typing import Any, Callable, Dict, Optional, Type, Union
+from collections.abc import Callable
+from typing import Any, Optional
 
-from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
-from langchain.schema import BaseMessage, HumanMessage, SystemMessage
+from langchain_core.callbacks import StreamingStdOutCallbackHandler
+from langchain_core.messages import BaseMessage, HumanMessage, SystemMessage
 from langchain_core.tools import BaseTool
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel
@@ -19,7 +20,7 @@ class OpenAILlm(BaseLlm):
     def __init__(
         self,
         config: Optional[BaseLlmConfig] = None,
-        tools: Optional[Union[Dict[str, Any], Type[BaseModel], Callable[..., Any], BaseTool]] = None,
+        tools: Optional[dict[str, Any] | type[BaseModel] | Callable[..., Any] | BaseTool] = None,
     ):
         self.tools = tools
         super().__init__(config=config)
@@ -69,7 +70,7 @@ class OpenAILlm(BaseLlm):
             warnings.warn(
                 "The environment variable 'OPENAI_API_BASE' is deprecated and will be removed in the 0.1.140. "
                 "Please use 'OPENAI_BASE_URL' instead.",
-                DeprecationWarning
+                DeprecationWarning,
             )
 
         if config.top_p:
@@ -106,10 +107,10 @@ class OpenAILlm(BaseLlm):
     def _query_function_call(
         self,
         chat: ChatOpenAI,
-        tools: Optional[Union[Dict[str, Any], Type[BaseModel], Callable[..., Any], BaseTool]],
+        tools: Optional[dict[str, Any] | type[BaseModel] | Callable[..., Any] | BaseTool],
         messages: list[BaseMessage],
     ) -> str:
-        from langchain.output_parsers.openai_tools import JsonOutputToolsParser
+        from langchain_core.output_parsers.openai_tools import JsonOutputToolsParser
         from langchain_core.utils.function_calling import convert_to_openai_tool
 
         openai_tools = [convert_to_openai_tool(tools)]

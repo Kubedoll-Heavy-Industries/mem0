@@ -1,6 +1,6 @@
 import logging
 import os
-from typing import Optional, Union
+from typing import Optional
 
 try:
     import pinecone
@@ -155,7 +155,7 @@ class PineconeDB(BaseVectorDB):
         citations: bool = False,
         app_id: Optional[str] = None,
         **kwargs: Optional[dict[str, any]],
-    ) -> Union[list[tuple[str, dict]], list[str]]:
+    ) -> list[tuple[str, dict]] | list[str]:
         """
         Query contents from vector database based on vector similarity.
 

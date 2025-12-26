@@ -1,6 +1,5 @@
 import json
 import os
-from typing import Optional, Union
 
 from openai import OpenAI
 
@@ -11,7 +10,7 @@ from mem0.memory.utils import extract_json
 
 
 class DeepSeekLLM(LLMBase):
-    def __init__(self, config: Optional[Union[BaseLlmConfig, DeepSeekConfig, dict]] = None):
+    def __init__(self, config: BaseLlmConfig | DeepSeekConfig | dict | None = None):
         # Convert to DeepSeekConfig if needed
         if config is None:
             config = DeepSeekConfig()
@@ -74,7 +73,7 @@ class DeepSeekLLM(LLMBase):
         self,
         messages: list[dict[str, str]],
         response_format=None,
-        tools: Optional[list[dict]] = None,
+        tools: list[dict] | None = None,
         tool_choice: str = "auto",
         **kwargs,
     ):

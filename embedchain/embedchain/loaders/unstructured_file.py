@@ -14,7 +14,7 @@ class UnstructuredLoader(BaseLoader):
             from langchain_community.document_loaders import UnstructuredFileLoader
         except ImportError:
             raise ImportError(
-                'Unstructured file requires extra dependencies. Install with `pip install "unstructured[local-inference, all-docs]"`'  # noqa: E501
+                'Unstructured file requires extra dependencies. Install with `pip install "unstructured[local-inference, all-docs]"`'
             ) from None
 
         loader = UnstructuredFileLoader(url)

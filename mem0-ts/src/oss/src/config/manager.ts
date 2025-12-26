@@ -91,6 +91,8 @@ export class ConfigManager {
               userConf?.modelProperties !== undefined
                 ? userConf.modelProperties
                 : defaultConf.modelProperties,
+            // Preserve nested config for providers like Ollama that need it
+            config: userConf?.config,
           };
         })(),
       },

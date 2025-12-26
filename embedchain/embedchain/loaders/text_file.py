@@ -12,7 +12,7 @@ class TextFileLoader(BaseLoader):
         if not os.path.exists(url):
             raise FileNotFoundError(f"The file at {url} does not exist.")
 
-        with open(url, "r", encoding="utf-8") as file:
+        with open(url, encoding="utf-8") as file:
             content = file.read()
 
         doc_id = hashlib.sha256((content + url).encode()).hexdigest()

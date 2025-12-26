@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Optional, Union
+from typing import Any, Optional
 
 try:
     from elasticsearch import Elasticsearch
@@ -52,7 +52,7 @@ class ElasticsearchDB(BaseVectorDB):
             self.client = Elasticsearch(cloud_id=self.config.CLOUD_ID, **self.config.ES_EXTRA_PARAMS)
         else:
             raise ValueError(
-                "Something is wrong with your config. Please check again - `https://docs.embedchain.ai/components/vector-databases#elasticsearch`"  # noqa: E501
+                "Something is wrong with your config. Please check again - `https://docs.embedchain.ai/components/vector-databases#elasticsearch`"
             )
 
         self.batch_size = self.config.batch_size
@@ -142,7 +142,7 @@ class ElasticsearchDB(BaseVectorDB):
             list(zip(ids, documents, metadatas, embeddings)),
             self.batch_size,
             desc="Inserting batches in elasticsearch",
-        ):  # noqa: E501
+        ):
             ids, docs, metadatas, embeddings = [], [], [], []
             for id, text, metadata, embedding in chunk:
                 ids.append(id)
@@ -169,7 +169,7 @@ class ElasticsearchDB(BaseVectorDB):
         where: dict[str, any],
         citations: bool = False,
         **kwargs: Optional[dict[str, Any]],
-    ) -> Union[list[tuple[str, dict]], list[str]]:
+    ) -> list[tuple[str, dict]] | list[str]:
         """
         query contents from vector database based on vector similarity
 

@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field, model_validator
 
@@ -9,18 +9,18 @@ class AzureMySQLConfig(BaseModel):
     host: str = Field(..., description="MySQL server host (e.g., myserver.mysql.database.azure.com)")
     port: int = Field(3306, description="MySQL server port")
     user: str = Field(..., description="Database user")
-    password: Optional[str] = Field(None, description="Database password (not required if using Azure credential)")
+    password: str | None = Field(None, description="Database password (not required if using Azure credential)")
     database: str = Field(..., description="Database name")
     collection_name: str = Field("mem0", description="Collection/table name")
     embedding_model_dims: int = Field(1536, description="Dimensions of the embedding model")
     use_azure_credential: bool = Field(
         False, description="Use Azure DefaultAzureCredential for authentication instead of password"
     )
-    ssl_ca: Optional[str] = Field(None, description="Path to SSL CA certificate")
+    ssl_ca: str | None = Field(None, description="Path to SSL CA certificate")
     ssl_disabled: bool = Field(False, description="Disable SSL connection (not recommended for production)")
     minconn: int = Field(1, description="Minimum number of connections in the pool")
     maxconn: int = Field(5, description="Maximum number of connections in the pool")
-    connection_pool: Optional[Any] = Field(
+    connection_pool: Any | None = Field(
         None, description="Pre-configured connection pool object (overrides other connection parameters)"
     )
 

@@ -11,7 +11,7 @@ mem0ai = { workspace = true }
 
 [project]
 name = "mem0ai"
-version = "1.0.1"
+version = "1.0.0"
 description = "Long-term memory for AI Agents"
 authors = [
     { name = "Mem0", email = "founders@mem0.ai" }
@@ -22,12 +22,12 @@ maintainers = [
 readme = "README.md"
 license = "Apache-2.0"
 license-files = ["LICENSE"]
-requires-python = ">=3.9,<4.0"
+requires-python = ">=3.10,<3.15"
 dependencies = [
     "qdrant-client>=1.9.1",
     "pydantic>=2.7.3",
-    "openai>=1.90.0",
-    "posthog>=3.5.0",
+    "openai>=2.0.0",
+    "posthog>=3.5.0,<6.0.0",  # chromadb requires <6.0.0
     "pytz>=2024.1",
     "sqlalchemy>=2.0.31",
     "protobuf>=5.29.0,<6.0.0",
@@ -35,19 +35,19 @@ dependencies = [
 
 [project.optional-dependencies]
 graph = [
-    "langchain-neo4j>=0.4.0",
-    "langchain-aws>=0.2.23",
-    "langchain-memgraph>=0.1.0",
+    "langchain-neo4j>=0.5.0",
+    "langchain-aws>=1.0.0",
+    "langchain-memgraph>=0.1.0",  # Latest is 0.1.12
     "neo4j>=5.23.1",
     "rank-bm25>=0.2.2",
     "kuzu>=0.11.0",
 ]
 vector_stores = [
     "vecs>=0.4.0",
-    "chromadb>=0.4.24",
+    "chromadb>=1.4.0,<2.0.0",
     "cassandra-driver>=3.29.0",
-    "weaviate-client>=4.4.0,<4.15.0",
-    "pinecone<=7.3.0",
+    "weaviate-client>=4.19.0,<5.0.0",
+    "pinecone>=8.0.0,<9.0.0",
     "pinecone-text>=0.10.0",
     "faiss-cpu>=1.7.4",
     "upstash-vector>=0.1.0",
@@ -63,15 +63,15 @@ vector_stores = [
     "azure-identity>=1.24.0",
     "redis>=5.0.0,<6.0.0",
     "redisvl>=0.1.0,<1.0.0",
-    "elasticsearch>=8.0.0,<9.0.0",
-    "pymilvus>=2.4.0,<2.6.0",
-    "langchain-aws>=0.2.23",
+    "elasticsearch>=9.0.0,<10.0.0",
+    "pymilvus>=2.6.0,<3.0.0",
+    "langchain-aws>=1.0.0",
 ]
 llms = [
     "groq>=0.3.0",
     "together>=0.2.10",
     "litellm>=1.74.0",
-    "openai>=1.90.0",
+    "openai>=2.0.0",
     "ollama>=0.1.0",
     "vertexai>=0.1.0",
     "google-generativeai>=0.3.0",
@@ -79,10 +79,11 @@ llms = [
 ]
 extras = [
     "boto3>=1.34.0",
-    "langchain-community>=0.0.0",
+    "langchain>=1.0.0,<2.0.0",
+    "langchain-community>=0.4.0,<2.0.0",
     "sentence-transformers>=5.0.0",
-    "elasticsearch>=8.0.0,<9.0.0",
-    "opensearch-py>=2.0.0",
+    "elasticsearch>=9.0.0,<10.0.0",
+    "opensearch-py>=3.0.0,<4.0.0",
     "fastembed>=0.3.1",
 ]
 
@@ -117,6 +118,27 @@ addopts = [
     "--tb=short",
 ]
 timeout = 300
+markers = [
+    "azure: tests requiring azure SDK",
+    "groq: tests requiring groq SDK",
+    "together: tests requiring together SDK",
+    "ollama: tests requiring ollama",
+    "litellm: tests requiring litellm",
+    "langchain: tests requiring langchain ecosystem",
+    "chromadb: tests requiring chromadb",
+    "elasticsearch: tests requiring elasticsearch",
+    "opensearch: tests requiring opensearch",
+    "pinecone: tests requiring pinecone",
+    "milvus: tests requiring pymilvus",
+    "redis: tests requiring redis",
+    "weaviate: tests requiring weaviate",
+    "neo4j: tests requiring neo4j",
+    "vertexai: tests requiring vertexai",
+    "gemini: tests requiring google generativeai",
+    "anthropic: tests requiring anthropic SDK",
+    "graph: tests requiring graph dependencies",
+    "integration: integration tests requiring external services",
+]
 
 [tool.hatch.build]
 include = [
@@ -136,15 +158,13 @@ only-include = ["mem0"]
 
 [tool.ruff]
 line-length = 120
-target-version = "py39"
+target-version = "py312"
 exclude = [
     "cookbooks/",
     "docs/",
-    "embedchain/",
     "evaluation/",
     "examples/",
     "mem0-ts/",
-    "openmemory/",
     "vercel-ai-sdk/",
 ]
 
@@ -162,15 +182,29 @@ select = [
 ]
 ignore = [
     "E501",   # line too long (handled by formatter)
+    "E722",   # bare except (existing code)
+    "B004",   # unreliable callable check
+    "B007",   # unused loop control variable
     "B008",   # function call in default argument
+    "B011",   # assert false
+    "B018",   # useless expression
     "B024",   # abstract class without abstract methods
+    "B028",   # no explicit stacklevel
     "B904",   # raise from err (too noisy for existing codebase)
+    "B905",   # zip without explicit strict
+    "C401",   # unnecessary generator set
+    "F811",   # redefined while unused
     "RUF001", # ambiguous unicode (intentional for CJK support)
     "RUF012", # mutable class attributes (ClassVar annotations)
+    "RUF013", # implicit optional
+    "RUF034", # useless if-else
     "SIM105", # use contextlib.suppress (style preference)
     "SIM108", # use ternary (style preference)
     "SIM115", # use context manager for open (style preference)
     "SIM117", # combine with statements (style preference)
+    "UP028",  # yield in for loop
+    "UP031",  # printf string formatting
+    "UP045",  # non-pep604 optional annotation
 ]
 
 [tool.ruff.lint.isort]

@@ -1,7 +1,7 @@
 import unittest
 import uuid
+from unittest.mock import patch
 
-from mock import patch
 from qdrant_client.http import models
 from qdrant_client.http.models import Batch
 

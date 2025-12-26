@@ -69,7 +69,7 @@ def recommend_movie_with_memory(user_id: str, user_query: str):
 if __name__ == "__main__":
     user_id = "arshi"
     recommend_movie_with_memory(user_id, "I'm looking for a movie to watch tonight. Any suggestions?")
-    # OUTPUT: You have watched Intersteller last weekend and you don't like horror movies, maybe you can watch "Purple Hearts" today.
+    # OUTPUT: You have watched Interstellar last weekend and you don't like horror movies, maybe you can watch "Purple Hearts" today.
     recommend_movie_with_memory(
         user_id, "Can we skip the tearjerkers? I really enjoyed Notting Hill and Crazy Rich Asians."
     )

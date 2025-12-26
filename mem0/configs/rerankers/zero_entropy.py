@@ -1,5 +1,3 @@
-from typing import Optional
-
 from pydantic import Field
 
 from mem0.configs.rerankers.base import BaseRerankerConfig
@@ -18,5 +16,5 @@ class ZeroEntropyRerankerConfig(BaseRerankerConfig):
     model: str = Field(
         default="zerank-1", description="Model to use for reranking. Available models: zerank-1, zerank-1-small"
     )
-    api_key: Optional[str] = Field(default=None, description="Zero Entropy API key")
-    top_k: Optional[int] = Field(default=None, description="Number of top documents to return after reranking")
+    api_key: str | None = Field(default=None, description="Zero Entropy API key")
+    top_k: int | None = Field(default=None, description="Number of top documents to return after reranking")

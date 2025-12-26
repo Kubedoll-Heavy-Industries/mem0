@@ -1,5 +1,4 @@
 import os
-from typing import Optional
 
 import requests
 
@@ -8,7 +7,7 @@ from mem0.llms.base import LLMBase
 
 
 class SarvamLLM(LLMBase):
-    def __init__(self, config: Optional[BaseLlmConfig] = None):
+    def __init__(self, config: BaseLlmConfig | None = None):
         super().__init__(config)
 
         # Set default model if not provided

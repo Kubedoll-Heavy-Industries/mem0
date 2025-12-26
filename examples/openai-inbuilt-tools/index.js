@@ -67,7 +67,7 @@ async function addSampleMemories() {
   const mem0Client = new MemoryClient(mem0Config);
 
   const myInterests = "I Love BMW, Audi and Porsche. I Hate Mercedes. I love Red cars and Maroon cars. I have a budget of 120K to 150K USD. I like Audi the most.";
-  
+
   await mem0Client.add([{
     role: "user",
     content: myInterests,

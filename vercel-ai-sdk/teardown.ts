@@ -1,4 +1,4 @@
-import { testConfig } from './config/test-config';
+import { testConfig } from "./config/test-config";
 
 export default async function () {
   console.log("Running global teardown...");

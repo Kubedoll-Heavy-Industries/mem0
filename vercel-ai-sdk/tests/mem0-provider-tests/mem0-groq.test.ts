@@ -3,7 +3,7 @@ dotenv.config();
 
 import { createMem0, retrieveMemories } from "../../src";
 import { generateText } from "ai";
-import { LanguageModelV2Prompt } from '@ai-sdk/provider';
+import { LanguageModelV3Prompt } from "@ai-sdk/provider";
 import { testConfig } from "../../config/test-config";
 import { createGroq } from "@ai-sdk/groq";
 
@@ -18,13 +18,13 @@ describe("GROQ MEM0 Tests", () => {
       provider: "groq",
       apiKey: process.env.GROQ_API_KEY,
       mem0Config: {
-        user_id: userId
-      }
+        user_id: userId,
+      },
     });
   });
 
   it("should retrieve memories and generate text using GROQ provider", async () => {
-    const messages: LanguageModelV2Prompt = [
+    const messages: LanguageModelV3Prompt = [
       {
         role: "user",
         content: [
@@ -34,15 +34,14 @@ describe("GROQ MEM0 Tests", () => {
       },
     ];
 
-    
     const { text } = await generateText({
       // @ts-ignore
       model: mem0("llama3-8b-8192"),
-      messages: messages
+      messages: messages,
     });
 
     // Expect text to be a string
-    expect(typeof text).toBe('string');
+    expect(typeof text).toBe("string");
     expect(text.length).toBeGreaterThan(0);
   });
 
@@ -52,10 +51,10 @@ describe("GROQ MEM0 Tests", () => {
     const { text } = await generateText({
       // @ts-ignore
       model: mem0("llama3-8b-8192"),
-      prompt: prompt
+      prompt: prompt,
     });
 
-    expect(typeof text).toBe('string');
+    expect(typeof text).toBe("string");
     expect(text.length).toBeGreaterThan(0);
   });
 });

@@ -52,7 +52,7 @@ export class SQLiteManager implements HistoryManager {
     isDeleted: number = 0,
   ): Promise<void> {
     await this.run(
-      `INSERT INTO memory_history 
+      `INSERT INTO memory_history
       (memory_id, previous_value, new_value, action, created_at, updated_at, is_deleted)
       VALUES (?, ?, ?, ?, ?, ?, ?)`,
       [

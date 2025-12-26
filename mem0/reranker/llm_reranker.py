@@ -1,5 +1,5 @@
 import re
-from typing import Any, Optional, Union
+from typing import Any
 
 from mem0.configs.rerankers.base import BaseRerankerConfig
 from mem0.configs.rerankers.llm import LLMRerankerConfig
@@ -10,7 +10,7 @@ from mem0.utils.factory import LlmFactory
 class LLMReranker(BaseReranker):
     """LLM-based reranker implementation."""
 
-    def __init__(self, config: Union[BaseRerankerConfig, LLMRerankerConfig, dict]):
+    def __init__(self, config: BaseRerankerConfig | LLMRerankerConfig | dict):
         """
         Initialize LLM reranker.
 
@@ -79,7 +79,7 @@ Provide only a single numerical score between 0.0 and 1.0. Do not include any ex
         # Fallback: return 0.5 if no valid score found
         return 0.5
 
-    def rerank(self, query: str, documents: list[dict[str, Any]], top_k: Optional[int] = None) -> list[dict[str, Any]]:
+    def rerank(self, query: str, documents: list[dict[str, Any]], top_k: int | None = None) -> list[dict[str, Any]]:
         """
         Rerank documents using LLM scoring.
 

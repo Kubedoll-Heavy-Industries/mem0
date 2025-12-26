@@ -171,7 +171,7 @@ class AIAssistant:
             self.pipeline.system_prompt = self.instructions
 
         print(
-            f"🎉 Created AI Assistant with name: {self.name}, assistant_id: {self.assistant_id}, thread_id: {self.thread_id}"  # noqa: E501
+            f"🎉 Created AI Assistant with name: {self.name}, assistant_id: {self.assistant_id}, thread_id: {self.thread_id}"
         )
 
         # telemetry related properties

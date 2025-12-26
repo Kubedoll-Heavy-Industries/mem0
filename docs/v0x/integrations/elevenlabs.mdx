@@ -122,9 +122,9 @@ Define the two key memory functions that will be registered as tools:
         """Add a message to the memory store"""
         message = parameters.get("message")
         await mem0_client.add(
-            messages=message, 
-            user_id=USER_ID, 
-            output_format="v1.1", 
+            messages=message,
+            user_id=USER_ID,
+            output_format="v1.1",
             version="v2"
         )
         return "Memory added successfully"
@@ -145,7 +145,7 @@ Define the two key memory functions that will be registered as tools:
         # Search for relevant memories using the message as a query
         results = await mem0_client.search(
             query=message,
-            version="v2", 
+            version="v2",
             filters=filters
         )
 
@@ -271,7 +271,7 @@ When the agent identifies information worth remembering, it calls this function 
 
 #### Example usage in agent prompt:
 ```
-When the user shares important information like preferences or personal details, 
+When the user shares important information like preferences or personal details,
 use the addMemories function to store this information for future reference.
 ```
 
@@ -292,7 +292,7 @@ The `retrieveMemories` tool allows your agent to search for and retrieve relevan
 
 #### Example usage in agent prompt:
 ```
-At the beginning of each conversation turn, use retrieveMemories to check if we've 
+At the beginning of each conversation turn, use retrieveMemories to check if we've
 discussed this topic before or if the user has shared relevant preferences.
 ```
 
@@ -420,18 +420,18 @@ Here's how a typical conversation with memory might flow:
 
 ## Troubleshooting
 
-- **Missing API Keys**: 
+- **Missing API Keys**:
   - Error: "API_KEY environment variable must be set"
   - Solution: Ensure all environment variables are set correctly in your .env file or system environment
-  
+
 - **Connection Issues**:
   - Error: "Failed to connect to API"
   - Solution: Check your network connection and API key permissions. Verify the API keys are valid and have the necessary permissions.
-  
+
 - **Empty Memory Results**:
   - Symptom: Agent always responds with "No memories found"
   - Solution: This is normal for new users. The memory database builds up over time as conversations occur. It's also possible your query isn't semantically similar to stored memories - try different phrasing.
-  
+
 - **Agent Not Using Memories**:
   - Symptom: The agent retrieves memories but doesn't incorporate them in responses
   - Solution: Update the agent's prompt to explicitly instruct it to use the retrieved memories in its responses
@@ -451,4 +451,4 @@ By integrating ElevenLabs Conversational AI with Mem0, you can create voice agen
 - For Mem0 documentation, refer to the [Mem0 Platform](https://app.mem0.ai/)
 - If you need further assistance, please feel free to reach out to us through the following methods:
 
-<Snippet file="get-help.mdx" /> 
+<Snippet file="get-help.mdx" />

@@ -1,5 +1,5 @@
 import os
-from typing import Optional, Union
+from typing import Optional
 
 from chromadb import EmbeddingFunction, Embeddings
 
@@ -23,7 +23,7 @@ class MistralAIEmbeddingFunction(EmbeddingFunction):
         self.client = MistralAIEmbeddings(mistral_api_key=api_key)
         self.client.model = self.config.model
 
-    def __call__(self, input: Union[list[str], str]) -> Embeddings:
+    def __call__(self, input: list[str] | str) -> Embeddings:
         if isinstance(input, str):
             input_ = [input]
         else:

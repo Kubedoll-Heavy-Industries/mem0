@@ -1,7 +1,6 @@
 import logging
 import os
 import shutil
-from typing import Optional
 
 from qdrant_client import QdrantClient
 from qdrant_client.models import (
@@ -26,11 +25,11 @@ class Qdrant(VectorStoreBase):
         collection_name: str,
         embedding_model_dims: int,
         client: QdrantClient = None,
-        host: Optional[str] = None,
-        port: Optional[int] = None,
-        path: Optional[str] = None,
-        url: Optional[str] = None,
-        api_key: Optional[str] = None,
+        host: str | None = None,
+        port: int | None = None,
+        path: str | None = None,
+        url: str | None = None,
+        api_key: str | None = None,
         on_disk: bool = False,
     ):
         """
@@ -116,7 +115,7 @@ class Qdrant(VectorStoreBase):
             except Exception as e:
                 logger.debug(f"Index for {field} might already exist: {e}")
 
-    def insert(self, vectors: list, payloads: Optional[list] = None, ids: Optional[list] = None):
+    def insert(self, vectors: list, payloads: list | None = None, ids: list | None = None):
         """
         Insert vectors into a collection.
 
@@ -157,7 +156,7 @@ class Qdrant(VectorStoreBase):
                 conditions.append(FieldCondition(key=key, match=MatchValue(value=value)))
         return Filter(must=conditions) if conditions else None
 
-    def search(self, query: str, vectors: list, limit: int = 5, filters: Optional[dict] = None) -> list:
+    def search(self, query: str, vectors: list, limit: int = 5, filters: dict | None = None) -> list:
         """
         Search for similar vectors.
 
@@ -193,7 +192,7 @@ class Qdrant(VectorStoreBase):
             ),
         )
 
-    def update(self, vector_id: int, vector: Optional[list] = None, payload: Optional[dict] = None):
+    def update(self, vector_id: int, vector: list | None = None, payload: dict | None = None):
         """
         Update a vector and its payload.
 
@@ -240,7 +239,7 @@ class Qdrant(VectorStoreBase):
         """
         return self.client.get_collection(collection_name=self.collection_name)
 
-    def list(self, filters: Optional[dict] = None, limit: int = 100) -> list:
+    def list(self, filters: dict | None = None, limit: int = 100) -> list:
         """
         List all vectors in a collection.
 

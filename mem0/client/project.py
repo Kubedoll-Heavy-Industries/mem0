@@ -1,6 +1,6 @@
 import logging
 from abc import ABC, abstractmethod
-from typing import Any, Optional
+from typing import Any
 
 import httpx
 from pydantic import BaseModel, ConfigDict, Field
@@ -18,9 +18,9 @@ class ProjectConfig(BaseModel):
     Configuration for project management operations.
     """
 
-    org_id: Optional[str] = Field(default=None, description="Organization ID")
-    project_id: Optional[str] = Field(default=None, description="Project ID")
-    user_email: Optional[str] = Field(default=None, description="User email")
+    org_id: str | None = Field(default=None, description="Organization ID")
+    project_id: str | None = Field(default=None, description="Project ID")
+    user_email: str | None = Field(default=None, description="User email")
 
     model_config = ConfigDict(validate_assignment=True, extra="forbid")
 
@@ -33,10 +33,10 @@ class BaseProject(ABC):
     def __init__(
         self,
         client: Any,
-        config: Optional[ProjectConfig] = None,
-        org_id: Optional[str] = None,
-        project_id: Optional[str] = None,
-        user_email: Optional[str] = None,
+        config: ProjectConfig | None = None,
+        org_id: str | None = None,
+        project_id: str | None = None,
+        user_email: str | None = None,
     ):
         """
         Initialize the project manager.
@@ -58,17 +58,17 @@ class BaseProject(ABC):
             self.config = ProjectConfig(org_id=org_id, project_id=project_id, user_email=user_email)
 
     @property
-    def org_id(self) -> Optional[str]:
+    def org_id(self) -> str | None:
         """Get the organization ID."""
         return self.config.org_id
 
     @property
-    def project_id(self) -> Optional[str]:
+    def project_id(self) -> str | None:
         """Get the project ID."""
         return self.config.project_id
 
     @property
-    def user_email(self) -> Optional[str]:
+    def user_email(self) -> str | None:
         """Get the user email."""
         return self.config.user_email
 
@@ -82,7 +82,7 @@ class BaseProject(ABC):
         if not (self.config.org_id and self.config.project_id):
             raise ValueError("org_id and project_id must be set to access project operations")
 
-    def _prepare_params(self, kwargs: Optional[dict[str, Any]] = None) -> dict[str, Any]:
+    def _prepare_params(self, kwargs: dict[str, Any] | None = None) -> dict[str, Any]:
         """
         Prepare query parameters for API requests.
 
@@ -107,7 +107,7 @@ class BaseProject(ABC):
 
         return {k: v for k, v in kwargs.items() if v is not None}
 
-    def _prepare_org_params(self, kwargs: Optional[dict[str, Any]] = None) -> dict[str, Any]:
+    def _prepare_org_params(self, kwargs: dict[str, Any] | None = None) -> dict[str, Any]:
         """
         Prepare query parameters for organization-level API requests.
 
@@ -132,7 +132,7 @@ class BaseProject(ABC):
         return {k: v for k, v in kwargs.items() if v is not None}
 
     @abstractmethod
-    def get(self, fields: Optional[list[str]] = None) -> dict[str, Any]:
+    def get(self, fields: list[str] | None = None) -> dict[str, Any]:
         """
         Get project details.
 
@@ -152,7 +152,7 @@ class BaseProject(ABC):
         pass
 
     @abstractmethod
-    def create(self, name: str, description: Optional[str] = None) -> dict[str, Any]:
+    def create(self, name: str, description: str | None = None) -> dict[str, Any]:
         """
         Create a new project within the organization.
 
@@ -175,10 +175,10 @@ class BaseProject(ABC):
     @abstractmethod
     def update(
         self,
-        custom_instructions: Optional[str] = None,
-        custom_categories: Optional[list[str]] = None,
-        retrieval_criteria: Optional[list[dict[str, Any]]] = None,
-        enable_graph: Optional[bool] = None,
+        custom_instructions: str | None = None,
+        custom_categories: list[str] | None = None,
+        retrieval_criteria: list[dict[str, Any]] | None = None,
+        enable_graph: bool | None = None,
     ) -> dict[str, Any]:
         """
         Update project settings.
@@ -306,10 +306,10 @@ class Project(BaseProject):
     def __init__(
         self,
         client: httpx.Client,
-        config: Optional[ProjectConfig] = None,
-        org_id: Optional[str] = None,
-        project_id: Optional[str] = None,
-        user_email: Optional[str] = None,
+        config: ProjectConfig | None = None,
+        org_id: str | None = None,
+        project_id: str | None = None,
+        user_email: str | None = None,
     ):
         """
         Initialize the synchronous project manager.
@@ -325,7 +325,7 @@ class Project(BaseProject):
         self._validate_org_project()
 
     @api_error_handler
-    def get(self, fields: Optional[list[str]] = None) -> dict[str, Any]:
+    def get(self, fields: list[str] | None = None) -> dict[str, Any]:
         """
         Get project details.
 
@@ -356,7 +356,7 @@ class Project(BaseProject):
         return response.json()
 
     @api_error_handler
-    def create(self, name: str, description: Optional[str] = None) -> dict[str, Any]:
+    def create(self, name: str, description: str | None = None) -> dict[str, Any]:
         """
         Create a new project within the organization.
 
@@ -396,10 +396,10 @@ class Project(BaseProject):
     @api_error_handler
     def update(
         self,
-        custom_instructions: Optional[str] = None,
-        custom_categories: Optional[list[str]] = None,
-        retrieval_criteria: Optional[list[dict[str, Any]]] = None,
-        enable_graph: Optional[bool] = None,
+        custom_instructions: str | None = None,
+        custom_categories: list[str] | None = None,
+        retrieval_criteria: list[dict[str, Any]] | None = None,
+        enable_graph: bool | None = None,
     ) -> dict[str, Any]:
         """
         Update project settings.
@@ -623,10 +623,10 @@ class AsyncProject(BaseProject):
     def __init__(
         self,
         client: httpx.AsyncClient,
-        config: Optional[ProjectConfig] = None,
-        org_id: Optional[str] = None,
-        project_id: Optional[str] = None,
-        user_email: Optional[str] = None,
+        config: ProjectConfig | None = None,
+        org_id: str | None = None,
+        project_id: str | None = None,
+        user_email: str | None = None,
     ):
         """
         Initialize the asynchronous project manager.
@@ -642,7 +642,7 @@ class AsyncProject(BaseProject):
         self._validate_org_project()
 
     @api_error_handler
-    async def get(self, fields: Optional[list[str]] = None) -> dict[str, Any]:
+    async def get(self, fields: list[str] | None = None) -> dict[str, Any]:
         """
         Get project details.
 
@@ -673,7 +673,7 @@ class AsyncProject(BaseProject):
         return response.json()
 
     @api_error_handler
-    async def create(self, name: str, description: Optional[str] = None) -> dict[str, Any]:
+    async def create(self, name: str, description: str | None = None) -> dict[str, Any]:
         """
         Create a new project within the organization.
 
@@ -713,10 +713,10 @@ class AsyncProject(BaseProject):
     @api_error_handler
     async def update(
         self,
-        custom_instructions: Optional[str] = None,
-        custom_categories: Optional[list[str]] = None,
-        retrieval_criteria: Optional[list[dict[str, Any]]] = None,
-        enable_graph: Optional[bool] = None,
+        custom_instructions: str | None = None,
+        custom_categories: list[str] | None = None,
+        retrieval_criteria: list[dict[str, Any]] | None = None,
+        enable_graph: bool | None = None,
     ) -> dict[str, Any]:
         """
         Update project settings.

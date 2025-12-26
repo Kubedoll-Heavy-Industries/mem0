@@ -68,7 +68,7 @@ def chatbot(state: State):
     try:
         # Retrieve relevant memories
         memories = mem0.search(messages[-1].content, user_id=user_id)
-        
+
         # Handle dict response format
         memory_list = memories['results']
 
@@ -90,7 +90,7 @@ def chatbot(state: State):
                     "content": messages[-1].content
                 },
                 {
-                    "role": "assistant", 
+                    "role": "assistant",
                     "content": response.content
                 }
             ]
@@ -98,9 +98,9 @@ def chatbot(state: State):
             print(f"Memory saved: {len(result.get('results', []))} memories added")
         except Exception as e:
             print(f"Error saving memory: {e}")
-            
+
         return {"messages": [response]}
-        
+
     except Exception as e:
         print(f"Error in chatbot: {e}")
         # Fallback response without memory context
@@ -171,4 +171,3 @@ By integrating LangGraph with Mem0, you can build a personalized Customer Suppor
     Create multi-agent systems with CrewAI
   </Card>
 </CardGroup>
-

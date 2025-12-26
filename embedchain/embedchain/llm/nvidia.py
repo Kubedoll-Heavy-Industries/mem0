@@ -1,10 +1,8 @@
 import os
 from collections.abc import Iterable
-from typing import Any, Optional, Union
+from typing import Any, Optional
 
-from langchain.callbacks.manager import CallbackManager
-from langchain.callbacks.stdout import StdOutCallbackHandler
-from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
+from langchain_core.callbacks import CallbackManager, StdOutCallbackHandler, StreamingStdOutCallbackHandler
 
 try:
     from langchain_nvidia_ai_endpoints import ChatNVIDIA
@@ -48,7 +46,7 @@ class NvidiaLlm(BaseLlm):
         return self._get_answer(prompt, self.config)
 
     @staticmethod
-    def _get_answer(prompt: str, config: BaseLlmConfig) -> Union[str, Iterable]:
+    def _get_answer(prompt: str, config: BaseLlmConfig) -> str | Iterable:
         callback_manager = [StreamingStdOutCallbackHandler()] if config.stream else [StdOutCallbackHandler()]
         model_kwargs = config.model_kwargs or {}
         labels = model_kwargs.get("labels", None)

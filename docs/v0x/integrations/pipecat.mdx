@@ -90,10 +90,10 @@ app = FastAPI()
 @app.websocket("/chat")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
-    
+
     # Basic setup with minimal configuration
     user_id = "alice"
-    
+
     # WebSocket transport
     transport = FastAPIWebsocketTransport(
         websocket=websocket,
@@ -105,26 +105,26 @@ async def websocket_endpoint(websocket: WebSocket):
             serializer=ProtobufFrameSerializer(),
         )
     )
-    
+
     # Core services
     user_context = OpenAIUserContextAggregator()
     assistant_context = OpenAIAssistantContextAggregator()
     stt = WhisperSTTService(api_key=os.getenv("OPENAI_API_KEY"))
-    
+
     # Memory service - the key component
     memory = Mem0MemoryService(
         api_key=os.getenv("MEM0_API_KEY"),
         user_id=user_id,
         agent_id="fastapi_memory_bot"
     )
-    
+
     # LLM for response generation
     llm = OpenAILLMService(
         api_key=os.getenv("OPENAI_API_KEY"),
         model="gpt-3.5-turbo",
         system_prompt="You are a helpful assistant that remembers past conversations."
     )
-    
+
     # Simple pipeline
     pipeline = Pipeline([
         transport.input(),
@@ -135,22 +135,22 @@ async def websocket_endpoint(websocket: WebSocket):
         transport.output(),
         assistant_context
     ])
-    
+
     # Run the pipeline
     runner = PipelineRunner()
     task = PipelineTask(pipeline)
-    
+
     # Event handlers for WebSocket connections
     @transport.event_handler("on_client_connected")
     async def on_client_connected(transport, client):
         # Send welcome message when client connects
         await task.queue_frame(TextFrame("Hello! I'm a memory bot. I'll remember our conversation."))
-    
+
     @transport.event_handler("on_client_disconnected")
     async def on_client_disconnected(transport, client):
         # Clean up when client disconnects
         await task.cancel()
-    
+
     await runner.run(task)
 
 if __name__ == "__main__":
@@ -215,4 +215,3 @@ memory = Mem0MemoryService(
 
 - [Mem0 Pipecat Integration](https://docs.pipecat.ai/server/services/memory/mem0)
 - [Pipecat Documentation](https://docs.pipecat.ai)
-

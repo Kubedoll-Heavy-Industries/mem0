@@ -2,8 +2,12 @@ name: Test
 
 on:
   push:
-    branches: [main]
+    branches: [main, cagyirey/main]
   pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test-mem0:
@@ -37,7 +41,7 @@ jobs:
 
       - name: Upload coverage
         if: matrix.python-version == '3.12'
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           files: coverage.xml
           flags: mem0
@@ -74,8 +78,34 @@ jobs:
 
       - name: Upload coverage
         if: matrix.python-version == '3.12'
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           files: coverage.xml
           flags: embedchain
           token: ${{ secrets.CODECOV_TOKEN }}
+
+  test-mem0-ts:
+    name: mem0-ts / unit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: mem0-ts/package.json
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: pnpm
+          cache-dependency-path: mem0-ts/pnpm-lock.yaml
+
+      - name: Install dependencies
+        working-directory: mem0-ts
+        run: pnpm install --frozen-lockfile
+
+      # Only factory.test.ts is a true unit test (no external deps)
+      # Other tests in src/ require OpenAI API keys
+      - name: Run unit tests
+        working-directory: mem0-ts
+        run: pnpm exec vitest run src/oss/tests/factory.test.ts

@@ -52,7 +52,7 @@ const Memories = (props: { isMemoriesExpanded: boolean }) => {
         </span>
       </div>
       {memories.length === 0 && (
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="p-4 text-center"
@@ -63,14 +63,14 @@ const Memories = (props: { isMemoriesExpanded: boolean }) => {
         </motion.div>
       )}
       <ScrollArea className="flex-1 p-4">
-        <motion.div 
+        <motion.div
           className="space-y-4"
         >
           {/* <AnimatePresence mode="popLayout"> */}
             {memories.map((memory: Memory, index: number) => (
-              <MemoryItem 
-                key={memory.id} 
-                memory={memory} 
+              <MemoryItem
+                key={memory.id}
+                memory={memory}
                 index={index}
               />
             ))}

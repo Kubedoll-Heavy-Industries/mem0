@@ -1,7 +1,7 @@
 import json
 import logging
 from string import Template
-from typing import Any, Type, TypeVar, Union
+from typing import Any, TypeVar
 
 T = TypeVar("T", bound="JSONSerializable")
 
@@ -11,7 +11,7 @@ T = TypeVar("T", bound="JSONSerializable")
 logger = logging.getLogger(__name__)
 
 
-def register_deserializable(cls: Type[T]) -> Type[T]:
+def register_deserializable(cls: type[T]) -> type[T]:
     """
     A class decorator to register a class as deserializable.
 
@@ -86,7 +86,7 @@ class JSONSerializable:
             return cls()
 
     @staticmethod
-    def _auto_encoder(obj: Any) -> Union[dict[str, Any], None]:
+    def _auto_encoder(obj: Any) -> dict[str, Any] | None:
         """
         Automatically encode an object for JSON serialization.
 
@@ -179,12 +179,12 @@ class JSONSerializable:
         Returns:
             Object: The deserialized object.
         """
-        with open(filename, "r", encoding="utf-8") as f:
+        with open(filename, encoding="utf-8") as f:
             json_str = f.read()
             return cls.deserialize(json_str)
 
     @classmethod
-    def _register_class_as_deserializable(cls, target_class: Type[T]) -> None:
+    def _register_class_as_deserializable(cls, target_class: type[T]) -> None:
         """
         Register a class as deserializable. This is a classmethod and globally shared.
 

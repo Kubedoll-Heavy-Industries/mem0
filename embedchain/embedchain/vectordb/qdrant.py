@@ -1,6 +1,6 @@
 import copy
 import os
-from typing import Any, Optional, Union
+from typing import Any, Optional
 
 try:
     from qdrant_client import QdrantClient
@@ -100,7 +100,7 @@ class QdrantDB(BaseVectorDB):
             for key in keys:
                 qdrant_must_filters.append(
                     models.FieldCondition(
-                        key="metadata.{}".format(key),
+                        key=f"metadata.{key}",
                         match=models.MatchValue(
                             value=where.get(key),
                         ),
@@ -165,7 +165,7 @@ class QdrantDB(BaseVectorDB):
         where: dict[str, any],
         citations: bool = False,
         **kwargs: Optional[dict[str, Any]],
-    ) -> Union[list[tuple[str, dict]], list[str]]:
+    ) -> list[tuple[str, dict]] | list[str]:
         """
         query contents from vector database based on vector similarity
         :param input_query: query string
@@ -188,7 +188,7 @@ class QdrantDB(BaseVectorDB):
             for key in keys:
                 qdrant_must_filters.append(
                     models.FieldCondition(
-                        key="metadata.{}".format(key),
+                        key=f"metadata.{key}",
                         match=models.MatchValue(
                             value=where.get(key),
                         ),

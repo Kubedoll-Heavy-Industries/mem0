@@ -27,13 +27,13 @@ class MySQLLoader(BaseLoader):
             import mysql.connector as sqlconnector
         except ImportError as e:
             raise ImportError(
-                "Unable to import required packages for MySQL loader. Run `pip install --upgrade 'embedchain[mysql]'`."  # noqa: E501
+                "Unable to import required packages for MySQL loader. Run `pip install --upgrade 'embedchain[mysql]'`."
             ) from e
 
         try:
             self.connection = sqlconnector.connection.MySQLConnection(**config)
             self.cursor = self.connection.cursor()
-        except (sqlconnector.Error, IOError) as err:
+        except (OSError, sqlconnector.Error) as err:
             logger.info(f"Connection failed: {err}")
             raise ValueError(
                 f"Unable to connect with the given config: {config}.",

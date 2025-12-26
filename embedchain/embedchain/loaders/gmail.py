@@ -102,9 +102,7 @@ class GmailReader:
                 ctype = part.get_content_type()
                 cdispo = str(part.get("Content-Disposition"))
 
-                if ctype == "text/plain" and "attachment" not in cdispo:
-                    return decode_payload(part)
-                elif ctype == "text/html":
+                if (ctype == "text/plain" and "attachment" not in cdispo) or ctype == "text/html":
                     return decode_payload(part)
         else:
             return decode_payload(mime_msg)
@@ -131,9 +129,9 @@ class GmailLoader(BaseLoader):
         content = clean_string(content)
         return dedent(
             f"""
-            Email from '{email['from']}' to '{email['to']}'
-            Subject: {email['subject']}
-            Date: {email['date']}
+            Email from '{email["from"]}' to '{email["to"]}'
+            Subject: {email["subject"]}
+            Date: {email["date"]}
             Content: {content}
         """
         )

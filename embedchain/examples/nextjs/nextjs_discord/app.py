@@ -69,7 +69,7 @@ async def answer_query(message):
         or message.channel.type == discord.ChannelType.private_thread
     ):
         await message.channel.send(
-            "🧵 Currently, we don't support answering questions in threads. Could you please send your message in the channel for a swift response? Appreciate your understanding! 🚀"  # noqa: E501
+            "🧵 Currently, we don't support answering questions in threads. Could you please send your message in the channel for a swift response? Appreciate your understanding! 🚀"
         )
         return
 
@@ -79,7 +79,9 @@ async def answer_query(message):
     await thread.send("🎭 Putting on my thinking cap, brb with an epic response!")
     response = NEXTJS_BOT.query(question, citations=True)
 
-    default_answer = "Sorry, I don't know the answer to that question. Please refer to the documentation.\nhttps://nextjs.org/docs"  # noqa: E501
+    default_answer = (
+        "Sorry, I don't know the answer to that question. Please refer to the documentation.\nhttps://nextjs.org/docs"
+    )
     answer = response.get("answer", default_answer)
 
     contexts = response.get("contexts", [])

@@ -262,7 +262,7 @@ When the agent identifies information worth remembering, it calls this function 
 
 #### Example usage in agent prompt:
 ```
-When the user shares important information like preferences or personal details, 
+When the user shares important information like preferences or personal details,
 use the addMemories function to store this information for future reference.
 ```
 
@@ -283,7 +283,7 @@ The `retrieveMemories` tool allows your agent to search for and retrieve relevan
 
 #### Example usage in agent prompt:
 ```
-At the beginning of each conversation turn, use retrieveMemories to check if we've 
+At the beginning of each conversation turn, use retrieveMemories to check if we've
 discussed this topic before or if the user has shared relevant preferences.
 ```
 
@@ -411,18 +411,18 @@ Here's how a typical conversation with memory might flow:
 
 ## Troubleshooting
 
-- **Missing API Keys**: 
+- **Missing API Keys**:
   - Error: "API_KEY environment variable must be set"
   - Solution: Ensure all environment variables are set correctly in your .env file or system environment
-  
+
 - **Connection Issues**:
   - Error: "Failed to connect to API"
   - Solution: Check your network connection and API key permissions. Verify the API keys are valid and have the necessary permissions.
-  
+
 - **Empty Memory Results**:
   - Symptom: Agent always responds with "No memories found"
   - Solution: This is normal for new users. The memory database builds up over time as conversations occur. It's also possible your query isn't semantically similar to stored memories - try different phrasing.
-  
+
 - **Agent Not Using Memories**:
   - Symptom: The agent retrieves memories but doesn't incorporate them in responses
   - Solution: Update the agent's prompt to explicitly instruct it to use the retrieved memories in its responses
@@ -444,4 +444,3 @@ By integrating ElevenLabs Conversational AI with Mem0, you can create voice agen
     Create voice-first AI applications
   </Card>
 </CardGroup>
-

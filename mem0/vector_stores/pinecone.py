@@ -1,6 +1,6 @@
 import logging
 import os
-from typing import Any, Optional, Union
+from typing import Any, Optional
 
 from pydantic import BaseModel
 
@@ -17,9 +17,9 @@ logger = logging.getLogger(__name__)
 
 
 class OutputData(BaseModel):
-    id: Optional[str]  # memory id
-    score: Optional[float]  # distance
-    payload: Optional[dict]  # metadata
+    id: str | None  # memory id
+    score: float | None  # distance
+    payload: dict | None  # metadata
 
 
 class PineconeDB(VectorStoreBase):
@@ -28,15 +28,15 @@ class PineconeDB(VectorStoreBase):
         collection_name: str,
         embedding_model_dims: int,
         client: Optional["Pinecone"],
-        api_key: Optional[str],
-        environment: Optional[str],
-        serverless_config: Optional[dict[str, Any]],
-        pod_config: Optional[dict[str, Any]],
+        api_key: str | None,
+        environment: str | None,
+        serverless_config: dict[str, Any] | None,
+        pod_config: dict[str, Any] | None,
         hybrid_search: bool,
         metric: str,
         batch_size: int,
-        extra_params: Optional[dict[str, Any]],
-        namespace: Optional[str] = None,
+        extra_params: dict[str, Any] | None,
+        namespace: str | None = None,
     ):
         """
         Initialize the Pinecone vector store.
@@ -124,8 +124,8 @@ class PineconeDB(VectorStoreBase):
     def insert(
         self,
         vectors: list[list[float]],
-        payloads: Optional[list[dict]] = None,
-        ids: Optional[list[Union[str, int]]] = None,
+        payloads: list[dict] | None = None,
+        ids: list[str | int] | None = None,
     ):
         """
         Insert vectors into an index.
@@ -186,7 +186,7 @@ class PineconeDB(VectorStoreBase):
 
             return result
 
-    def _create_filter(self, filters: Optional[dict]) -> dict:
+    def _create_filter(self, filters: dict | None) -> dict:
         """
         Create a filter dictionary from the provided filters.
         """
@@ -203,9 +203,7 @@ class PineconeDB(VectorStoreBase):
 
         return pinecone_filter
 
-    def search(
-        self, query: str, vectors: list[float], limit: int = 5, filters: Optional[dict] = None
-    ) -> list[OutputData]:
+    def search(self, query: str, vectors: list[float], limit: int = 5, filters: dict | None = None) -> list[OutputData]:
         """
         Search for similar vectors.
 
@@ -241,7 +239,7 @@ class PineconeDB(VectorStoreBase):
         results = self._parse_output(response.matches)
         return results
 
-    def delete(self, vector_id: Union[str, int]):
+    def delete(self, vector_id: str | int):
         """
         Delete a vector by ID.
 
@@ -250,7 +248,7 @@ class PineconeDB(VectorStoreBase):
         """
         self.index.delete(ids=[str(vector_id)], namespace=self.namespace)
 
-    def update(self, vector_id: Union[str, int], vector: Optional[list[float]] = None, payload: Optional[dict] = None):
+    def update(self, vector_id: str | int, vector: list[float] | None = None, payload: dict | None = None):
         """
         Update a vector and its payload.
 
@@ -275,7 +273,7 @@ class PineconeDB(VectorStoreBase):
 
         self.index.upsert(vectors=[item], namespace=self.namespace)
 
-    def get(self, vector_id: Union[str, int]) -> OutputData:
+    def get(self, vector_id: str | int) -> OutputData:
         """
         Retrieve a vector by ID.
 
@@ -320,7 +318,7 @@ class PineconeDB(VectorStoreBase):
         """
         return self.client.describe_index(self.collection_name)
 
-    def list(self, filters: Optional[dict] = None, limit: int = 100) -> list[OutputData]:
+    def list(self, filters: dict | None = None, limit: int = 100) -> list[OutputData]:
         """
         List vectors in an index with optional filtering.
 

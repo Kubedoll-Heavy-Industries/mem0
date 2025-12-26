@@ -40,7 +40,7 @@ class TestConfigForAppComponents:
 
 class TestAppFromConfig:
     def load_config_data(self, yaml_path):
-        with open(yaml_path, "r") as file:
+        with open(yaml_path) as file:
             return yaml.safe_load(file)
 
     @pytest.mark.skip(reason="Config file configs/chroma.yaml not in repository")
