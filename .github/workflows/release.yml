@@ -7,9 +7,7 @@ on:
       - "mem0ai-v*"                 # release-please: mem0ai-v1.0.2
       - "embedchain-v*"             # release-please: embedchain-v0.1.129
       - "mem0-ts-v*"                # release-please: mem0-ts-v2.1.39
-      - "vercel-ai-provider-v*"        # release-please: vercel-ai-provider-v2.1.0
-  release:
-    types: [published]
+      - "vercel-ai-provider-v*"     # release-please: vercel-ai-provider-v2.1.0
   workflow_dispatch:
     inputs:
       target:
@@ -18,17 +16,11 @@ on:
         type: choice
         options:
           - all
-          - packages
-          - docker
-      package:
-        description: "Package to build (ignored for docker-only)"
-        required: false
-        type: choice
-        default: both
-        options:
           - mem0ai
           - embedchain
-          - both
+          - mem0-ts
+          - vercel-ai-provider
+          - docker
       dry_run:
         description: "Dry run (don't actually publish)"
         required: false
@@ -40,15 +32,14 @@ env:
 
 jobs:
   # ===========================================================================
-  # Build Python packages
+  # Build Python: mem0ai
   # ===========================================================================
-  build:
-    name: Build ${{ matrix.package }}
+  build-mem0ai:
+    name: Build mem0ai
     runs-on: ubuntu-latest
-    if: github.event_name != 'workflow_dispatch' || inputs.target == 'all' || inputs.target == 'packages'
-    strategy:
-      matrix:
-        package: ${{ github.event_name == 'workflow_dispatch' && inputs.package != 'both' && fromJson(format('["{0}"]', inputs.package)) || fromJson('["mem0ai", "embedchain"]') }}
+    if: |
+      (github.event_name == 'push' && (startsWith(github.ref, 'refs/tags/v') || startsWith(github.ref, 'refs/tags/mem0ai-v'))) ||
+      (github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'mem0ai'))
     steps:
       - uses: actions/checkout@v4
 
@@ -62,26 +53,53 @@ jobs:
         run: uv python install 3.12
 
       - name: Build mem0ai
-        if: matrix.package == 'mem0ai'
         run: uv build
 
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-mem0ai
+          path: dist/
+
+  # ===========================================================================
+  # Build Python: embedchain
+  # ===========================================================================
+  build-embedchain:
+    name: Build embedchain
+    runs-on: ubuntu-latest
+    if: |
+      (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/embedchain-v')) ||
+      (github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'embedchain'))
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: Set up Python
+        run: uv python install 3.12
+
       - name: Build embedchain
-        if: matrix.package == 'embedchain'
         run: uv build --package embedchain
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: dist-${{ matrix.package }}
+          name: dist-embedchain
           path: dist/
 
   # ===========================================================================
-  # Build TypeScript packages
+  # Build TypeScript: mem0-ts
   # ===========================================================================
-  build-ts:
-    name: Build TypeScript packages
+  build-mem0-ts:
+    name: Build mem0-ts
     runs-on: ubuntu-latest
-    if: github.event_name != 'workflow_dispatch' || inputs.target == 'all' || inputs.target == 'packages'
+    if: |
+      (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/mem0-ts-v')) ||
+      (github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'mem0-ts'))
     steps:
       - uses: actions/checkout@v4
 
@@ -95,19 +113,10 @@ jobs:
         with:
           node-version: "24"
           cache: "pnpm"
-          cache-dependency-path: |
-            mem0-ts/pnpm-lock.yaml
-            vercel-ai-sdk/pnpm-lock.yaml
+          cache-dependency-path: mem0-ts/pnpm-lock.yaml
 
       - name: Build mem0-ts
         working-directory: mem0-ts
-        run: |
-          pnpm install
-          pnpm run build
-          pnpm pack
-
-      - name: Build vercel-ai-sdk
-        working-directory: vercel-ai-sdk
         run: |
           pnpm install
           pnpm run build
@@ -118,6 +127,37 @@ jobs:
         with:
           name: dist-mem0-ts
           path: mem0-ts/*.tgz
+
+  # ===========================================================================
+  # Build TypeScript: vercel-ai-provider
+  # ===========================================================================
+  build-vercel-ai:
+    name: Build vercel-ai-provider
+    runs-on: ubuntu-latest
+    if: |
+      (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/vercel-ai-provider-v')) ||
+      (github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'vercel-ai-provider'))
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "pnpm"
+          cache-dependency-path: vercel-ai-sdk/pnpm-lock.yaml
+
+      - name: Build vercel-ai-sdk
+        working-directory: vercel-ai-sdk
+        run: |
+          pnpm install
+          pnpm run build
+          pnpm pack
 
       - name: Upload vercel-ai-sdk artifact
         uses: actions/upload-artifact@v4
@@ -130,10 +170,9 @@ jobs:
   # ===========================================================================
   upload-release-assets:
     name: Upload Release Assets
-    needs: [build, build-ts]
+    needs: [build-mem0ai, build-embedchain, build-mem0-ts, build-vercel-ai]
+    if: always() && !cancelled() && github.event_name == 'push'
     runs-on: ubuntu-latest
-    # Only upload to releases (not manual dispatch unless explicitly releasing)
-    if: github.event_name == 'release' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/'))
     permissions:
       contents: write
     steps:
@@ -145,9 +184,10 @@ jobs:
           merge-multiple: true
 
       - name: List artifacts
-        run: ls -la dist/
+        run: ls -la dist/ || echo "No artifacts"
 
       - name: Upload to GitHub Release
+        if: hashFiles('dist/*') != ''
         uses: softprops/action-gh-release@v2
         with:
           files: dist/*
@@ -159,11 +199,9 @@ jobs:
   docker:
     name: Docker
     runs-on: ubuntu-latest
-    # Only build Docker for mem0ai releases (not embedchain) or manual dispatch
     if: |
-      (github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'docker')) ||
-      (github.event_name == 'release') ||
-      (github.event_name == 'push' && (startsWith(github.ref, 'refs/tags/v') || startsWith(github.ref, 'refs/tags/mem0ai-v')))
+      (github.event_name == 'push' && (startsWith(github.ref, 'refs/tags/v') || startsWith(github.ref, 'refs/tags/mem0ai-v'))) ||
+      (github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'mem0ai' || inputs.target == 'docker'))
     permissions:
       contents: read
       packages: write
@@ -191,11 +229,9 @@ jobs:
       - name: Extract version and namespace
         id: meta
         run: |
-          # Extract version from tag (e.g., v1.0.0 -> 1.0.0, mem0ai-v1.0.0 -> 1.0.0)
           VERSION="${GITHUB_REF_NAME#*-v}"
           VERSION="${VERSION#v}"
           echo "version=${VERSION:-dev}" >> "$GITHUB_OUTPUT"
-          # Docker requires lowercase repository names
           echo "namespace=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_OUTPUT"
 
       - name: Build and push Docker images
@@ -216,8 +252,3 @@ jobs:
           OCI_URL: https://github.com/${{ github.repository }}
           OCI_VENDOR: Kubedoll Heavy Industries
           OCI_AUTHORS: Cadence Agyirey <8145742+cagyirey@users.noreply.github.com>
-
-      # TODO: Attestation for multi-image bake builds requires iterating over outputs
-      # See: https://docs.docker.com/build/bake/reference/#output
-      # - name: Generate artifact attestation
-      #   uses: actions/attest-build-provenance@v3
