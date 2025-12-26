@@ -188,13 +188,15 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract version from tag
-        id: version
+      - name: Extract version and namespace
+        id: meta
         run: |
           # Extract version from tag (e.g., v1.0.0 -> 1.0.0, mem0ai-v1.0.0 -> 1.0.0)
           VERSION="${GITHUB_REF_NAME#*-v}"
           VERSION="${VERSION#v}"
           echo "version=${VERSION:-dev}" >> "$GITHUB_OUTPUT"
+          # Docker requires lowercase repository names
+          echo "namespace=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_OUTPUT"
 
       - name: Build and push Docker images
         uses: docker/bake-action@v6
@@ -205,11 +207,11 @@ jobs:
             *.cache-from=type=gha
             *.cache-to=type=gha,mode=max
         env:
-          VERSION: ${{ steps.version.outputs.version }}
+          VERSION: ${{ steps.meta.outputs.version }}
           COMMIT: ${{ github.sha }}
           BUILD_DATE: ${{ github.event.head_commit.timestamp || github.event.release.created_at || '' }}
           REGISTRY: ${{ env.REGISTRY }}
-          REGISTRY_NAMESPACE: ${{ github.repository_owner }}
+          REGISTRY_NAMESPACE: ${{ steps.meta.outputs.namespace }}
           OCI_SOURCE: https://github.com/${{ github.repository }}
           OCI_URL: https://github.com/${{ github.repository }}
           OCI_VENDOR: Kubedoll Heavy Industries
