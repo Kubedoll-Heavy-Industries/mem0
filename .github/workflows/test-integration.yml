@@ -35,23 +35,13 @@ jobs:
         working-directory: mem0-ts
         run: pnpm install --frozen-lockfile
 
-      # Setup host Ollama with model caching
-      - uses: ollama/setup-ollama@v1
-
-      - name: Cache Ollama models
-        uses: actions/cache@v4
-        with:
-          path: ~/.ollama/models
-          key: ollama-${{ env.OLLAMA_LLM_MODEL }}-${{ env.OLLAMA_EMBED_MODEL }}
-
-      - name: Pull Ollama models
-        run: |
-          ollama pull "$OLLAMA_LLM_MODEL"
-          ollama pull "$OLLAMA_EMBED_MODEL"
-
+      # Use testcontainers for all services including Ollama
+      # Models are pulled inside the container - no host setup needed
       - name: Run integration tests
         working-directory: mem0-ts
         run: pnpm test:integration
         env:
-          OLLAMA_HOST: http://localhost:11434
+          # Model names for testcontainers to pull
+          OLLAMA_LLM_MODEL: ${{ env.OLLAMA_LLM_MODEL }}
+          OLLAMA_EMBED_MODEL: ${{ env.OLLAMA_EMBED_MODEL }}
           TESTCONTAINERS_RYUK_DISABLED: "true"
