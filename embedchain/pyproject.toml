@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "embedchain"
-version = "0.1.128"
+version = "0.2.0"
 description = "Simplest open source retrieval (RAG) framework"
 authors = [
     { name = "Taranjeet Singh", email = "taranjeet@embedchain.ai" },
