@@ -38,11 +38,13 @@
     },
     "mem0-ts": {
       "release-type": "node",
+      "component": "mem0-ts",
       "package-name": "mem0ai",
       "changelog-path": "CHANGELOG.md"
     },
     "vercel-ai-sdk": {
       "release-type": "node",
+      "component": "vercel-ai-provider",
       "package-name": "@mem0/vercel-ai-provider",
       "changelog-path": "CHANGELOG.md"
     }

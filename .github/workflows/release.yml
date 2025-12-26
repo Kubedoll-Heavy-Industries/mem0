@@ -7,7 +7,7 @@ on:
       - "mem0ai-v*"                 # release-please: mem0ai-v1.0.2
       - "embedchain-v*"             # release-please: embedchain-v0.1.129
       - "mem0-ts-v*"                # release-please: mem0-ts-v2.1.39
-      - "@mem0/vercel-ai-provider-v*"  # release-please: @mem0/vercel-ai-provider-v2.0.5
+      - "vercel-ai-provider-v*"        # release-please: vercel-ai-provider-v2.1.0
   release:
     types: [published]
   workflow_dispatch:
