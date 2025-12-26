@@ -1,6 +1,6 @@
 {
   ".": "1.1.0",
-  "embedchain": "0.2.0",
-  "mem0-ts": "2.2.0",
+  "embedchain": "0.3.0",
+  "mem0-ts": "2.3.0",
   "vercel-ai-sdk": "2.1.0"
 }
